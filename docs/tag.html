@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link href='https://OmnisyR.github.io/assets/Primer.css' rel='stylesheet' />
-    <script src='https://OmnisyR.github.io/assets/GmeekVercount.js'></script>
+    <script src='https://OmnisyR.github.io/assets/GmeekVercount.js'></script><script src='https://OmnisyR.github.io/assets/GmeekTOC.js'></script>
     <link rel="icon" href="https://github.githubassets.com/favicons/favicon.svg"><script>
         let theme = localStorage.getItem("meek_theme") || "light";
         document.documentElement.setAttribute("data-color-mode", theme);
@@ -85,8 +85,8 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 var now=new Date();
 document.getElementById("copyrightYear").innerHTML=now.getFullYear();
 
-if(""!=""){
-    var startSite=new Date("");
+if("07/23/2025"!=""){
+    var startSite=new Date("07/23/2025");
     var diff=now.getTime()-startSite.getTime();
     var diffDay=Math.floor(diff/(1000*60*60*24));
     document.getElementById("runday").innerHTML="网站运行"+diffDay+"天"+" • ";
