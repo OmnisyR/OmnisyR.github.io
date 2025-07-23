@@ -1,4 +1,7 @@
 function translate(container) {
+  if (container === null) {
+    return null;
+  }
   var content = container.innerHTML
   var lan = 'e'
   if(document.documentElement.lang === 'zh-CN'){
