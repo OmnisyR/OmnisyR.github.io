@@ -3,8 +3,7 @@ function translate(container) {
     return null;
   }
   var content = container.innerHTML
-  var lan = 'e'
-  if(document.documentElement.lang === 'zh-CN'){
+  if (document.documentElement.lang === 'zh-CN') {
     var pa1 = /\\c(.*?)\\c/g
     var pa2 = /\\e(.*?)\\e/g
   }else{
@@ -17,5 +16,8 @@ function translate(container) {
 document.addEventListener('DOMContentLoaded', function() {
   translate(document.getElementById('listTitle'))
   translate(document.getElementById('content'))
-  translate(document.getElementById('header').postTitle)
+  let elements = document.getElementsByClassName('postTitle')
+  if (elements.length > 0) {
+    translate(elements[0]))
+  }
 });
