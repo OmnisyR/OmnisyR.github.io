@@ -6,3 +6,5 @@
 ### 连续型扩散模型
 
 ## MCMod开发
+
+<!-- ##{"script":"<script src='https://blog.meekdai.com/Gmeek/plugins/GmeekTOC.js'></script>"}## -->
