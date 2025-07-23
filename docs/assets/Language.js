@@ -3,7 +3,7 @@ function translate(container) {
     return null;
   }
   var content = container.innerHTML
-  if (document.documentElement.lang === 'zh-CN') {
+  if (navigator.language=== 'zh-CN') {
     var pa1 = /\\c(.*?)\\c/g
     var pa2 = /\\e(.*?)\\e/g
   }else{
