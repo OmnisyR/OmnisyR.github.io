@@ -1,4 +1,4 @@
-//https://github.com/Meekdai/meekdai.github.io/blob/main/static/assets/GmeekVercount.js
+//https://blog.meekdai.com/Gmeek/plugins/GmeekVercount.js
 function createVercount() {
     var postBody = document.getElementById('postBody');
     if (postBody){
