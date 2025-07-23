@@ -17,5 +17,5 @@ function translate(container) {
 document.addEventListener('DOMContentLoaded', function() {
   translate(document.getElementById('listTitle'))
   translate(document.getElementById('content'))
-  translate(document.getElementById('content').postTitle)
+  translate(document.getElementById('header').postTitle)
 });
