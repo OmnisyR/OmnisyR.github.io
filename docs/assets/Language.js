@@ -18,6 +18,6 @@ document.addEventListener('DOMContentLoaded', function() {
   translate(document.getElementById('content'))
   let elements = document.getElementsByClassName('postTitle')
   if (elements.length > 0) {
-    translate(elements[0]))
+    translate(elements[0])
   }
 });
