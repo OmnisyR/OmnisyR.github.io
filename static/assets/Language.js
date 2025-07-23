@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
-  ["listTitle", "postTitle", "content"].forEach((item, i) => {
+  ["listTitle", "header", "content"].forEach((item, i) => {
     var container = document.getElementById(item);
     var content = container.innerHTML
     var lan = 'e'
