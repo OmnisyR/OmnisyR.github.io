@@ -2,7 +2,7 @@
     "title":"OmnisyR's Blog",
     "subTitle":"记录科研、开发的点点滴滴",
     "avatarUrl":"https://github.githubassets.com/favicons/favicon.svg",
-    "GMEEK_VERSION":"last",
+    "GMEEK_VERSION":"main",
     "email":"lxuan233@gmail.com",
     "singlePage":["link","about"],
     "onePageListNum":64,
