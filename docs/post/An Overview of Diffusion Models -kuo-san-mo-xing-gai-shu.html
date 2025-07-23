@@ -11,10 +11,12 @@
         document.documentElement.setAttribute("data-color-mode", theme);
     </script>
 <meta name="description" content="DDPM:
-$\boldsymbol{x}_t = \sqrt{\alpha_t}\boldsymbol{x}_{t-1} + \sqrt{1 - \alpha_t}\epsilon$。">
+
+$x_t = \sqrt{\alpha_t}x_{t-1} + \sqrt{1 - \alpha_t}\epsilon$。">
 <meta property="og:title" content="An Overview of Diffusion Models 扩散模型概述">
 <meta property="og:description" content="DDPM:
-$\boldsymbol{x}_t = \sqrt{\alpha_t}\boldsymbol{x}_{t-1} + \sqrt{1 - \alpha_t}\epsilon$。">
+
+$x_t = \sqrt{\alpha_t}x_{t-1} + \sqrt{1 - \alpha_t}\epsilon$。">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://OmnisyR.github.io/post/An%20Overview%20of%20Diffusion%20Models%20-kuo-san-mo-xing-gai-shu.html">
 <meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
@@ -75,8 +77,8 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </div>
 </div>
     <div id="content">
-<div class="markdown-body" id="postBody"><p>DDPM:<br>
-$\boldsymbol{x}<em>t = \sqrt{\alpha_t}\boldsymbol{x}</em>{t-1} + \sqrt{1 - \alpha_t}\epsilon$</p></div>
+<div class="markdown-body" id="postBody"><p>DDPM:</p>
+<p>$x_t = \sqrt{\alpha_t}x_{t-1} + \sqrt{1 - \alpha_t}\epsilon$</p></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
@@ -177,6 +179,6 @@ function iFrameLoading(){
 
 
 </script>
-
+<script>MathJax = {tex: {inlineMath: [["$", "$"]]}};</script><script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
 </html>
