@@ -5,7 +5,7 @@
 
   const themeColors = {
     light: {
-      bgGradient: "linear-gradient(135deg, #f4f4f4, #fef2f2, #f4f0ff)",
+      bgGradient: "linear-gradient(135deg, #f4f4f4, #f4f4f4, #f4f4f4)",
       cardBg: "rgba(255,255,255,0.25)",
       cardBorder: "1px solid rgba(255,255,255,0.2)",
       title: "#1c1c1e",
@@ -13,7 +13,7 @@
       meta: "#888"
     },
     dark: {
-      bgGradient: "linear-gradient(135deg, #1a1a2b, #222c3a, #2e3950)",
+      bgGradient: "linear-gradient(135deg, #2e3950, #2e3950, #2e3950)",
       cardBg: "rgba(32,32,32,0.3)",
       cardBorder: "1px solid rgba(255,255,255,0.08)",
       title: "#eee",
@@ -48,8 +48,8 @@
         width: 100vw; height: 100vh;
         z-index: -1;
         background-size: 600% 600%;
-        // animation: hueflow 30s ease infinite;
-        // transition: background 0.6s ease;
+        animation: hueflow 30s ease infinite;
+        transition: background 0.6s ease;
       }
       @keyframes hueflow {
         0% { filter: hue-rotate(0deg); background-position: 0% 50%; }
@@ -65,7 +65,7 @@
     const mode = getEffectiveMode();
     const theme = themeColors[mode];
 
-    bg.style.background = theme.bgGradient;
+    bg.style.background = #f4f4f4;
 
     document.querySelectorAll(".post-card").forEach(card => {
       card.style.background = theme.cardBg;
