@@ -48,8 +48,8 @@
         width: 100vw; height: 100vh;
         z-index: -1;
         background-size: 600% 600%;
-        animation: hueflow 30s ease infinite;
-        transition: background 0.6s ease;
+        // animation: hueflow 30s ease infinite;
+        // transition: background 0.6s ease;
       }
       @keyframes hueflow {
         0% { filter: hue-rotate(0deg); background-position: 0% 50%; }
