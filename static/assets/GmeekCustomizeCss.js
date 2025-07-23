@@ -65,7 +65,7 @@
     const mode = getEffectiveMode();
     const theme = themeColors[mode];
 
-    bg.style.background = theme.bgGradient;
+    bg.style.background = #f4f4f4;
 
     document.querySelectorAll(".post-card").forEach(card => {
       card.style.background = theme.cardBg;
