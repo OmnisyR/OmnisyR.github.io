@@ -13,6 +13,9 @@
 <meta name="description" content="> [!NOTE]
 > This article currently only supports Chinese.
 
+> [!CAUTION]
+> 施工中！
+
 <!-- ##{'script':'<script src='https://OmnisyR.github.io/assets/GmeekTOC.js'></script>'}## -->
 
 ## 生成式模型
@@ -20,6 +23,9 @@
 <meta property="og:title" content="\eAn Overview of Diffusion Models\e\c扩散模型概述\c">
 <meta property="og:description" content="> [!NOTE]
 > This article currently only supports Chinese.
+
+> [!CAUTION]
+> 施工中！
 
 <!-- ##{'script':'<script src='https://OmnisyR.github.io/assets/GmeekTOC.js'></script>'}## -->
 
@@ -55,7 +61,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 }
 
 </style>
-<style>.markdown-alert{padding:0.5rem 1rem;margin-bottom:1rem;border-left:.25em solid var(--borderColor-default,var(--color-border-default));}.markdown-alert .markdown-alert-title {display:flex;font-weight:var(--base-text-weight-medium,500);align-items:center;line-height:1;}.markdown-alert>:first-child {margin-top:0;}.markdown-alert>:last-child {margin-bottom:0;}</style><style>.markdown-alert.markdown-alert-note {border-left-color:var(--borderColor-accent-emphasis, var(--color-accent-emphasis));background-color:var(--color-accent-subtle);}.markdown-alert.markdown-alert-note .markdown-alert-title {color: var(--fgColor-accent,var(--color-accent-fg));}</style>
+<style>.markdown-alert{padding:0.5rem 1rem;margin-bottom:1rem;border-left:.25em solid var(--borderColor-default,var(--color-border-default));}.markdown-alert .markdown-alert-title {display:flex;font-weight:var(--base-text-weight-medium,500);align-items:center;line-height:1;}.markdown-alert>:first-child {margin-top:0;}.markdown-alert>:last-child {margin-bottom:0;}</style><style>.markdown-alert.markdown-alert-note {border-left-color:var(--borderColor-accent-emphasis, var(--color-accent-emphasis));background-color:var(--color-accent-subtle);}.markdown-alert.markdown-alert-note .markdown-alert-title {color: var(--fgColor-accent,var(--color-accent-fg));}</style><style>.markdown-alert.markdown-alert-caution {border-left-color:var(--borderColor-danger-emphasis, var(--color-danger-emphasis));background-color:var(--color-danger-subtle);}.markdown-alert.markdown-alert-caution .markdown-alert-title {color: var(--fgColor-danger,var(--color-danger-fg));}</style>
 
 
 
@@ -87,6 +93,8 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
     <div id="content">
 <div class="markdown-body" id="postBody"><div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg class="octicon octicon-info mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p><p>This article currently only supports Chinese.</p>
 </div>
+<div class="markdown-alert markdown-alert-caution"><p class="markdown-alert-title"><svg class="octicon octicon-stop mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M4.47.22A.749.749 0 0 1 5 0h6c.199 0 .389.079.53.22l4.25 4.25c.141.14.22.331.22.53v6a.749.749 0 0 1-.22.53l-4.25 4.25A.749.749 0 0 1 11 16H5a.749.749 0 0 1-.53-.22L.22 11.53A.749.749 0 0 1 0 11V5c0-.199.079-.389.22-.53Zm.84 1.28L1.5 5.31v5.38l3.81 3.81h5.38l3.81-3.81V5.31L10.69 1.5ZM8 4a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Caution</p><p>施工中！</p>
+</div>
 
 <h2>生成式模型</h2>
 <p>扩散模型是一种<code class="notranslate">生成式模型</code>，它最初只运用在了图片生成上，但如今，它已经有了相当广阔的运用空间。在扩散模型流行之前，主流的图片的生成式模型还有<code class="notranslate">变分自编码器</code>以及<code class="notranslate">生成式对抗模型</code>，与它们相比，扩散模型虽然牺牲了采样速度，提升了采样结果的<code class="notranslate">泛性</code>与<code class="notranslate">质量</code>。</p>
@@ -98,15 +106,29 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <p>扩散模型的训练的过程通常被称为正向过程（或增噪过程），其采样的过程通常被称为逆向过程（或去噪过程）。</p>
 <h4>正向过程</h4>
 <p><img src="https://OmnisyR.github.io/figs/forward.png"><br>
-扩散模型的正向过程旨在一步步地为原始数据集的图片，以<code class="notranslate">一定比例</code>添加标准高斯噪声，直至<code class="notranslate">预定的步数</code>结束，使得该图片成为完全高斯噪声。扩散模型在<code class="notranslate">训练</code>中，则是使用了<code class="notranslate">随机梯度下降法</code>，随机选取某一步数来进行模型的梯度下降。如果一步步添加噪声来进行训练，固然是较为耗费时间的，但实际上，正向过程并不需要一步步地进行，通过<code class="notranslate">重参数技巧</code>可以将任意步数简化为一步完成，这大大提升了训练的效率。</p>
+扩散模型的正向过程旨在一步步地为原始数据集的图片，以<code class="notranslate">一定比例</code>添加标准高斯噪声，直至<code class="notranslate">预定的步数</code>结束，使得该图片成为完全高斯噪声，但实际上，正向过程并不需要一步步地进行，通过<code class="notranslate">重参数技巧</code>可以将任意步数简化为一步完成。扩散模型在<code class="notranslate">训练</code>中，则是使用了<code class="notranslate">随机梯度下降法</code>，随机选取某一步数来进行模型的梯度下降，进行噪声的学习，以便进行逆向过程的去噪工作。</p>
 <h4>逆向过程</h4>
 <p><img src="https://OmnisyR.github.io/figs/backward.png"><br>
-扩散模型的逆向过程旨在随机生成一个标准高斯噪声，使用预训练好的模型，进行一步步地降噪，直至预定的步数结束，使得该标准高斯分布称为近似训练集的图片。和正向过程不同的是，逆向过程的这些步骤不能简单地一次进行，但仍然有相当多的人想到了快速采样的方法，<code class="notranslate">时至今日</code>，扩散模型的快速采样也仍然是一个热门课题。</p>
+扩散模型的逆向过程旨在随机生成一个标准高斯噪声，使用预训练好的模型，进行一步步地降噪，直至预定的步数结束，使得该标准高斯分布称为近似训练集的图片。和正向过程不同的是，逆向过程的这些步骤不能简单地一次进行，但有相当多的人找到了快速采样的方法，从而直接有效弥补了扩散模型耗费算力大这一缺点。<code class="notranslate">时至今日</code>，扩散模型的快速采样也仍然是一个热门课题。</p>
 <h3>连续型扩散模型</h3>
-<p>上述的思想中，很容易能够看出无论是正向过程，还是逆向过程，扩散模型的离散的。后续人们利用随机微分方程对扩散模型进行了连续性的数学建模，使得能够更好地从数学层面改进扩散模型，无论是正向过程还是逆向过程都能够使用函数进行连续性表达，只不过计算机无法处理连续数据，在实践中，仍然会离散化处理相关数据。</p>
+<p>上述的思想中，很容易能够看出无论是正向过程，还是逆向过程，扩散模型的离散的。后续人们利用随机微分方程对扩散模型进行了连续性的数学建模，使得能够更好地从数学层面改进扩散模型，无论是正向过程还是逆向过程都能够使用函数进行连续性表达，只不过计算机无法处理连续数据，在实践中，仍然会将连续函数以离散的形式进行编程。</p>
 <h2>评估方法</h2>
 <h3>Inception Score</h3>
-<h3>FID</h3></div>
+<h3>FID</h3>
+<p>\denot{扩散模型:}<br>
+\denot{生成式模型:}<br>
+\denot{变分自编码器:}<br>
+\denot{生成式对抗模型:}<br>
+\denot{泛性:}<br>
+\denot{质量:}<br>
+\denot{Deep Unsupervised Learning using Nonequilibrium Thermodynamics:<a href="https://arxiv.org/abs/1503.03585%7D" rel="nofollow">https://arxiv.org/abs/1503.03585}</a><br>
+\denot{Denoising Diffusion Probabilistic Models(DDPM):<a href="https://arxiv.org/abs/2006.11239%7D" rel="nofollow">https://arxiv.org/abs/2006.11239}</a><br>
+\denot{一定比例:}<br>
+\denot{预定的步数:}<br>
+\denot{重参数技巧:}<br>
+\denot{训练:}<br>
+\denot{随机梯度下降法:}<br>
+\denot{时至今日:}</p></div>
 <div style="font-size:small;margin-top:8px;float:right;">转载文章请注明出处</div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
