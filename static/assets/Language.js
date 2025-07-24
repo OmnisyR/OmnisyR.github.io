@@ -6,7 +6,7 @@ function transStr(str){
     var pa1 = /\\e(.*?)\\e/g
     var pa2 = /\\c(.*?)\\c/g
   }
-  return content.replace(pa1, (match, content)=>{return content}).replace(pa2,'')
+  return str.replace(pa1, (match, content)=>{return content}).replace(pa2,'')
 }
 
 function translate(container){
