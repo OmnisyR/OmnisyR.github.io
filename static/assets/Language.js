@@ -1,8 +1,4 @@
-function translate(container) {
-  if (container === null) {
-    return null;
-  }
-  var content = container.innerHTML
+function transStr(str){
   if (navigator.language=== 'zh-CN') {
     var pa1 = /\\c(.*?)\\c/g
     var pa2 = /\\e(.*?)\\e/g
@@ -10,10 +6,18 @@ function translate(container) {
     var pa1 = /\\e(.*?)\\e/g
     var pa2 = /\\c(.*?)\\c/g
   }
-  container.innerHTML = content.replace(pa1, (match, content)=>{return content}).replace(pa2,'')
+  return content.replace(pa1, (match, content)=>{return content}).replace(pa2,'')
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+function translate(container){
+  if (container === null) {
+    return null;
+  }
+  container.innerHTML = transStr(container.innerHTML)
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  document.title = transStr(document.title)
   translate(document.getElementById('listTitle'))
   translate(document.getElementById('content'))
   let elements = document.getElementsByClassName('postTitle')
