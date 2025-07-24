@@ -2,12 +2,14 @@
 > This article currently only supports Chinese.
 
 ## 生成式模型
+`扩散模型`是一种`生成式模型`，它最初只运用在了图片生成上，但如今，它已经有了相当广阔的运用空间。
+在扩散模型流行之前，主流的图片的生成式模型还有`变分自编码器`以及`生成式对抗模型`，与它们相比，扩散模型虽然牺牲了采样速度，提升了采样结果的`泛性`与`质量`。
 
-[DDPM](https://arxiv.org/abs/2006.11239)
+`Gmeek-html<img src="https://OmnisyR.github.io/figs/generative models.png">`
+图片来源：[Diffusion Models vs. GANs vs. VAEs: Comparison of Deep Generative Models](https://pub.towardsai.net/diffusion-models-vs-gans-vs-vaes-comparison-of-deep-generative-models-67ab93e0d9ae)
 
-$$
-x_t = \sqrt{\alpha_t}x_{t-1} + \sqrt{1 - \alpha_t}\epsilon
-$$
+## 扩散模型
+扩散模型
 
 <!-- ##{"script":"<script src='https://blog.meekdai.com/Gmeek/plugins/GmeekTOC.js'></script>"}## -->
 <!-- ##{"script":"<script src='https://blog.meekdai.com/Gmeek/plugins/Cite.js'></script>"}## -->
