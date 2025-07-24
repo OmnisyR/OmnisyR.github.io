@@ -1,7 +1,7 @@
-## 生成式模型
-
 > [!NOTE]
 > This article currently only supports Chinese.
+
+## 生成式模型
 
 [DDPM](https://arxiv.org/abs/2006.11239)
 
