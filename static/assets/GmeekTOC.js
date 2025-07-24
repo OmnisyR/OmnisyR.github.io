@@ -20,7 +20,7 @@ function createTOC() {
     tocElement.insertAdjacentHTML('beforeend', '<a class="toc-end" onclick="window.scrollTo({top:0,behavior: \'smooth\'});">Top</a>');
 }
 
-document.addEventListener("DOMContentLoaded", function() {
+window.addEventListener("load", function() {
     createTOC();
     var css = `
     .toc {
