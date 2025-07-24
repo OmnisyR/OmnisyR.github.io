@@ -89,12 +89,19 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </div>
 
 <h2>生成式模型</h2>
-<p><code class="notranslate">扩散模型</code>是一种<code class="notranslate">生成式模型</code>，它最初只运用在了图片生成上，但如今，它已经有了相当广阔的运用空间。<br>
-在扩散模型流行之前，主流的图片的生成式模型还有<code class="notranslate">变分自编码器</code>以及<code class="notranslate">生成式对抗模型</code>，与它们相比，扩散模型虽然牺牲了采样速度，提升了采样结果的<code class="notranslate">泛性</code>与<code class="notranslate">质量</code>。</p>
-<p><img src="https://OmnisyR.github.io/figs/generative_models.png"><br>
-图片来源：<a href="https://pub.towardsai.net/diffusion-models-vs-gans-vs-vaes-comparison-of-deep-generative-models-67ab93e0d9ae" rel="nofollow">Diffusion Models vs. GANs vs. VAEs: Comparison of Deep Generative Models</a></p>
+<p><code class="notranslate">扩散模型</code>是一种<code class="notranslate">生成式模型</code>，它最初只运用在了图片生成上，但如今，它已经有了相当广阔的运用空间。在扩散模型流行之前，主流的图片的生成式模型还有<code class="notranslate">变分自编码器</code>以及<code class="notranslate">生成式对抗模型</code>，与它们相比，扩散模型虽然牺牲了采样速度，提升了采样结果的<code class="notranslate">泛性</code>与<code class="notranslate">质量</code>。</p>
+<p><img src="https://OmnisyR.github.io/figs/generative models.png"><br>
+\eSource:\e\c图片来源：\c<a href="https://pub.towardsai.net/diffusion-models-vs-gans-vs-vaes-comparison-of-deep-generative-models-67ab93e0d9ae" rel="nofollow">Diffusion Models vs. GANs vs. VAEs: Comparison of Deep Generative Models</a></p>
 <h2>扩散模型</h2>
-<p>扩散模型</p></div>
+<p>在2015年，一篇名为<code class="notranslate">Deep Unsupervised Learning using Nonequilibrium Thermodynamics</code>的文章首次将扩散模型带入了人们的视野中。但由于当时硬件受限等原因，直到2020年<code class="notranslate">Denoising Diffusion Probabilistic Models(DDPM)</code>发布后，人们才开始广泛地使用扩散模型来进行图片生成。</p>
+<p>扩散模型的训练的过程通常被称为正向过程（或增噪过程），其采样的过程通常被称为逆向过程（或去噪过程）。</p>
+<h3>正向过程</h3>
+<p><img src="https://OmnisyR.github.io/figs/forward.png"><br>
+扩散模型的正向过程旨在一步步地为原始数据集的图片，以<code class="notranslate">一定比例</code>添加标准高斯噪声，直至预定的步数结束，使得该图片成为完全高斯噪声。</p>
+<h3>逆向过程</h3>
+<p><img src="https://OmnisyR.github.io/figs/backward.png"><br>
+扩散模型的逆向过程旨在随机生成一个标准高斯噪声，使用预训练好的模型，进行一步步地降噪，直至预定的步数结束，使得该标准高斯分布称为近似训练集的图片。</p>
+<h2>评估方法</h2></div>
 <div style="font-size:small;margin-top:8px;float:right;">转载文章请注明出处</div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
