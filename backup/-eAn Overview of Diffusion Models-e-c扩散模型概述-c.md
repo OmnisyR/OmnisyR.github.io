@@ -35,17 +35,17 @@
 
 ### FID
 
-\denot{扩散模型:}
-\denot{生成式模型:}
-\denot{变分自编码器:}
-\denot{生成式对抗模型:}
-\denot{泛性:}
-\denot{质量:}
-\denot{Deep Unsupervised Learning using Nonequilibrium Thermodynamics:https://arxiv.org/abs/1503.03585}
-\denot{Denoising Diffusion Probabilistic Models(DDPM):https://arxiv.org/abs/2006.11239}
-\denot{一定比例:}
-\denot{预定的步数:}
-\denot{重参数技巧:}
-\denot{训练:}
-\denot{随机梯度下降法:}
-\denot{时至今日:}
+\denote{扩散模型:}
+\denote{生成式模型:}
+\denote{变分自编码器:}
+\denote{生成式对抗模型:}
+\denote{泛性:}
+\denote{质量:}
+\denote{Deep Unsupervised Learning using Nonequilibrium Thermodynamics:https://arxiv.org/abs/1503.03585}
+\denote{Denoising Diffusion Probabilistic Models(DDPM):https://arxiv.org/abs/2006.11239}
+\denote{一定比例:}
+\denote{预定的步数:}
+\denote{重参数技巧:}
+\denote{训练:}
+\denote{随机梯度下降法:}
+\denote{时至今日:}
