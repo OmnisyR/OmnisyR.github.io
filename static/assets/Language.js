@@ -29,4 +29,8 @@ document.addEventListener('DOMContentLoaded', function(){
   if (elements.length > 0) {
     translate(elements[0], force_cn)
   }
+  elements = document.getElementsByClassName('Label LabelName')
+  elements.forEach((item, i) => {
+    translate(item, force_cn)
+  });
 });
