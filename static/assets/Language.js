@@ -16,7 +16,7 @@ function translate(container, force_cn){
   container.innerHTML = transStr(container.innerHTML, force_cn)
 }
 
-document.addEventListener('DOMContentLoaded', function(){
+window.addEventListener('load', function(){
   var elements = document.getElementsByClassName('markdown-alert markdown-alert-note')
   var force_cn = false
   if (elements.length > 0 && elements[0].innerHTML.includes('This article currently only supports Chinese.')){
