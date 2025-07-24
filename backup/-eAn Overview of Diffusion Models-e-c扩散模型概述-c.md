@@ -11,5 +11,4 @@
 ## 扩散模型
 扩散模型
 
-<!-- ##{"script":"<script src='https://blog.meekdai.com/Gmeek/plugins/GmeekTOC.js'></script>"}## -->
-<!-- ##{"script":"<script src='https://blog.meekdai.com/Gmeek/plugins/Cite.js'></script>"}## -->
+<!-- ##{"script":"<script src='https://OmnisyR.github.io/assets/GmeekTOC.js'></script>"}## -->
