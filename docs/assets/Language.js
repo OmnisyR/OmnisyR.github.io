@@ -19,7 +19,7 @@ function translate(container, force_cn){
 document.addEventListener('DOMContentLoaded', function(){
   var elements = document.getElementsByClassName('markdown-alert markdown-alert-note')
   var force_cn = false
-  if (elements.length > 0 && elements[0].includes('This article currently only supports Chinese.')){
+  if (elements.length > 0 && elements[0].innerHTML.includes('This article currently only supports Chinese.')){
     force_cn = true
   }
   document.title = transStr(document.title)
