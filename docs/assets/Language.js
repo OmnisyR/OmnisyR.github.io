@@ -1,5 +1,5 @@
 function transStr(str, force_cn){
-  if (force_cn || avigator.language=== 'zh-CN') {
+  if (force_cn || navigator.language=== 'zh-CN') {
     var pa1 = /\\c(.*?)\\c/g
     var pa2 = /\\e(.*?)\\e/g
   }else{
