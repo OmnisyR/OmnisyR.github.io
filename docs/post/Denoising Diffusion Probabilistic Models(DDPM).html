@@ -10,25 +10,25 @@
         let theme = localStorage.getItem("meek_theme") || "light";
         document.documentElement.setAttribute("data-color-mode", theme);
     </script>
-<meta name="description" content="  > [!NOTE]
-  > This article currently only supports Chinese.
+<meta name="description" content="> [!NOTE]
+> This article currently only supports Chinese.
 
-  > [!CAUTION]
-  > 施工中！
+> [!CAUTION]
+> 施工中！
 
-  <!-- ##{'script':'<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>'}## -->
-  \denotes
-  ;;;;马尔可夫链::某一时刻的状态只与上衣时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻参与，若干个这样的状态组成的链条便形成了马尔科夫链。">
+<!-- ##{'script':'<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>'}## -->
+\denotes
+;;;;马尔可夫链::某一时刻的状态只与上衣时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻参与，若干个这样的状态组成的链条便形成了马尔科夫链。">
 <meta property="og:title" content="Denoising Diffusion Probabilistic Models(DDPM)">
-<meta property="og:description" content="  > [!NOTE]
-  > This article currently only supports Chinese.
+<meta property="og:description" content="> [!NOTE]
+> This article currently only supports Chinese.
 
-  > [!CAUTION]
-  > 施工中！
+> [!CAUTION]
+> 施工中！
 
-  <!-- ##{'script':'<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>'}## -->
-  \denotes
-  ;;;;马尔可夫链::某一时刻的状态只与上衣时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻参与，若干个这样的状态组成的链条便形成了马尔科夫链。">
+<!-- ##{'script':'<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>'}## -->
+\denotes
+;;;;马尔可夫链::某一时刻的状态只与上衣时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻参与，若干个这样的状态组成的链条便形成了马尔科夫链。">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://OmnisyR.github.io/post/Denoising%20Diffusion%20Probabilistic%20Models%28DDPM%29.html">
 <meta property="og:image" content="https://avatars.githubusercontent.com/u/68898477?s=400&u=262ae3b76f651c62a82042317aaae313706c859c&v=4">
@@ -93,7 +93,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </div>
 <div class="markdown-alert markdown-alert-caution"><p class="markdown-alert-title"><svg class="octicon octicon-stop mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M4.47.22A.749.749 0 0 1 5 0h6c.199 0 .389.079.53.22l4.25 4.25c.141.14.22.331.22.53v6a.749.749 0 0 1-.22.53l-4.25 4.25A.749.749 0 0 1 11 16H5a.749.749 0 0 1-.53-.22L.22 11.53A.749.749 0 0 1 0 11V5c0-.199.079-.389.22-.53Zm.84 1.28L1.5 5.31v5.38l3.81 3.81h5.38l3.81-3.81V5.31L10.69 1.5ZM8 4a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Caution</p><p>施工中！</p>
 </div>
-  
+
 <p>\denotes<br>
 ;;;;马尔可夫链::某一时刻的状态只与上衣时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻参与，若干个这样的状态组成的链条便形成了马尔科夫链。;;;;<br>
 \denotes</p>
@@ -101,16 +101,20 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <h2>正向过程</h2>
 <p>扩散模型的正向过程为，对原始的图像进行一步步地噪声添加，从而在最终阶段，使得图片完全服从噪声分布，一般地，使用高斯噪声来进行这个过程。对于离散的时间$t = 0, 1, \dots, T$，在扩散模型遵循的<code class="notranslate">马尔可夫链</code>过程中，对于给定的$x_0 \sim q(x_0)$，即原始图像作为初始阶段，和$x_T \sim q(x_T) = \mathcal{N}(0, I)$，即完全服从标准高斯噪声的图像作为最终阶段。其各个阶段$x_0, x_1, \dots, x_T$的概率分布服从以下公式：</p>
 <p>$$
-q(x_T|x_0) = q(x_0)\prod_{i = 1}^{T}q(x_i|x_{i - 1})
+q(x_T|x_0) = q(x_0)\prod_{t = 0}^{T - 1}q(x_{t + 1}|x_{t})
 \tag{1}
-$$
-$$
+$$</p>
+<p>其中$q(x_{t + 1}|x_{t})$代表着每一时刻，为上一时刻的图片添加噪声的过程。很显然，这个过程是需要人为定义的，因此，可以选择一组超参数$\beta_t$，从而有：</p>
+<p>$$
+q(x_{t + 1}|x_{t}) = \mathcal{N}(x_{t + 1};\sqrt{1 - \beta_t}x_t,\beta_tI)
+\tag{2}
+$$</p>
+<p>$$
 x_{t + 1} = \sqrt{\alpha_t} x_t + \sqrt{1 - \alpha_t}\epsilon_t
 \tag{2}
 $$</p>
 <p>其中，$\alpha_t$是一系列人为定义的超参数，$\epsilon_t$表示任意的标准高斯噪声。</p>
-<h2>逆向过程</h2>
-<p>;;;;</p></div>
+<h2>逆向过程</h2></div>
 <div style="font-size:small;margin-top:8px;float:right;">转载文章请注明出处</div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
