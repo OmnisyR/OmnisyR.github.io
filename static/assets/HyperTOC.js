@@ -2,11 +2,16 @@ const denotes = new Map();
 
 document.addEventListener('DOMContentLoaded', function() {
   var container = document.getElementById('content')
-  container.innerHTML = container.innerHTML.replace(/\\denote{(.*?)}<br>/g, (match, content) => {
+  container.innerHTML = container.innerHTML.replace(/\\denote{(.*?)}/g, (match, content) => {
     let arr = content.split('::')
     denotes.set(arr[0], arr[1])
     return ''
-  })
+  }).split('<br>')
+  .map(function(v) {
+    return v.trim()
+  }).filter(function(v) {
+    return v != '';
+  }).join('<br>')
 });
 
 window.addEventListener('load', function() {
@@ -50,7 +55,7 @@ window.addEventListener('load', function() {
   style.textContent = `
   .flex-container {
     position: fixed;
-    display: flex
+    display: flex;
     left: 50%;
     transform: translateX(420px);
     overflow-y: auto;
