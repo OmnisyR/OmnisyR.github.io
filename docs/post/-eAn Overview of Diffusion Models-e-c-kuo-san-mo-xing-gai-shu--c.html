@@ -19,7 +19,7 @@
 <!-- ##{'script':'<script src='https://OmnisyR.github.io/assets/GmeekTOC.js'></script><script src='https://OmnisyR.github.io/assets/Denote.js'></script>'}## -->
 
 ## 生成式模型
-扩散模型是一种`生成式模型`，它最初只运用在了图片生成上，但如今，它已经有了相当广阔的运用空间。">
+扩散模型是一种`生成式模型`\denote{生成式模型::在实际运用中，依据用户的引导性输入或是不依靠输入，就可以生成出一系列数据的模型（这些数据往往在现实中不存在）}，它最初只运用在了图片生成上，但如今，它已经有了相当广阔的运用空间。">
 <meta property="og:title" content="\eAn Overview of Diffusion Models\e\c扩散模型概述\c">
 <meta property="og:description" content="> [!NOTE]
 > This article currently only supports Chinese.
@@ -30,7 +30,7 @@
 <!-- ##{'script':'<script src='https://OmnisyR.github.io/assets/GmeekTOC.js'></script><script src='https://OmnisyR.github.io/assets/Denote.js'></script>'}## -->
 
 ## 生成式模型
-扩散模型是一种`生成式模型`，它最初只运用在了图片生成上，但如今，它已经有了相当广阔的运用空间。">
+扩散模型是一种`生成式模型`\denote{生成式模型::在实际运用中，依据用户的引导性输入或是不依靠输入，就可以生成出一系列数据的模型（这些数据往往在现实中不存在）}，它最初只运用在了图片生成上，但如今，它已经有了相当广阔的运用空间。">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://OmnisyR.github.io/post/-eAn%20Overview%20of%20Diffusion%20Models-e-c-kuo-san-mo-xing-gai-shu--c.html">
 <meta property="og:image" content="https://avatars.githubusercontent.com/u/68898477?s=400&u=262ae3b76f651c62a82042317aaae313706c859c&v=4">
@@ -97,36 +97,24 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </div>
 
 <h2>生成式模型</h2>
-<p>扩散模型是一种<code class="notranslate">生成式模型</code>，它最初只运用在了图片生成上，但如今，它已经有了相当广阔的运用空间。在扩散模型流行之前，主流的图片的生成式模型还有<code class="notranslate">变分自编码器</code>以及<code class="notranslate">生成式对抗模型</code>，与它们相比，扩散模型虽然牺牲了采样速度，提升了采样结果的<code class="notranslate">泛性</code>与<code class="notranslate">质量</code>。</p>
+<p>扩散模型是一种<code class="notranslate">生成式模型</code>\denote{生成式模型::在实际运用中，依据用户的引导性输入或是不依靠输入，就可以生成出一系列数据的模型（这些数据往往在现实中不存在）}，它最初只运用在了图片生成上，但如今，它已经有了相当广阔的运用空间。在扩散模型流行之前，主流的图片的生成式模型还有<code class="notranslate">变分自编码器</code>\denote{变分自编码器::VAE}以及<code class="notranslate">生成式对抗模型</code>\denote{生成式对抗模型::GANs}，与它们相比，扩散模型虽然牺牲了采样速度，提升了采样结果的<code class="notranslate">泛性</code>\denote{泛性::不拘泥于数据集，能够}与<code class="notranslate">质量</code>\denote{质量::看起来和真的一样}。</p>
 <p><img src="https://OmnisyR.github.io/figs/generative_models.png"><br>
 \eSource:\e\c图片来源：\c<a href="https://pub.towardsai.net/diffusion-models-vs-gans-vs-vaes-comparison-of-deep-generative-models-67ab93e0d9ae" rel="nofollow">Diffusion Models vs. GANs vs. VAEs: Comparison of Deep Generative Models</a></p>
 <h2>扩散模型</h2>
-<p>在2015年，一篇名为<code class="notranslate">Deep Unsupervised Learning using Nonequilibrium Thermodynamics</code>的文章首次将扩散模型带入了人们的视野中。但由于当时硬件受限等原因，直到2020年<code class="notranslate">Denoising Diffusion Probabilistic Models(DDPM)</code>发布后，人们才开始广泛地使用扩散模型来进行图片生成。</p>
+<p>在2015年，一篇名为<code class="notranslate">Deep Unsupervised Learning using Nonequilibrium Thermodynamics</code>\denote{Deep Unsupervised Learning using Nonequilibrium Thermodynamics::<a href="https://arxiv.org/abs/1503.03585%7D%E7%9A%84%E6%96%87%E7%AB%A0%E9%A6%96%E6%AC%A1%E5%B0%86%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E5%B8%A6%E5%85%A5%E4%BA%86%E4%BA%BA%E4%BB%AC%E7%9A%84%E8%A7%86%E9%87%8E%E4%B8%AD%E3%80%82%E4%BD%86%E7%94%B1%E4%BA%8E%E5%BD%93%E6%97%B6%E7%A1%AC%E4%BB%B6%E5%8F%97%E9%99%90%E7%AD%89%E5%8E%9F%E5%9B%A0%EF%BC%8C%E7%9B%B4%E5%88%B02020%E5%B9%B4%60Denoising" rel="nofollow">https://arxiv.org/abs/1503.03585}的文章首次将扩散模型带入了人们的视野中。但由于当时硬件受限等原因，直到2020年`Denoising</a> Diffusion Probabilistic Models(DDPM)`\denote{Denoising Diffusion Probabilistic Models(DDPM)::<a href="https://arxiv.org/abs/2006.11239%7D%E5%8F%91%E5%B8%83%E5%90%8E%EF%BC%8C%E4%BA%BA%E4%BB%AC%E6%89%8D%E5%BC%80%E5%A7%8B%E5%B9%BF%E6%B3%9B%E5%9C%B0%E4%BD%BF%E7%94%A8%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E6%9D%A5%E8%BF%9B%E8%A1%8C%E5%9B%BE%E7%89%87%E7%94%9F%E6%88%90%E3%80%82" rel="nofollow">https://arxiv.org/abs/2006.11239}发布后，人们才开始广泛地使用扩散模型来进行图片生成。</a></p>
 <h3>扩散模型的两个过程</h3>
 <p>扩散模型的训练的过程通常被称为正向过程（或增噪过程），其采样的过程通常被称为逆向过程（或去噪过程）。</p>
 <h4>正向过程</h4>
 <p><img src="https://OmnisyR.github.io/figs/forward.png"><br>
-扩散模型的正向过程旨在一步步地为原始数据集的图片，以<code class="notranslate">一定比例</code>添加标准高斯噪声，直至<code class="notranslate">预定的步数</code>结束，使得该图片成为完全高斯噪声，但实际上，正向过程并不需要一步步地进行，通过<code class="notranslate">重参数技巧</code>可以将任意步数简化为一步完成。扩散模型在训练中，则是使用了<code class="notranslate">随机梯度下降法</code>，随机选取某一步数来进行模型的梯度下降，进行噪声的学习，以便进行逆向过程的去噪工作。</p>
+扩散模型的正向过程旨在一步步地为原始数据集的图片，以<code class="notranslate">一定比例</code>\denote{一定比例::又称噪声时间表}添加标准高斯噪声，直至<code class="notranslate">预定的步数</code>\denote{预定的步数::在实践中，通常选择1000步}结束，使得该图片成为完全高斯噪声，但实际上，正向过程并不需要一步步地进行，通过<code class="notranslate">重参数技巧</code>\denote{重参数技巧::一种数学计算技巧，在DDPM中将详细讨论}可以将任意步数简化为一步完成。扩散模型在训练中，则是使用了<code class="notranslate">随机梯度下降法</code>\denote{随机梯度下降法::SDG}，随机选取某一步数来进行模型的梯度下降，进行噪声的学习，以便进行逆向过程的去噪工作。</p>
 <h4>逆向过程</h4>
 <p><img src="https://OmnisyR.github.io/figs/backward.png"><br>
-扩散模型的逆向过程旨在随机生成一个标准高斯噪声，使用预训练好的模型，预测出所添加的噪声，再进行一步步地去噪，直至预定的步数结束，使得该标准高斯分布称为近似训练集的图片。和正向过程不同的是，逆向过程的这些步骤不能简单地一次进行，但有相当多的人找到了快速采样的方法，从而直接有效弥补了扩散模型耗费算力大这一缺点。<code class="notranslate">时至今日</code>，扩散模型的快速采样也仍然是一个热门课题。</p>
+扩散模型的逆向过程旨在随机生成一个标准高斯噪声，使用预训练好的模型，预测出所添加的噪声，再进行一步步地去噪，直至预定的步数结束，使得该标准高斯分布称为近似训练集的图片。和正向过程不同的是，逆向过程的这些步骤不能简单地一次进行，但有相当多的人找到了快速采样的方法，从而直接有效弥补了扩散模型耗费算力大这一缺点。<code class="notranslate">时至今日</code>\denote{时至今日::直到写到这里时的2025年07月}，扩散模型的快速采样也仍然是一个热门课题。</p>
 <h3>连续型扩散模型</h3>
 <p>上述的思想中，很容易能够看出无论是正向过程，还是逆向过程，扩散模型的离散的。后续人们利用随机微分方程对扩散模型进行了连续性的数学建模，使得能够更好地从数学层面改进扩散模型，无论是正向过程还是逆向过程都能够使用函数进行连续性表达，只不过计算机无法处理连续数据，在实践中，仍然会将连续函数以离散的形式进行编程。</p>
 <h2>评估方法</h2>
 <h3>Inception Score</h3>
-<h3>FID</h3>
-<p>\denote{生成式模型::在实际运用中，依据用户的引导性输入或是不依靠输入，就可以生成出一系列数据的模型（这些数据往往在现实中不存在）}<br>
-\denote{变分自编码器::VAE}<br>
-\denote{生成式对抗模型::GANs}<br>
-\denote{泛性:不拘泥于数据集，能够}<br>
-\denote{质量:看起来和真的一样}<br>
-\denote{Deep Unsupervised Learning using Nonequilibrium Thermodynamics::<a href="https://arxiv.org/abs/1503.03585%7D" rel="nofollow">https://arxiv.org/abs/1503.03585}</a><br>
-\denote{Denoising Diffusion Probabilistic Models(DDPM)::<a href="https://arxiv.org/abs/2006.11239%7D" rel="nofollow">https://arxiv.org/abs/2006.11239}</a><br>
-\denote{一定比例::又称噪声时间表}<br>
-\denote{预定的步数::在实践中，通常选择1000步}<br>
-\denote{重参数技巧::一种数学计算技巧，在DDPM中将详细讨论}<br>
-\denote{随机梯度下降法::SDG}<br>
-\denote{时至今日::直到写到这里时的2025年07月}</p></div>
+<h3>FID</h3></div>
 <div style="font-size:small;margin-top:8px;float:right;">转载文章请注明出处</div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
