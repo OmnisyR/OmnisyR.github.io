@@ -6,18 +6,18 @@
 
 <!-- ##{"script":"<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>"}## -->
 \denotes
-#生成式模型::在实际运用中，依据用户的引导性输入或是不依靠输入，就可以生成出一系列数据的模型（这些数据往往在现实中不存在）#
-#变分自编码器::简称VAE#
-#生成式对抗模型::GANs#
-#泛性::不拘泥于数据集，能够#
-#质量::看起来和真的一样#
-#Deep Unsupervised Learning using Nonequilibrium Thermodynamics::文章地址：https://arxiv.org/abs/1503.03585#
-#Denoising Diffusion Probabilistic Models(DDPM)::文章地址：https://arxiv.org/abs/2006.11239#
-#一定比例::又称噪声时间表#
-#预定的步数::在实践中，通常选择1000步#
-#重参数技巧::一种数学计算技巧，在DDPM中将详细讨论#
-#随机梯度下降法::SDG#
-#时至今日::直到写到这里时的2025年07月#
+####生成式模型::在实际运用中，依据用户的引导性输入或是不依靠输入，就可以生成出一系列数据的模型（这些数据往往在现实中不存在）####
+####变分自编码器::简称VAE####
+####生成式对抗模型::GANs####
+####泛性::不拘泥于数据集，能够####
+####质量::看起来和真的一样####
+####Deep Unsupervised Learning using Nonequilibrium Thermodynamics::文章地址：https://arxiv.org/abs/1503.03585####
+####Denoising Diffusion Probabilistic Models(DDPM)::文章地址：https://arxiv.org/abs/2006.11239####
+####一定比例::又称噪声时间表####
+####预定的步数::在实践中，通常选择1000步####
+####重参数技巧::一种数学计算技巧，在DDPM中将详细讨论####
+####随机梯度下降法::SDG####
+####时至今日::直到写到这里时的2025年07月####
 \denotes
 ## 生成式模型
 扩散模型是一种`生成式模型`，它最初只运用在了图片生成上，但如今，它已经有了相当广阔的运用空间。在扩散模型流行之前，主流的图片的生成式模型还有`变分自编码器`以及`生成式对抗模型`，与它们相比，扩散模型虽然牺牲了采样速度，提升了采样结果的`泛性`与`质量`。
