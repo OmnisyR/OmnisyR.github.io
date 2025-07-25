@@ -10,8 +10,8 @@
 
 
 ## 正向过程
-$$
+\begin{equation}
 x_{t + 1} = \sqrt{\alpha_t} x_t + \sqrt{1 - \alpha_t}\epsilon
-$$
+\end{equation}
 
 ## 逆向过程
