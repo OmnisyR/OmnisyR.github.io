@@ -1,6 +1,6 @@
 const denotes = new Map();
 
-function initMathJax(){
+function initMathJax() {
   document.body.insertAdjacentHTML(
     'beforeend',
     `
@@ -159,9 +159,12 @@ window.addEventListener('load', function() {
     item.addEventListener(
       "click",
       () => {
-        value = denotes.get(key)
+        const value = denotes.get(key)
+        if (value === undefined) {
+          return null
+        }
         document.getElementsByClassName("denote-title")[0].innerHTML = key
-        document.getElementsByClassName('denote-content')[0].innerHTML = denotes.get(key)
+        document.getElementsByClassName('denote-content')[0].innerHTML = value
         if (value.includes('$')) {
           MathJax.typeset()
         }
