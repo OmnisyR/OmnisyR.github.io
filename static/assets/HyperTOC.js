@@ -13,7 +13,7 @@ function initMathJax(){
 document.addEventListener('DOMContentLoaded', function() {
   var container = document.getElementById('content')
   container.innerHTML = container.innerHTML.replace(/\\denotes([\s\S]*?)\\denotes/gm, (match, content) => {
-    content.replace(/\#(.*?)\#/g, (m, c) => {
+    content.replace(/\#\#\#\#(.*?)\#\#\#\#/g, (m, c) => {
       let arr = c.split('::')
       denotes.set(arr[0], arr[1])
       return ''
@@ -162,10 +162,7 @@ window.addEventListener('load', function() {
         value = denotes.get(key)
         document.getElementsByClassName("denote-title")[0].innerHTML = key
         document.getElementsByClassName('denote-content')[0].innerHTML = denotes.get(key)
-        if (value.includes('又')) {
-          if (typeof MathJax === 'undefined') {
-            initMathJax()
-          }
+        if (value.includes('$')) {
           MathJax.typeset()
         }
       },
