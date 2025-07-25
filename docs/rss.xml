@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>OmnisyR's Blog</title><link>https://OmnisyR.github.io</link><description>记录科研、开发的点点滴滴</description><copyright>OmnisyR's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/68898477?s=400&amp;u=262ae3b76f651c62a82042317aaae313706c859c&amp;v=4</url><title>avatar</title><link>https://OmnisyR.github.io</link></image><lastBuildDate>Fri, 25 Jul 2025 04:36:30 +0000</lastBuildDate><managingEditor>OmnisyR's Blog</managingEditor><ttl>60</ttl><webMaster>OmnisyR's Blog</webMaster><item><title>\eAn Overview of Diffusion Models\e\c扩散模型概述\c</title><link>https://OmnisyR.github.io/post/-eAn%20Overview%20of%20Diffusion%20Models-e-c-kuo-san-mo-xing-gai-shu--c.html</link><description>&gt; [!NOTE]
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>OmnisyR's Blog</title><link>https://OmnisyR.github.io</link><description>记录科研、开发的点点滴滴</description><copyright>OmnisyR's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/68898477?s=400&amp;u=262ae3b76f651c62a82042317aaae313706c859c&amp;v=4</url><title>avatar</title><link>https://OmnisyR.github.io</link></image><lastBuildDate>Fri, 25 Jul 2025 05:17:32 +0000</lastBuildDate><managingEditor>OmnisyR's Blog</managingEditor><ttl>60</ttl><webMaster>OmnisyR's Blog</webMaster><item><title>\eAn Overview of Diffusion Models\e\c扩散模型概述\c</title><link>https://OmnisyR.github.io/post/-eAn%20Overview%20of%20Diffusion%20Models-e-c-kuo-san-mo-xing-gai-shu--c.html</link><description>&gt; [!NOTE]
 &gt; This article currently only supports Chinese.
 
 &gt; [!CAUTION]
@@ -12,8 +12,8 @@
 \denote{生成式对抗模型::GANs}
 \denote{泛性::不拘泥于数据集，能够}
 \denote{质量::看起来和真的一样}
-\denote{Deep Unsupervised Learning using Nonequilibrium Thermodynamics::文章地址：[Deep Unsupervised Learning using Nonequilibrium Thermodynamics on arXiv](https://arxiv.org/abs/1503.03585)}
-\denote{Denoising Diffusion Probabilistic Models(DDPM)::[Denoising Diffusion Probabilistic Models on arXiv](https://arxiv.org/abs/2006.11239)}
+\denote{Deep Unsupervised Learning using Nonequilibrium Thermodynamics::文章地址：https://arxiv.org/abs/1503.03585}
+\denote{Denoising Diffusion Probabilistic Models(DDPM)::文章地址：https://arxiv.org/abs/2006.11239}
 \denote{一定比例::又称噪声时间表}
 \denote{预定的步数::在实践中，通常选择1000步}
 \denote{重参数技巧::一种数学计算技巧，在DDPM中将详细讨论}
