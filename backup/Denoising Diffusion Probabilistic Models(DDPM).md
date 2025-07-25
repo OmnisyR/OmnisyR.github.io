@@ -14,4 +14,12 @@
 x_{t + 1} = \sqrt{\alpha_t} x_t + \sqrt{1 - \alpha_t}\epsilon
 \end{equation}
 
+```math
+\begin{align}
+a^2 + b^2 &= c^2 \label{pythagorean} \\
+e^{i \pi} + 1 &= 0 \\ 
+\mathbb{E}[mr] &= 1 \\ 
+\end{align}
+```
+
 ## 逆向过程
