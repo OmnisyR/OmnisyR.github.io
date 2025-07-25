@@ -1,6 +1,6 @@
 const denotes = new Map();
 
-function createDenote() {
+window.addEventListener('load', function() {
   var container = document.getElementById('content')
   container.innerHTML = container.innerHTML.replace(/\\denote{(.*?)}/g, (match, content) => {
     let arr = content.split('::')
@@ -9,14 +9,9 @@ function createDenote() {
   })
   var denoteElement = document.createElement('div');
   denoteElement.className = 'denote';
-  denotes.forEach((item, i) => {
-    console.log(item)
-  })
-}
-
-window.addEventListener('load', function() {
-  createDenote();
-  var css = `
+  tocElement.insertAdjacentHTML('afterbegin', '<div class="denote-title">注释</div>')
+  const style = document.createElement('style');
+  style.textContent =  `
   .denote{
     position: fixed;
     top: 130px;
@@ -31,12 +26,16 @@ window.addEventListener('load', function() {
     max-height: 70vh;
   }
   .denote-title{
-
+    font-weight: bold;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 8px;
   }
   .denote-content{
 
   }
-  `
+  `;
+  document.head.appendChild(style);
   // const style = document.createElement('style');
   // style.textContent = css;
   // document.head.appendChild(style);
