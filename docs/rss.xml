@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>OmnisyR's Blog</title><link>https://OmnisyR.github.io</link><description>记录科研、开发的点点滴滴</description><copyright>OmnisyR's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/68898477?s=400&amp;u=262ae3b76f651c62a82042317aaae313706c859c&amp;v=4</url><title>avatar</title><link>https://OmnisyR.github.io</link></image><lastBuildDate>Fri, 25 Jul 2025 16:09:34 +0000</lastBuildDate><managingEditor>OmnisyR's Blog</managingEditor><ttl>60</ttl><webMaster>OmnisyR's Blog</webMaster><item><title>Denoising Diffusion Probabilistic Models(DDPM)</title><link>https://OmnisyR.github.io/post/Denoising%20Diffusion%20Probabilistic%20Models%28DDPM%29.html</link><description>&gt; [!NOTE]
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>OmnisyR's Blog</title><link>https://OmnisyR.github.io</link><description>记录科研、开发的点点滴滴</description><copyright>OmnisyR's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/68898477?s=400&amp;u=262ae3b76f651c62a82042317aaae313706c859c&amp;v=4</url><title>avatar</title><link>https://OmnisyR.github.io</link></image><lastBuildDate>Fri, 25 Jul 2025 16:10:55 +0000</lastBuildDate><managingEditor>OmnisyR's Blog</managingEditor><ttl>60</ttl><webMaster>OmnisyR's Blog</webMaster><item><title>Denoising Diffusion Probabilistic Models(DDPM)</title><link>https://OmnisyR.github.io/post/Denoising%20Diffusion%20Probabilistic%20Models%28DDPM%29.html</link><description>&gt; [!NOTE]
 &gt; This article currently only supports Chinese.
 
 &gt; [!CAUTION]
@@ -24,7 +24,7 @@
 ;;;;Denoising Diffusion Probabilistic Models(DDPM)::文章地址：https://arxiv.org/abs/2006.11239;;;;
 ;;;;一定比例::又称噪声时间表;;;;
 ;;;;预定的步数::在实践中，通常选择1000步;;;;
-;;;;重参数技巧::一种数学计算技巧，在DDPM中将详细讨论;;;;
+;;;;重参数化技巧::一种数学计算技巧，在DDPM中将详细讨论;;;;
 ;;;;随机梯度下降法::SDG;;;;
 ;;;;时至今日::直到写到这里时的2025年07月;;;;
 \denotes

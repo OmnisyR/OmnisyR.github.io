@@ -27,7 +27,7 @@
 ;;;;Denoising Diffusion Probabilistic Models(DDPM)::文章地址：https://arxiv.org/abs/2006.11239;;;;
 ;;;;一定比例::又称噪声时间表;;;;
 ;;;;预定的步数::在实践中，通常选择1000步;;;;
-;;;;重参数技巧::一种数学计算技巧，在DDPM中将详细讨论;;;;
+;;;;重参数化技巧::一种数学计算技巧，在DDPM中将详细讨论;;;;
 ;;;;随机梯度下降法::SDG;;;;
 ;;;;时至今日::直到写到这里时的2025年07月;;;;
 \denotes
@@ -51,7 +51,7 @@
 ;;;;Denoising Diffusion Probabilistic Models(DDPM)::文章地址：https://arxiv.org/abs/2006.11239;;;;
 ;;;;一定比例::又称噪声时间表;;;;
 ;;;;预定的步数::在实践中，通常选择1000步;;;;
-;;;;重参数技巧::一种数学计算技巧，在DDPM中将详细讨论;;;;
+;;;;重参数化技巧::一种数学计算技巧，在DDPM中将详细讨论;;;;
 ;;;;随机梯度下降法::SDG;;;;
 ;;;;时至今日::直到写到这里时的2025年07月;;;;
 \denotes
@@ -132,21 +132,21 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 ;;;;Denoising Diffusion Probabilistic Models(DDPM)::文章地址：<a href="https://arxiv.org/abs/2006.11239" rel="nofollow">https://arxiv.org/abs/2006.11239</a>;;;;<br>
 ;;;;一定比例::又称噪声时间表;;;;<br>
 ;;;;预定的步数::在实践中，通常选择1000步;;;;<br>
-;;;;重参数技巧::一种数学计算技巧，在DDPM中将详细讨论;;;;<br>
+;;;;重参数化技巧::一种数学计算技巧，在DDPM中将详细讨论;;;;<br>
 ;;;;随机梯度下降法::SDG;;;;<br>
 ;;;;时至今日::直到写到这里时的2025年07月;;;;<br>
 \denotes</p>
 <h2>生成式模型</h2>
 <p>扩散模型是一种<code class="notranslate">生成式模型</code>，它最初只运用在了图片生成上，但如今，它已经有了相当广阔的运用空间。在扩散模型流行之前，主流的图片的生成式模型还有<code class="notranslate">变分自编码器</code>以及<code class="notranslate">生成式对抗模型</code>，与它们相比，扩散模型虽然牺牲了采样速度，提升了采样结果的<code class="notranslate">泛性</code>与<code class="notranslate">质量</code>。</p>
 <p><img src="https://OmnisyR.github.io/figs/generative_models.png"><br>
-\eSource:\e\c图片来源：\c<a href="https://pub.towardsai.net/diffusion-models-vs-gans-vs-vaes-comparison-of-deep-generative-models-67ab93e0d9ae" rel="nofollow">Diffusion Models vs. GANs vs. VAEs: Comparison of Deep Generative Models</a></p>
+;;;eSource:;;;e;;;c图片来源：;;;c<a href="https://pub.towardsai.net/diffusion-models-vs-gans-vs-vaes-comparison-of-deep-generative-models-67ab93e0d9ae" rel="nofollow">Diffusion Models vs. GANs vs. VAEs: Comparison of Deep Generative Models</a></p>
 <h2>扩散模型</h2>
 <p>在2015年，一篇名为<code class="notranslate">Deep Unsupervised Learning using Nonequilibrium Thermodynamics</code>的文章首次将扩散模型带入了人们的视野中。但由于当时硬件受限等原因，直到2020年<code class="notranslate">Denoising Diffusion Probabilistic Models(DDPM)</code>发布后，人们才开始广泛地使用扩散模型来进行图片生成。</p>
 <h3>扩散模型的两个过程</h3>
 <p>扩散模型的训练的过程通常被称为正向过程（或增噪过程），其采样的过程通常被称为逆向过程（或去噪过程）。</p>
 <h4>正向过程</h4>
 <p><img src="https://OmnisyR.github.io/figs/forward.png"><br>
-扩散模型的正向过程旨在一步步地为原始数据集的图片，以<code class="notranslate">一定比例</code>添加标准高斯噪声，直至<code class="notranslate">预定的步数</code>结束，使得该图片成为完全高斯噪声，但实际上，正向过程并不需要一步步地进行，通过<code class="notranslate">重参数技巧</code>可以将任意步数简化为一步完成。扩散模型在训练中，则是使用了<code class="notranslate">随机梯度下降法</code>，随机选取某一步数来进行模型的梯度下降，进行噪声的学习，以便进行逆向过程的去噪工作。</p>
+扩散模型的正向过程旨在一步步地为原始数据集的图片，以<code class="notranslate">一定比例</code>添加标准高斯噪声，直至<code class="notranslate">预定的步数</code>结束，使得该图片成为完全高斯噪声，但实际上，正向过程并不需要一步步地进行，通过结合<code class="notranslate">重参数化技巧</code>可以将任意步数简化为一步完成。扩散模型在训练中，则是使用了<code class="notranslate">随机梯度下降法</code>，随机选取某一步数来进行模型的梯度下降，进行噪声的学习，以便进行逆向过程的去噪工作。</p>
 <h4>逆向过程</h4>
 <p><img src="https://OmnisyR.github.io/figs/backward.png"><br>
 扩散模型的逆向过程旨在随机生成一个标准高斯噪声，使用预训练好的模型，预测出所添加的噪声，再进行一步步地去噪，直至预定的步数结束，使得该标准高斯分布称为近似训练集的图片。和正向过程不同的是，逆向过程的这些步骤不能简单地一次进行，但有相当多的人找到了快速采样的方法，从而直接有效弥补了扩散模型耗费算力大这一缺点。<code class="notranslate">时至今日</code>，扩散模型的快速采样也仍然是一个热门课题。</p>

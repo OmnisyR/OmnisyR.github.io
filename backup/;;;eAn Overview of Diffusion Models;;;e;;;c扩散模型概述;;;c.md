@@ -15,7 +15,7 @@
 ;;;;Denoising Diffusion Probabilistic Models(DDPM)::文章地址：https://arxiv.org/abs/2006.11239;;;;
 ;;;;一定比例::又称噪声时间表;;;;
 ;;;;预定的步数::在实践中，通常选择1000步;;;;
-;;;;重参数技巧::一种数学计算技巧，在DDPM中将详细讨论;;;;
+;;;;重参数化技巧::一种数学计算技巧，在DDPM中将详细讨论;;;;
 ;;;;随机梯度下降法::SDG;;;;
 ;;;;时至今日::直到写到这里时的2025年07月;;;;
 \denotes
@@ -23,7 +23,7 @@
 扩散模型是一种`生成式模型`，它最初只运用在了图片生成上，但如今，它已经有了相当广阔的运用空间。在扩散模型流行之前，主流的图片的生成式模型还有`变分自编码器`以及`生成式对抗模型`，与它们相比，扩散模型虽然牺牲了采样速度，提升了采样结果的`泛性`与`质量`。
 
 `Gmeek-html<img src="https://OmnisyR.github.io/figs/generative_models.png">`
-\eSource:\e\c图片来源：\c[Diffusion Models vs. GANs vs. VAEs: Comparison of Deep Generative Models](https://pub.towardsai.net/diffusion-models-vs-gans-vs-vaes-comparison-of-deep-generative-models-67ab93e0d9ae)
+;;;eSource:;;;e;;;c图片来源：;;;c[Diffusion Models vs. GANs vs. VAEs: Comparison of Deep Generative Models](https://pub.towardsai.net/diffusion-models-vs-gans-vs-vaes-comparison-of-deep-generative-models-67ab93e0d9ae)
 
 ## 扩散模型
 在2015年，一篇名为`Deep Unsupervised Learning using Nonequilibrium Thermodynamics`的文章首次将扩散模型带入了人们的视野中。但由于当时硬件受限等原因，直到2020年`Denoising Diffusion Probabilistic Models(DDPM)`发布后，人们才开始广泛地使用扩散模型来进行图片生成。
@@ -33,7 +33,7 @@
 
 #### 正向过程
 `Gmeek-html<img src="https://OmnisyR.github.io/figs/forward.png">`
-扩散模型的正向过程旨在一步步地为原始数据集的图片，以`一定比例`添加标准高斯噪声，直至`预定的步数`结束，使得该图片成为完全高斯噪声，但实际上，正向过程并不需要一步步地进行，通过`重参数技巧`可以将任意步数简化为一步完成。扩散模型在训练中，则是使用了`随机梯度下降法`，随机选取某一步数来进行模型的梯度下降，进行噪声的学习，以便进行逆向过程的去噪工作。
+扩散模型的正向过程旨在一步步地为原始数据集的图片，以`一定比例`添加标准高斯噪声，直至`预定的步数`结束，使得该图片成为完全高斯噪声，但实际上，正向过程并不需要一步步地进行，通过结合`重参数化技巧`可以将任意步数简化为一步完成。扩散模型在训练中，则是使用了`随机梯度下降法`，随机选取某一步数来进行模型的梯度下降，进行噪声的学习，以便进行逆向过程的去噪工作。
 
 #### 逆向过程
 `Gmeek-html<img src="https://OmnisyR.github.io/figs/backward.png">`
