@@ -1,7 +1,12 @@
+const denotes = new Map();
+
 function createDenote() {
   var container = document.getElementById('content')
   container.innerHTML = container.innerHTML.replace(/\\denote{(.*?)}/g, (match, content) => {
     console.log(content)
+    let arr = content.split('::')
+    denots.setKey(arr[0], arr[1])
+    return ''
   })
   var denoteElement = document.createElement('div');
   denoteElement.className = 'denote';
