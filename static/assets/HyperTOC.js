@@ -20,15 +20,15 @@ window.addEventListener('load', function() {
   const headings = contentContainer.querySelectorAll('h1, h2, h3, h4, h5, h6');
   tocElement.insertAdjacentHTML('afterbegin', '<div class="toc-title">文章目录</div>');
   headings.forEach(heading => {
-      if (!heading.id) {
-          heading.id = heading.textContent.trim().replace(/\s+/g, '-').toLowerCase();
-      }
-      const link = document.createElement('a');
-      link.href = '#' + heading.id;
-      link.textContent = heading.textContent;
-      link.className = 'toc-link';
-      link.style.paddingLeft = `${(parseInt(heading.tagName.charAt(1)) - 1) * 10}px`;
-      tocElement.appendChild(link);
+    if (!heading.id) {
+      heading.id = heading.textContent.trim().replace(/\s+/g, '-').toLowerCase();
+    }
+    const link = document.createElement('a');
+    link.href = '#' + heading.id;
+    link.textContent = heading.textContent;
+    link.className = 'toc-link';
+    link.style.paddingLeft = `${(parseInt(heading.tagName.charAt(1)) - 1) * 10}px`;
+    tocElement.appendChild(link);
   });
   tocElement.insertAdjacentHTML('beforeend', '<a class="toc-end" onclick="window.scrollTo({top:0,behavior: \'smooth\'});">Top</a>');
 
@@ -115,5 +115,13 @@ window.addEventListener('load', function() {
       width:60%;
     }
   }`;
-  document.head.appendChild(style);
+  document.head.appendChild(style)
+  window.onscroll = function() {
+    const backToTopButton = document.querySelector('.toc-end');
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+      backToTopButton.style = "visibility: visible;"
+    } else {
+      backToTopButton.style = "visibility: hidden;"
+    }
+  };
 });
