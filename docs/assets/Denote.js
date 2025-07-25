@@ -17,7 +17,7 @@ window.addEventListener('load', function() {
     position: fixed;
     top: 130px;
     left: 50%;
-    transform: translateX(-100%) translateX(-420px);
+    transform: translateX(50%) translateX(420px);
     width: 200px;
     border: 1px solid #e1e4e8;
     border-radius: 6px;
