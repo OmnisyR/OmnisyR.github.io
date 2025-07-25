@@ -50,7 +50,7 @@ window.addEventListener('load', function() {
   style.textContent = `
   .flex-container {
     position: fixed;
-    display: flex
+    display: flex;
     left: 50%;
     transform: translateX(420px);
     overflow-y: auto;
