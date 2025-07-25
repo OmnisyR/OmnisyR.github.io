@@ -11,8 +11,8 @@
 ####生成式对抗模型::GANs####
 ####泛性::不拘泥于数据集，能够####
 ####质量::看起来和真的一样####
-####Deep Unsupervised Learning using Nonequilibrium Thermodynamics::文章地址：https://arxiv.org/abs/1503.03585####
-####Denoising Diffusion Probabilistic Models(DDPM)::文章地址：https://arxiv.org/abs/2006.11239####
+####Deep Unsupervised Learning using Nonequilibrium Thermodynamics::文章地址：https://arxiv.org/abs/1503.03585 ####
+####Denoising Diffusion Probabilistic Models(DDPM)::文章地址：https://arxiv.org/abs/2006.11239 ####
 ####一定比例::又称噪声时间表####
 ####预定的步数::在实践中，通常选择1000步####
 ####重参数技巧::一种数学计算技巧，在DDPM中将详细讨论####
