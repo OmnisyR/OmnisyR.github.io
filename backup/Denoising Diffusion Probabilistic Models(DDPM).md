@@ -6,7 +6,8 @@
 
 <!-- ##{"script":"<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>"}## -->
 \denotes
-;;;;马尔可夫链::某一时刻的状态只与上衣时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻参与，若干个这样的状态组成的链条便形成了马尔科夫链。;;;;
+;;;;马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。;;;;
+;;;;重参数化技巧：：对于概率$p(x|y) = \mathcal{N}(x|ay, b)$，即$x$服从一个均值为$ay$，标准差为$\sqrt{b}$的高斯分布，那么则有$x = ay + \sqrt{b}\epsilon$，其中$\epsilon \sim \mathcal{N}(0, 1)$。;;;;
 \denotes
 ## 介绍
 
@@ -25,11 +26,11 @@ q(x_{t + 1}|x_{t}) = \mathcal{N}(x_{t + 1};\sqrt{1 - \beta_t}x_t,\beta_tI)
 \tag{2}
 $$
 
-$$
-x_{t + 1} = \sqrt{\alpha_t} x_t + \sqrt{1 - \alpha_t}\epsilon_t
-\tag{2}
-$$
+但是，这样的式子仍然是不可计算的，通过`重参数化技巧`，可以将任意的高斯分布进行展开，因此则有：
 
-其中，$\alpha_t$是一系列人为定义的超参数，$\epsilon_t$表示任意的标准高斯噪声。
+$$
+x_{t + 1} = \sqrt{1 - \beta_t} x_t + \sqrt{\beta_t}\epsilon_t
+\tag{3}
+$$
 
 ## 逆向过程
