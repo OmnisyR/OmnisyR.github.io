@@ -13,7 +13,7 @@ function initMathJax(){
 document.addEventListener('DOMContentLoaded', function() {
   var container = document.getElementById('content')
   container.innerHTML = container.innerHTML.replace(/\\denotes([\s\S]*?)\\denotes/gm, (match, content) => {
-    content.replace(/\#\#\#\#(.*?)\#\#\#\#/g, (m, c) => {
+    content.replace(/\;;;;(.*?);;;;/g, (m, c) => {
       let arr = c.split('::')
       denotes.set(arr[0], arr[1])
       return ''
