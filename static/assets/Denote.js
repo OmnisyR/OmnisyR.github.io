@@ -1,23 +1,32 @@
 const denotes = new Map();
 
-window.addEventListener('load', function() {
+document.addEventListener('DOMContentLoaded', function() {
   var container = document.getElementById('content')
   container.innerHTML = container.innerHTML.replace(/\\denote{(.*?)}/g, (match, content) => {
     let arr = content.split('::')
     denotes.set(arr[0], arr[1])
     return ''
   })
+});
+
+window.addEventListener('load', function() {
   var denoteElement = document.createElement('div');
   denoteElement.className = 'denote';
+  var container = document.getElementById('content')
+  var elements = document.getElementsByClassName('toc')
+  var hasTOC = elements.length > 0
+  if (hasTOC) {
+    container = elements[0]
+  }
   container.prepend(denoteElement);
   denoteElement.insertAdjacentHTML('afterbegin', '<div class="denote-title">注释</div>')
   const style = document.createElement('style');
-  style.textContent =  `
+  style.textContent = `
   .denote{
     position: fixed;
     top: 130px;
     left: 50%;
-    transform: translateX(50%) translateX(535px);
+    transform: translateX(50%) translateX(320px);
     width: 200px;
     border: 1px solid #e1e4e8;
     border-radius: 6px;
@@ -50,7 +59,4 @@ window.addEventListener('load', function() {
   }
   `;
   document.head.appendChild(style);
-  // const style = document.createElement('style');
-  // style.textContent = css;
-  // document.head.appendChild(style);
 });
