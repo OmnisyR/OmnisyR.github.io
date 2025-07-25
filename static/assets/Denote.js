@@ -17,7 +17,7 @@ window.addEventListener('load', function() {
     position: fixed;
     top: 130px;
     left: 50%;
-    transform: translateX(50%) translateX(520px);
+    transform: translateX(50%) translateX(535px);
     width: 200px;
     border: 1px solid #e1e4e8;
     border-radius: 6px;
@@ -34,6 +34,19 @@ window.addEventListener('load', function() {
   }
   .denote-content{
 
+  }
+
+  @media (max-width: 1249px) {
+    .denote{
+      position:static;
+      top:auto;
+      left:auto;
+      transform:none;
+      padding:10px;
+      margin-bottom:20px;
+      max-height: 40vh;
+      width:60%;
+    }
   }
   `;
   document.head.appendChild(style);
