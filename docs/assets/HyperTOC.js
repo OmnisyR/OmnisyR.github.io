@@ -108,7 +108,7 @@ window.addEventListener('load', function() {
   }
   .denote-title{
     font-weight: bold;
-    text-align: center;
+    text-align: left;
     border-bottom: 1px solid #ddd;
     padding-bottom: 8px;
   }
@@ -142,4 +142,17 @@ window.addEventListener('load', function() {
       backToTopButton.style = "visibility: hidden;"
     }
   };
+  var elements = document.getElementsByClassName("notranslate");
+  for (var i = 0; i < elements.length; i++) {
+    item = elements[i]
+    const key = item.textContent
+    item.addEventListener(
+      "click",
+      () => {
+        document.getElementsByClassName("denote-title")[0].textContent = key
+        document.getElementsByClassName('denote-content')[0].textContent = denotes.get(key)
+      },
+      false,
+    );
+  }
 });
