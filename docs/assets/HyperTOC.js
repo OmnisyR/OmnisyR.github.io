@@ -3,13 +3,14 @@ const denotes = new Map();
 document.addEventListener('DOMContentLoaded', function() {
   var container = document.getElementById('content')
   const pas = [/\\denote{(.*?)}<br>/g, /\\denote{(.*?)}/g]
-  for (const pa of pas) {
-    container.innerHTML = container.innerHTML.replace(pa, (match, content) => {
-      let arr = content.split('::')
+  container.innerHTML = container.innerHTML.replace(/\\denotes\(.*?)\denotes\n/g, (match, content) => {
+    content.replace(/{(.*?)}/g, (m, c) => {
+      let arr = c.split('::')
       denotes.set(arr[0], arr[1])
       return ''
     })
-  }
+    return ''
+  })
 });
 
 window.addEventListener('load', function() {
@@ -149,8 +150,8 @@ window.addEventListener('load', function() {
     item.addEventListener(
       "click",
       () => {
-        document.getElementsByClassName("denote-title")[0].innerHTML = key
-        document.getElementsByClassName('denote-content')[0].innerHTML = denotes.get(key)
+        document.getElementsByClassName("denote-title")[0].textContent = key
+        document.getElementsByClassName('denote-content')[0].textContent = denotes.get(key)
       },
       false,
     );

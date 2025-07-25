@@ -17,18 +17,20 @@
 > 施工中！
 
 <!-- ##{'script':'<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>'}## -->
-\denote{生成式模型::在实际运用中，依据用户的引导性输入或是不依靠输入，就可以生成出一系列数据的模型（这些数据往往在现实中不存在）}
-\denote{变分自编码器::VAE}
-\denote{生成式对抗模型::GANs}
-\denote{泛性::不拘泥于数据集，能够}
-\denote{质量::看起来和真的一样}
-\denote{Deep Unsupervised Learning using Nonequilibrium Thermodynamics::文章地址：https://arxiv.org/abs/1503.03585}
-\denote{Denoising Diffusion Probabilistic Models(DDPM)::文章地址：https://arxiv.org/abs/2006.11239}
-\denote{一定比例::又称噪声时间表}
-\denote{预定的步数::在实践中，通常选择1000步}
-\denote{重参数技巧::一种数学计算技巧，在DDPM中将详细讨论}
-\denote{随机梯度下降法::SDG}
-\denote{时至今日::直到写到这里时的2025年07月}
+\denotes
+{生成式模型::在实际运用中，依据用户的引导性输入或是不依靠输入，就可以生成出一系列数据的模型（这些数据往往在现实中不存在）}
+{变分自编码器::VAE}
+{生成式对抗模型::GANs}
+{泛性::不拘泥于数据集，能够}
+{质量::看起来和真的一样}
+{Deep Unsupervised Learning using Nonequilibrium Thermodynamics::文章地址：https://arxiv.org/abs/1503.03585}
+{Denoising Diffusion Probabilistic Models(DDPM)::文章地址：https://arxiv.org/abs/2006.11239}
+{一定比例::又称噪声时间表}
+{预定的步数::在实践中，通常选择1000步}
+{重参数技巧::一种数学计算技巧，在DDPM中将详细讨论}
+{随机梯度下降法::SDG}
+{时至今日::直到写到这里时的2025年07月}
+\denotes
 ## 生成式模型
 扩散模型是一种`生成式模型`，它最初只运用在了图片生成上，但如今，它已经有了相当广阔的运用空间。">
 <meta property="og:title" content="\eAn Overview of Diffusion Models\e\c扩散模型概述\c">
@@ -39,18 +41,20 @@
 > 施工中！
 
 <!-- ##{'script':'<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>'}## -->
-\denote{生成式模型::在实际运用中，依据用户的引导性输入或是不依靠输入，就可以生成出一系列数据的模型（这些数据往往在现实中不存在）}
-\denote{变分自编码器::VAE}
-\denote{生成式对抗模型::GANs}
-\denote{泛性::不拘泥于数据集，能够}
-\denote{质量::看起来和真的一样}
-\denote{Deep Unsupervised Learning using Nonequilibrium Thermodynamics::文章地址：https://arxiv.org/abs/1503.03585}
-\denote{Denoising Diffusion Probabilistic Models(DDPM)::文章地址：https://arxiv.org/abs/2006.11239}
-\denote{一定比例::又称噪声时间表}
-\denote{预定的步数::在实践中，通常选择1000步}
-\denote{重参数技巧::一种数学计算技巧，在DDPM中将详细讨论}
-\denote{随机梯度下降法::SDG}
-\denote{时至今日::直到写到这里时的2025年07月}
+\denotes
+{生成式模型::在实际运用中，依据用户的引导性输入或是不依靠输入，就可以生成出一系列数据的模型（这些数据往往在现实中不存在）}
+{变分自编码器::VAE}
+{生成式对抗模型::GANs}
+{泛性::不拘泥于数据集，能够}
+{质量::看起来和真的一样}
+{Deep Unsupervised Learning using Nonequilibrium Thermodynamics::文章地址：https://arxiv.org/abs/1503.03585}
+{Denoising Diffusion Probabilistic Models(DDPM)::文章地址：https://arxiv.org/abs/2006.11239}
+{一定比例::又称噪声时间表}
+{预定的步数::在实践中，通常选择1000步}
+{重参数技巧::一种数学计算技巧，在DDPM中将详细讨论}
+{随机梯度下降法::SDG}
+{时至今日::直到写到这里时的2025年07月}
+\denotes
 ## 生成式模型
 扩散模型是一种`生成式模型`，它最初只运用在了图片生成上，但如今，它已经有了相当广阔的运用空间。">
 <meta property="og:type" content="article">
@@ -118,18 +122,20 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <div class="markdown-alert markdown-alert-caution"><p class="markdown-alert-title"><svg class="octicon octicon-stop mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M4.47.22A.749.749 0 0 1 5 0h6c.199 0 .389.079.53.22l4.25 4.25c.141.14.22.331.22.53v6a.749.749 0 0 1-.22.53l-4.25 4.25A.749.749 0 0 1 11 16H5a.749.749 0 0 1-.53-.22L.22 11.53A.749.749 0 0 1 0 11V5c0-.199.079-.389.22-.53Zm.84 1.28L1.5 5.31v5.38l3.81 3.81h5.38l3.81-3.81V5.31L10.69 1.5ZM8 4a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Caution</p><p>施工中！</p>
 </div>
 
-<p>\denote{生成式模型::在实际运用中，依据用户的引导性输入或是不依靠输入，就可以生成出一系列数据的模型（这些数据往往在现实中不存在）}<br>
-\denote{变分自编码器::VAE}<br>
-\denote{生成式对抗模型::GANs}<br>
-\denote{泛性::不拘泥于数据集，能够}<br>
-\denote{质量::看起来和真的一样}<br>
-\denote{Deep Unsupervised Learning using Nonequilibrium Thermodynamics::文章地址：<a href="https://arxiv.org/abs/1503.03585%7D" rel="nofollow">https://arxiv.org/abs/1503.03585}</a><br>
-\denote{Denoising Diffusion Probabilistic Models(DDPM)::文章地址：<a href="https://arxiv.org/abs/2006.11239%7D" rel="nofollow">https://arxiv.org/abs/2006.11239}</a><br>
-\denote{一定比例::又称噪声时间表}<br>
-\denote{预定的步数::在实践中，通常选择1000步}<br>
-\denote{重参数技巧::一种数学计算技巧，在DDPM中将详细讨论}<br>
-\denote{随机梯度下降法::SDG}<br>
-\denote{时至今日::直到写到这里时的2025年07月}</p>
+<p>\denotes<br>
+{生成式模型::在实际运用中，依据用户的引导性输入或是不依靠输入，就可以生成出一系列数据的模型（这些数据往往在现实中不存在）}<br>
+{变分自编码器::VAE}<br>
+{生成式对抗模型::GANs}<br>
+{泛性::不拘泥于数据集，能够}<br>
+{质量::看起来和真的一样}<br>
+{Deep Unsupervised Learning using Nonequilibrium Thermodynamics::文章地址：<a href="https://arxiv.org/abs/1503.03585%7D" rel="nofollow">https://arxiv.org/abs/1503.03585}</a><br>
+{Denoising Diffusion Probabilistic Models(DDPM)::文章地址：<a href="https://arxiv.org/abs/2006.11239%7D" rel="nofollow">https://arxiv.org/abs/2006.11239}</a><br>
+{一定比例::又称噪声时间表}<br>
+{预定的步数::在实践中，通常选择1000步}<br>
+{重参数技巧::一种数学计算技巧，在DDPM中将详细讨论}<br>
+{随机梯度下降法::SDG}<br>
+{时至今日::直到写到这里时的2025年07月}<br>
+\denotes</p>
 <h2>生成式模型</h2>
 <p>扩散模型是一种<code class="notranslate">生成式模型</code>，它最初只运用在了图片生成上，但如今，它已经有了相当广阔的运用空间。在扩散模型流行之前，主流的图片的生成式模型还有<code class="notranslate">变分自编码器</code>以及<code class="notranslate">生成式对抗模型</code>，与它们相比，扩散模型虽然牺牲了采样速度，提升了采样结果的<code class="notranslate">泛性</code>与<code class="notranslate">质量</code>。</p>
 <p><img src="https://OmnisyR.github.io/figs/generative_models.png"><br>
