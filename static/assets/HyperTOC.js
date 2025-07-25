@@ -2,16 +2,14 @@ const denotes = new Map();
 
 document.addEventListener('DOMContentLoaded', function() {
   var container = document.getElementById('content')
-  container.innerHTML = container.innerHTML.replace(/\\denote{(.*?)}/g, (match, content) => {
-    let arr = content.split('::')
-    denotes.set(arr[0], arr[1])
-    return ''
-  }).split('<br>')
-  .map(function(v) {
-    return v.trim()
-  }).filter(function(v) {
-    return v != '';
-  }).join('<br>')
+  const pas = [/\\denote{(.*?)}<br>/g, /\\denote{(.*?)}/g]
+  for (const pa of pas) {
+    container.innerHTML = container.innerHTML.replace(pa, (match, content) => {
+      let arr = content.split('::')
+      denotes.set(arr[0], arr[1])
+      return ''
+    })
+  }
 });
 
 window.addEventListener('load', function() {
@@ -108,21 +106,6 @@ window.addEventListener('load', function() {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     max-height: 70vh;
   }
-  .denote-title{
-    font-weight: bold;
-    text-align: center;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 8px;
-  }
-  .denote content{
-    display: block;
-    color: var(--color-diff-blob-addition-num-text);
-    text-decoration: none;
-    padding: 5px 0;
-    font-size: 14px;
-    line-height: 1.5;
-    border-bottom: 1px solid #e1e4e8;
-  }
   @media (max-width: 1249px) {
     .flex-container {
       position:static;
@@ -135,5 +118,13 @@ window.addEventListener('load', function() {
       width:60%;
     }
   }`;
-  document.head.appendChild(style);
+  document.head.appendChild(style)
+  window.onscroll = function() {
+    const backToTopButton = document.querySelector('.toc-end');
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+      backToTopButton.style = "visibility: visible;"
+    } else {
+      backToTopButton.style = "visibility: hidden;"
+    }
+  };
 });
