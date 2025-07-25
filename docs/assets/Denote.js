@@ -10,17 +10,18 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 window.addEventListener('load', function() {
-  var denoteElement = document.createElement('div');
-  denoteElement.className = 'denote';
+  var denoteElement = document.createElement('div')
+  denoteElement.className = 'denote'
   var container = document.getElementById('content')
   var elements = document.getElementsByClassName('toc')
   var hasTOC = elements.length > 0
-  if (hasTOC) {
-    container = elements[0]
-  }
-  container.prepend(denoteElement);
+  document.getElementById('content').prepend(denoteElement);
   denoteElement.insertAdjacentHTML('afterbegin', '<div class="denote-title">注释</div>')
-  const style = document.createElement('style');
+  const content = document.createElement('content')
+  content.textContent = '点击文本以显示注释'
+  content.className = 'denote-content'
+  denoteElement.appendChild(content)
+  const style = document.createElement('style')
   style.textContent = `
   .denote{
     position: fixed;
@@ -41,10 +42,15 @@ window.addEventListener('load', function() {
     border-bottom: 1px solid #ddd;
     padding-bottom: 8px;
   }
-  .denote-content{
-
+  .denote content{
+    display: block;
+    color: var(--color-diff-blob-addition-num-text);
+    text-decoration: none;
+    padding: 5px 0;
+    font-size: 14px;
+    line-height: 1.5;
+    border-bottom: 1px solid #e1e4e8;
   }
-
   @media (max-width: 1249px) {
     .denote{
       position:static;
