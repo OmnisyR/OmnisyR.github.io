@@ -5,7 +5,7 @@ function createDenote() {
   container.innerHTML = container.innerHTML.replace(/\\denote{(.*?)}/g, (match, content) => {
     console.log(content)
     let arr = content.split('::')
-    denots.setKey(arr[0], arr[1])
+    denotes.setKey(arr[0], arr[1])
     return ''
   })
   var denoteElement = document.createElement('div');
