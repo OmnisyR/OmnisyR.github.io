@@ -106,6 +106,21 @@ window.addEventListener('load', function() {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     max-height: 70vh;
   }
+  .denote-title{
+    font-weight: bold;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 8px;
+  }
+  .denote content{
+    display: block;
+    color: var(--color-diff-blob-addition-num-text);
+    text-decoration: none;
+    padding: 5px 0;
+    font-size: 14px;
+    line-height: 1.5;
+    border-bottom: 1px solid #e1e4e8;
+  }
   @media (max-width: 1249px) {
     .flex-container {
       position:static;
