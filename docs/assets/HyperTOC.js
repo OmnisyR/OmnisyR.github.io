@@ -1,5 +1,15 @@
 const denotes = new Map();
 
+function initMathJax(){
+  document.body.insertAdjacentHTML(
+    'beforeend',
+    `
+    <script>MathJax = {tex: {inlineMath: [["$", "$"]]}};</script>
+    <script async="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    `
+  )
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   var container = document.getElementById('content')
   container.innerHTML = container.innerHTML.replace(/\\denotes([\s\S]*?)\\denotes/gm, (match, content) => {
@@ -20,20 +30,20 @@ window.addEventListener('load', function() {
 
   var tocElement = document.createElement('div')
   tocElement.className = 'toc'
-  const headings = contentContainer.querySelectorAll('h1, h2, h3, h4, h5, h6');
-  tocElement.insertAdjacentHTML('afterbegin', '<div class="toc-title">文章目录</div>');
+  const headings = contentContainer.querySelectorAll('h1, h2, h3, h4, h5, h6')
+  tocElement.insertAdjacentHTML('afterbegin', '<div class="toc-title">文章目录</div>')
   headings.forEach(heading => {
     if (!heading.id) {
-      heading.id = heading.textContent.trim().replace(/\s+/g, '-').toLowerCase();
+      heading.id = heading.textContent.trim().replace(/\s+/g, '-').toLowerCase()
     }
-    const link = document.createElement('a');
-    link.href = '#' + heading.id;
-    link.textContent = heading.textContent;
-    link.className = 'toc-link';
-    link.style.paddingLeft = `${(parseInt(heading.tagName.charAt(1)) - 1) * 10}px`;
-    tocElement.appendChild(link);
+    const link = document.createElement('a')
+    link.href = '#' + heading.id
+    link.textContent = heading.textContent
+    link.className = 'toc-link'
+    link.style.paddingLeft = `${(parseInt(heading.tagName.charAt(1)) - 1) * 10}px`
+    tocElement.appendChild(link)
   });
-  tocElement.insertAdjacentHTML('beforeend', '<a class="toc-end" onclick="window.scrollTo({top:0,behavior: \'smooth\'});">Top</a>');
+  tocElement.insertAdjacentHTML('beforeend', '<a class="toc-end" onclick="window.scrollTo({top:0,behavior: \'smooth\'});">Top</a>')
 
   box.appendChild(tocElement)
 
@@ -149,9 +159,15 @@ window.addEventListener('load', function() {
     item.addEventListener(
       "click",
       () => {
+        value = denotes.get(key)
         document.getElementsByClassName("denote-title")[0].innerHTML = key
         document.getElementsByClassName('denote-content')[0].innerHTML = denotes.get(key)
-        MathJax.typeset()
+        if (value.includes('又')) {
+          if (typeof MathJax === 'undefined') {
+            initMathJax()
+          }
+          MathJax.typeset()
+        }
       },
       false,
     );
