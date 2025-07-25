@@ -9,7 +9,7 @@ window.addEventListener('load', function() {
   })
   var denoteElement = document.createElement('div');
   denoteElement.className = 'denote';
-  tocElement.insertAdjacentHTML('afterbegin', '<div class="denote-title">注释</div>')
+  denoteElement.insertAdjacentHTML('afterbegin', '<div class="denote-title">注释</div>')
   const style = document.createElement('style');
   style.textContent =  `
   .denote{
