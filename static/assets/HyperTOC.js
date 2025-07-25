@@ -149,8 +149,8 @@ window.addEventListener('load', function() {
     item.addEventListener(
       "click",
       () => {
-        document.getElementsByClassName("denote-title")[0].textContent = key
-        document.getElementsByClassName('denote-content')[0].textContent = denotes.get(key)
+        document.getElementsByClassName("denote-title")[0].innerHTML = key
+        document.getElementsByClassName('denote-content')[0].innerHTML = denotes.get(key)
       },
       false,
     );
