@@ -151,6 +151,7 @@ window.addEventListener('load', function() {
       () => {
         document.getElementsByClassName("denote-title")[0].innerHTML = key
         document.getElementsByClassName('denote-content')[0].innerHTML = denotes.get(key)
+        MathJax.typeset()
       },
       false,
     );
