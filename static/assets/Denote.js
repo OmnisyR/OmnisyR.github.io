@@ -2,7 +2,7 @@ const denotes = new Map();
 
 function createDenote() {
   var container = document.getElementById('content')
-  container.innerHTML = container.innerHTML.replace(/\\n\\denote{(.*?)}/g, (match, content) => {
+  container.innerHTML = container.innerHTML.replace(/\n\\denote{(.*?)}/g, (match, content) => {
     let arr = content.split('::')
     denotes.set(arr[0], arr[1])
     return ''
