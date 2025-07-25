@@ -6,7 +6,7 @@
 
 <!-- ##{"script":"<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>"}## -->
 \denotes
-😭马尔可夫链::某一时刻的状态只与上衣时刻的状态相关，即$x_t = f(x_{t - 1})$，若干个这样的状态组成的链条便形成了马尔科夫链。😭
+#马尔可夫链::某一时刻的状态只与上衣时刻的状态相关，即$x_t = f(x_{t - 1})$，若干个这样的状态组成的链条便形成了马尔科夫链。#
 \denotes
 ## 介绍
 
