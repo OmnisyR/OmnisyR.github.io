@@ -155,16 +155,28 @@ $$</p>
 <p>为了式子的简洁性，记$\alpha_t + \beta_t = 1$，对于时刻$t + 1, t, t - 1$，有：</p>
 <p>$$
 \begin{align}
-x_{t + 1} &amp;= \sqrt{\alpha_t} x_t + \sqrt{1 - \alpha_t}\epsilon_t\\
+x_{t + 1} &amp;= \sqrt{\alpha_t} x_t + \sqrt{1 - \alpha_t}\epsilon_t
 \tag{4}
-&amp;= \sqrt{\alpha_t}(\sqrt{\alpha_{{t - 1}}} x_{t - 1} + \sqrt{1 - \alpha_{t - 1}}\epsilon_{t - 1}) + \sqrt{1 - \alpha_t}\epsilon_t\\
-&amp;= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 1} + \sqrt{\alpha_t(1 - \alpha_{t - 1})}\epsilon_{t - 1} + \sqrt{1 - \alpha_t}\epsilon_t\\
-&amp;= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 1} + \mathcal{N}(0, \alpha_t(1 - \alpha_{t - 1})) + \mathcal{N}(0, 1 - \alpha_t)\\
-&amp;= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 1} + \mathcal{N}(0, \alpha_t(1 - \alpha_{t - 1}) + 1 - \alpha_t)\\
-&amp;= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 1} + \sqrt{1 - \alpha_t\alpha_{t - 1}}\bar{\epsilon}_{t, t - 1}\\
-&amp;= \dots\\
-&amp;= \sqrt{\bar{\alpha_t}}x_0 + \sqrt{1 - \bar{\alpha_t}}\epsilon
+\\
+&amp;= \sqrt{\alpha_t}(\sqrt{\alpha_{{t - 1}}} x_{t - 1} + \sqrt{1 - \alpha_{t - 1}}\epsilon_{t - 1}) + \sqrt{1 - \alpha_t}\epsilon_t
 \tag{5}
+\\
+&amp;= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 1} + \sqrt{\alpha_t(1 - \alpha_{t - 1})}\epsilon_{t - 1} + \sqrt{1 - \alpha_t}\epsilon_t
+\tag{6}
+\\
+&amp;= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 1} + \mathcal{N}(0, \alpha_t(1 - \alpha_{t - 1})) + \mathcal{N}(0, 1 - \alpha_t)
+\tag{7}
+\\
+&amp;= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 1} + \mathcal{N}(0, \alpha_t(1 - \alpha_{t - 1}) + 1 - \alpha_t)
+\tag{8}
+\\
+&amp;= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 1} + \sqrt{1 - \alpha_t\alpha_{t - 1}}\bar{\epsilon}_{t, t - 1}
+\tag{9}
+\\
+&amp;= \dots
+\\
+&amp;= \sqrt{\bar{\alpha_t}}x_0 + \sqrt{1 - \bar{\alpha_t}}\epsilon
+\tag{10}
 \end{align}
 $$</p>
 <h2>逆向过程</h2></div>
