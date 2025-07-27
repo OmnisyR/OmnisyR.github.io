@@ -65,10 +65,11 @@ for timestep in tqdm(range(timesteps)):
 
 由重参数化技巧，对于时刻$t + 1, t, t - 1$，有：
 
-$$
+\begin{align*}
 x_{t + 1} &= \sqrt{1 - \beta_t} x_t + \sqrt{\beta_t}\epsilon_t
+\\
 &= \sqrt{1 - \beta_t} (\sqrt{1 - \beta_{{t - 1}}} x_{t - 1} + \sqrt{\beta_{t - 1}}\epsilon_{t - 1}) + \sqrt{\beta_t}\epsilon_t
-\tag{3}
-$$
+\tag{4}
+\end{align*}
 
 ## 逆向过程
