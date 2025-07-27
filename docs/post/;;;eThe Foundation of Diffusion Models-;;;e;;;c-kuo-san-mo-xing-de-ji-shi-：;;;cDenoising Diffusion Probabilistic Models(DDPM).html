@@ -160,7 +160,10 @@ x_{t + 1} &amp;= \sqrt{\alpha_t} x_t + \sqrt{1 - \alpha_t}\epsilon_t\\
 &amp;= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 1} + \sqrt{\alpha_t(1 - \alpha_{t - 1})}\epsilon_{t - 1} + \sqrt{1 - \alpha_t}\epsilon_t\\
 &amp;= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 1} + \mathcal{N}(0, \alpha_t(1 - \alpha_{t - 1})) + \mathcal{N}(0, 1 - \alpha_t)\\
 &amp;= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 1} + \mathcal{N}(0, \alpha_t(1 - \alpha_{t - 1}) + 1 - \alpha_t)\\
-&amp;= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 1} + \sqrt{1 - \alpha_t\alpha_{t - 1}}\bar{\epsilon}_{t, t - 1}
+&amp;= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 1} + \sqrt{1 - \alpha_t\alpha_{t - 1}}\bar{\epsilon}_{t, t - 1}\\
+&amp;= \dots\\
+&amp;= \sqrt{\bar{\alpha_t}}x_0 + sqrt{1 - \bar{\alpha_t}}\epsilon
+\tag{4}
 \end{align}
 $$</p>
 <h2>逆向过程</h2></div>
