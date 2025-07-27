@@ -63,13 +63,14 @@ for timestep in tqdm(range(timesteps)):
     )
 ```
 
-由重参数化技巧，对于时刻$t + 1, t, t - 1$，有：
+为了式子的简洁性，记$\alpha_t + \beta_t = 1$，对于时刻$t + 1, t, t - 1$，有：
 
 \begin{align*}
-x_{t + 1} &= \sqrt{1 - \beta_t} x_t + \sqrt{\beta_t}\epsilon_t
-\\
-&= \sqrt{1 - \beta_t} (\sqrt{1 - \beta_{{t - 1}}} x_{t - 1} + \sqrt{\beta_{t - 1}}\epsilon_{t - 1}) + \sqrt{\beta_t}\epsilon_t
+x_{t + 1} &= \sqrt{\alpha_t} x_t + \sqrt{1 - \alpha_t}\epsilon_t
 \tag{4}
+\\
+&= \sqrt{\alpha_t} (\sqrt{\alpha_{{t - 1}}} x_{t - 1} + \sqrt{1 - \alpha_{t - 1}}\epsilon_{t - 1}) + \sqrt{1 - \alpha_t}\epsilon_t
+\tag{5}
 \end{align*}
 
 ## 逆向过程

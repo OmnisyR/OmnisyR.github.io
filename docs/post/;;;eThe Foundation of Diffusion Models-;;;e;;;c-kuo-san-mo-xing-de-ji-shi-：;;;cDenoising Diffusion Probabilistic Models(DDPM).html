@@ -152,12 +152,13 @@ $$</p>
       <span class="pl-en">transform_reverse</span>(<span class="pl-s1">x_t</span>).<span class="pl-c1">clip</span>(<span class="pl-c1">0</span>, <span class="pl-c1">255</span>).<span class="pl-c1">to</span>(<span class="pl-s1">torch</span>.<span class="pl-c1">uint8</span>).<span class="pl-c1">cpu</span>(),
       <span class="pl-s">'noising/%d.png'</span> <span class="pl-c1">%</span> <span class="pl-s1">timestep</span>
     )</pre></div>
-<p>由重参数化技巧，对于时刻$t + 1, t, t - 1$，有：</p>
+<p>为了式子的简洁性，记$\alpha_t + \beta_t = 1$，对于时刻$t + 1, t, t - 1$，有：</p>
 <p>\begin{align*}<br>
-x_{t + 1} &amp;= \sqrt{1 - \beta_t} x_t + \sqrt{\beta_t}\epsilon_t<br>
-\<br>
-&amp;= \sqrt{1 - \beta_t} (\sqrt{1 - \beta_{{t - 1}}} x_{t - 1} + \sqrt{\beta_{t - 1}}\epsilon_{t - 1}) + \sqrt{\beta_t}\epsilon_t<br>
+x_{t + 1} &amp;= \sqrt{\alpha_t} x_t + \sqrt{1 - \alpha_t}\epsilon_t<br>
 \tag{4}<br>
+\<br>
+&amp;= \sqrt{\alpha_t} (\sqrt{\alpha_{{t - 1}}} x_{t - 1} + \sqrt{1 - \alpha_{t - 1}}\epsilon_{t - 1}) + \sqrt{1 - \alpha_t}\epsilon_t<br>
+\tag{5}<br>
 \end{align*}</p>
 <h2>逆向过程</h2></div>
 <div style="font-size:small;margin-top:8px;float:right;">转载文章请注明出处</div>
