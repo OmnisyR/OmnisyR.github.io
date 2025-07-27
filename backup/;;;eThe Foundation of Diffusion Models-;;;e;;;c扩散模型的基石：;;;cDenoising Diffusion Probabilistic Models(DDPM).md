@@ -68,14 +68,15 @@ for timestep in tqdm(range(timesteps)):
 $$
 \begin{align}
 x_{t + 1} &= \sqrt{\alpha_t} x_t + \sqrt{1 - \alpha_t}\epsilon_t\\
+\tag{4}
 &= \sqrt{\alpha_t}(\sqrt{\alpha_{{t - 1}}} x_{t - 1} + \sqrt{1 - \alpha_{t - 1}}\epsilon_{t - 1}) + \sqrt{1 - \alpha_t}\epsilon_t\\
 &= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 1} + \sqrt{\alpha_t(1 - \alpha_{t - 1})}\epsilon_{t - 1} + \sqrt{1 - \alpha_t}\epsilon_t\\
 &= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 1} + \mathcal{N}(0, \alpha_t(1 - \alpha_{t - 1})) + \mathcal{N}(0, 1 - \alpha_t)\\
 &= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 1} + \mathcal{N}(0, \alpha_t(1 - \alpha_{t - 1}) + 1 - \alpha_t)\\
 &= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 1} + \sqrt{1 - \alpha_t\alpha_{t - 1}}\bar{\epsilon}_{t, t - 1}\\
 &= \dots\\
-&= \sqrt{\bar{\alpha_t}}x_0 + sqrt{1 - \bar{\alpha_t}}\epsilon
-\tag{4}
+&= \sqrt{\bar{\alpha_t}}x_0 + \sqrt{1 - \bar{\alpha_t}}\epsilon
+\tag{5}
 \end{align}
 $$
 
