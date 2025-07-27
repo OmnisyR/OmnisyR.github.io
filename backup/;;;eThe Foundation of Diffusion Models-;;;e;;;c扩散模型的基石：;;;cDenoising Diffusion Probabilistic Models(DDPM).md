@@ -9,6 +9,7 @@
 ;;;;马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。;;;;
 ;;;;重参数化技巧::对于概率$p(x|y) = \mathcal{N}(x|ay, b)$，即$x$服从一个均值为$ay$，标准差为$\sqrt{b}$的高斯分布，那么则有$x = ay + \sqrt{b}\epsilon$，其中$\epsilon \sim \mathcal{N}(0, 1)$。;;;;
 ;;;;下方的代码::默认使用GPU加速的pytorch代码，不使用GPU加速会很难跑得动扩散模型。;;;;
+;;;;高斯分布的加法法则::$\mathcal{N}(\mu_1, \sigma^2_1) + \mathcal{N}(\mu_2, \sigma^2_2) = \mathcal{N}(\mu_1 + \mu_2, \sigma^2_1 + \sigma^2_2)$。;;;;
 \denotes
 ## 介绍
 
@@ -23,14 +24,14 @@ $$
 其中$q(x_{t + 1}|x_{t})$代表着每一时刻，为上一时刻的图片添加噪声的过程。很显然，这个过程是需要人为定义的，因此，可以选择一组超参数$\beta_t$，从而有：
 
 $$
-q(x_{t + 1}|x_{t}) = \mathcal{N}(x_{t + 1};\sqrt{1 - \beta_t}x_t,\beta_tI)
+q(x_t|x_{t - 1}) = \mathcal{N}(x_t;\sqrt{1 - \beta_t}x_{t - 1},\beta_tI)
 \tag{2}
 $$
 
 但是，这样的式子仍然是不可计算的，通过`重参数化技巧`，可以将任意的高斯分布进行展开，因此则有：
 
 $$
-x_{t + 1} = \sqrt{1 - \beta_t} x_t + \sqrt{\beta_t}\epsilon_t
+x_t = \sqrt{1 - \beta_t} x_{t - 1} + \sqrt{\beta_t}\epsilon_t
 \tag{3}
 $$
 
@@ -63,26 +64,26 @@ for timestep in tqdm(range(timesteps)):
     )
 ```
 
-为了式子的简洁性，记$\alpha_t + \beta_t = 1$，对于时刻$t + 1, t, t - 1$，有：
+为了式子的简洁性，记$\alpha_t + \beta_t = 1$，则有：
 
 $$
 \begin{align}
-x_{t + 1} &= \sqrt{\alpha_t} x_t + \sqrt{1 - \alpha_t}\epsilon_t
+x_{t + 1} &= \sqrt{\alpha_t} x_{t - 1} + \sqrt{1 - \alpha_t}\epsilon_t
 \tag{4}
 \\
-&= \sqrt{\alpha_t}(\sqrt{\alpha_{{t - 1}}} x_{t - 1} + \sqrt{1 - \alpha_{t - 1}}\epsilon_{t - 1}) + \sqrt{1 - \alpha_t}\epsilon_t
+&= \sqrt{\alpha_t}(\sqrt{\alpha_{{t - 2}}} x_{t - 1} + \sqrt{1 - \alpha_{t - 1}}\epsilon_{t - 1}) + \sqrt{1 - \alpha_t}\epsilon_t
 \tag{5}
 \\
-&= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 1} + \sqrt{\alpha_t(1 - \alpha_{t - 1})}\epsilon_{t - 1} + \sqrt{1 - \alpha_t}\epsilon_t
+&= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 2} + \sqrt{\alpha_t(1 - \alpha_{t - 1})}\epsilon_{t - 1} + \sqrt{1 - \alpha_t}\epsilon_t
 \tag{6}
 \\
-&= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 1} + \mathcal{N}(0, \alpha_t(1 - \alpha_{t - 1})) + \mathcal{N}(0, 1 - \alpha_t)
+&= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 2} + \mathcal{N}(0, \alpha_t(1 - \alpha_{t - 1})) + \mathcal{N}(0, 1 - \alpha_t)
 \tag{7}
 \\
-&= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 1} + \mathcal{N}(0, \alpha_t(1 - \alpha_{t - 1}) + 1 - \alpha_t)
+&= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 2} + \mathcal{N}(0, \alpha_t(1 - \alpha_{t - 1}) + 1 - \alpha_t)
 \tag{8}
 \\
-&= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 1} + \sqrt{1 - \alpha_t\alpha_{t - 1}}\bar{\epsilon}_{t, t - 1}
+&= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 2} + \sqrt{1 - \alpha_t\alpha_{t - 1}}\bar{\epsilon}_{t, t - 1}
 \tag{9}
 \\
 &= \dots
@@ -91,5 +92,7 @@ x_{t + 1} &= \sqrt{\alpha_t} x_t + \sqrt{1 - \alpha_t}\epsilon_t
 \tag{10}
 \end{align}
 $$
+
+其中，$\bar{\alpha_t} = \prod_{i = 1}^{t}\alpha_i$。由于式(6)中存在着两个完全随机的标准高斯分布，因此可以对这二者进行重参数化技巧的逆运算得到式(7)，再通过`高斯分布的加法法则`得到式(8)从而对多步的迭代进行化简，能够仅仅使用一步即可求得正向过程的任意时刻状态。
 
 ## 逆向过程
