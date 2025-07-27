@@ -67,10 +67,12 @@ for timestep in tqdm(range(timesteps)):
 
 \begin{align*}
 x_{t + 1} &= \sqrt{\alpha_t} x_t + \sqrt{1 - \alpha_t}\epsilon_t
-\tag{4}
 \\
-&= \sqrt{\alpha_t} (\sqrt{\alpha_{{t - 1}}} x_{t - 1} + \sqrt{1 - \alpha_{t - 1}}\epsilon_{t - 1}) + \sqrt{1 - \alpha_t}\epsilon_t
-\tag{5}
+&= \sqrt{\alpha_t}(\sqrt{\alpha_{{t - 1}}} x_{t - 1} + \sqrt{1 - \alpha_{t - 1}}\epsilon_{t - 1}) + \sqrt{1 - \alpha_t}\epsilon_t
+\\
+&= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 1} + \sqrt{\alpha_t(1 - \alpha_{t - 1})}\epsilon_{t - 1} + \sqrt{1 - \alpha_t}\epsilon_t
+\\
+&= 
 \end{align*}
 
 ## 逆向过程
