@@ -147,11 +147,17 @@ $$</p>
     <span class="pl-s1">ep</span> <span class="pl-c1">=</span> <span class="pl-s1">torch</span>.<span class="pl-c1">randn</span>(<span class="pl-s1">size</span><span class="pl-c1">=</span><span class="pl-s1">x_t</span>.<span class="pl-c1">shape</span>).<span class="pl-c1">cuda</span>()
     <span class="pl-c">#式(3)的迭代增噪过程</span>
     <span class="pl-s1">x_t</span> <span class="pl-c1">=</span> (<span class="pl-c1">1</span> <span class="pl-c1">-</span> <span class="pl-s1">beta</span>[<span class="pl-s1">timestep</span>]).<span class="pl-c1">sqrt</span>().<span class="pl-c1">item</span>() <span class="pl-c1">*</span> <span class="pl-s1">x_t</span> <span class="pl-c1">+</span> <span class="pl-s1">beta</span>[<span class="pl-s1">timestep</span>].<span class="pl-c1">sqrt</span>() <span class="pl-c1">*</span> <span class="pl-s1">ep</span>
-    <span class="pl-c">#保存图片到本都</span>
+    <span class="pl-c">#保存图片到本地</span>
     <span class="pl-s1">torchvision</span>.<span class="pl-c1">io</span>.<span class="pl-c1">write_png</span>(
       <span class="pl-en">transform_reverse</span>(<span class="pl-s1">x_t</span>).<span class="pl-c1">clip</span>(<span class="pl-c1">0</span>, <span class="pl-c1">255</span>).<span class="pl-c1">to</span>(<span class="pl-s1">torch</span>.<span class="pl-c1">uint8</span>).<span class="pl-c1">cpu</span>(),
       <span class="pl-s">'noising/%d.png'</span> <span class="pl-c1">%</span> <span class="pl-s1">timestep</span>
     )</pre></div>
+<p>由重参数化技巧，对于时刻$t + 1, t, t - 1$，有：</p>
+<p>$$
+x_{t + 1} &amp;= \sqrt{1 - \beta_t} x_t + \sqrt{\beta_t}\epsilon_t
+&amp;= \sqrt{1 - \beta_t} (\sqrt{1 - \beta_{{t - 1}}} x_{t - 1} + \sqrt{\beta_{t - 1}}\epsilon_{t - 1}) + \sqrt{\beta_t}\epsilon_t
+\tag{3}
+$$</p>
 <h2>逆向过程</h2></div>
 <div style="font-size:small;margin-top:8px;float:right;">转载文章请注明出处</div>
 

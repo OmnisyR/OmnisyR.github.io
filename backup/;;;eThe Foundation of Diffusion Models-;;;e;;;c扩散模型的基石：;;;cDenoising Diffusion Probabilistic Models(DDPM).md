@@ -7,7 +7,7 @@
 <!-- ##{"script":"<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>"}## -->
 \denotes
 ;;;;马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。;;;;
-;;;;重参数化技巧::对于概率$p(x|y) = \mathcal{N}(x|ay, b)$，即$x$服从一个均值为$ay$，标准差为$\sqrt{b}$的高斯分布，那么则有$x = ay + \sqrt{b}\\epsilon$，其中$\\epsilon \sim \mathcal{N}(0, 1)$。;;;;
+;;;;重参数化技巧::对于概率$p(x|y) = \mathcal{N}(x|ay, b)$，即$x$服从一个均值为$ay$，标准差为$\sqrt{b}$的高斯分布，那么则有$x = ay + \sqrt{b}\epsilon$，其中$\epsilon \sim \mathcal{N}(0, 1)$。;;;;
 ;;;;下方的代码::默认使用GPU加速的pytorch代码，不使用GPU加速会很难跑得动扩散模型。;;;;
 \denotes
 ## 介绍
@@ -56,11 +56,19 @@ for timestep in tqdm(range(timesteps)):
     ep = torch.randn(size=x_t.shape).cuda()
     #式(3)的迭代增噪过程
     x_t = (1 - beta[timestep]).sqrt().item() * x_t + beta[timestep].sqrt() * ep
-    #保存图片到本都
+    #保存图片到本地
     torchvision.io.write_png(
       transform_reverse(x_t).clip(0, 255).to(torch.uint8).cpu(),
       'noising/%d.png' % timestep
     )
 ```
+
+由重参数化技巧，对于时刻$t + 1, t, t - 1$，有：
+
+$$
+x_{t + 1} &= \sqrt{1 - \beta_t} x_t + \sqrt{\beta_t}\epsilon_t
+&= \sqrt{1 - \beta_t} (\sqrt{1 - \beta_{{t - 1}}} x_{t - 1} + \sqrt{\beta_{t - 1}}\epsilon_{t - 1}) + \sqrt{\beta_t}\epsilon_t
+\tag{3}
+$$
 
 ## 逆向过程
