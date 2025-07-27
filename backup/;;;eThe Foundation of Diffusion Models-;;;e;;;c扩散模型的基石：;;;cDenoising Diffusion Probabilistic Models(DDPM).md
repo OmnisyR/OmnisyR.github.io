@@ -96,7 +96,7 @@ $$
 其中：
 
 $$
-\bar{\alpha}_t = \prod_{i = 1}^{t}\alpha_i
+\bar{\alpha} a_t = \prod_{i = 1}^{t}\alpha_i
 \tag{11}
 $$
 
