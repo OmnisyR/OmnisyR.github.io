@@ -153,15 +153,14 @@ $$</p>
       <span class="pl-s">'noising/%d.png'</span> <span class="pl-c1">%</span> <span class="pl-s1">timestep</span>
     )</pre></div>
 <p>为了式子的简洁性，记$\alpha_t + \beta_t = 1$，对于时刻$t + 1, t, t - 1$，有：</p>
-<p>\begin{align*}<br>
-x_{t + 1} &amp;= \sqrt{\alpha_t} x_t + \sqrt{1 - \alpha_t}\epsilon_t<br>
-\<br>
-&amp;= \sqrt{\alpha_t}(\sqrt{\alpha_{{t - 1}}} x_{t - 1} + \sqrt{1 - \alpha_{t - 1}}\epsilon_{t - 1}) + \sqrt{1 - \alpha_t}\epsilon_t<br>
-\<br>
-&amp;= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 1} + \sqrt{\alpha_t(1 - \alpha_{t - 1})}\epsilon_{t - 1} + \sqrt{1 - \alpha_t}\epsilon_t<br>
-\<br>
+<p>\begin{align}<br>
+x_{t + 1} &amp;= \sqrt{\alpha_t} x_t + \sqrt{1 - \alpha_t}\epsilon_t\<br>
+&amp;= \sqrt{\alpha_t}(\sqrt{\alpha_{{t - 1}}} x_{t - 1} + \sqrt{1 - \alpha_{t - 1}}\epsilon_{t - 1}) + \sqrt{1 - \alpha_t}\epsilon_t\<br>
+&amp;= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 1} + \sqrt{\alpha_t(1 - \alpha_{t - 1})}\epsilon_{t - 1} + \sqrt{1 - \alpha_t}\epsilon_t\<br>
+&amp;= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 1} + \mathcal{N}(0, \alpha_t(1 - \alpha_{t - 1})) + \mathcal{N}(0, 1 - \alpha_t)\<br>
+&amp;= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 1} + \mathcal{N}(0, \alpha_t(1 - \alpha_{t - 1}) + 1 - \alpha_t)\<br>
 &amp;=<br>
-\end{align*}</p>
+\end{align}</p>
 <h2>逆向过程</h2></div>
 <div style="font-size:small;margin-top:8px;float:right;">转载文章请注明出处</div>
 

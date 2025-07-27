@@ -65,14 +65,13 @@ for timestep in tqdm(range(timesteps)):
 
 为了式子的简洁性，记$\alpha_t + \beta_t = 1$，对于时刻$t + 1, t, t - 1$，有：
 
-\begin{align*}
-x_{t + 1} &= \sqrt{\alpha_t} x_t + \sqrt{1 - \alpha_t}\epsilon_t
-\\
-&= \sqrt{\alpha_t}(\sqrt{\alpha_{{t - 1}}} x_{t - 1} + \sqrt{1 - \alpha_{t - 1}}\epsilon_{t - 1}) + \sqrt{1 - \alpha_t}\epsilon_t
-\\
-&= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 1} + \sqrt{\alpha_t(1 - \alpha_{t - 1})}\epsilon_{t - 1} + \sqrt{1 - \alpha_t}\epsilon_t
-\\
-&= 
-\end{align*}
+\begin{align}
+x_{t + 1} &= \sqrt{\alpha_t} x_t + \sqrt{1 - \alpha_t}\epsilon_t\\
+&= \sqrt{\alpha_t}(\sqrt{\alpha_{{t - 1}}} x_{t - 1} + \sqrt{1 - \alpha_{t - 1}}\epsilon_{t - 1}) + \sqrt{1 - \alpha_t}\epsilon_t\\
+&= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 1} + \sqrt{\alpha_t(1 - \alpha_{t - 1})}\epsilon_{t - 1} + \sqrt{1 - \alpha_t}\epsilon_t\\
+&= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 1} + \mathcal{N}(0, \alpha_t(1 - \alpha_{t - 1})) + \mathcal{N}(0, 1 - \alpha_t)\\
+&= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 1} + \mathcal{N}(0, \alpha_t(1 - \alpha_{t - 1}) + 1 - \alpha_t)\\
+&=
+\end{align}
 
 ## 逆向过程
