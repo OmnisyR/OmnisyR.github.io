@@ -93,6 +93,22 @@ x_t &= \sqrt{\alpha_t} x_{t - 1} + \sqrt{1 - \alpha_t}\epsilon_t
 \end{align}
 $$
 
-其中$\bar{\alpha}\_t = \prod_{i = 1}^{t}\alpha_i$。由于式(6)中存在着两个完全随机的标准高斯分布，因此可以对这二者进行重参数化技巧的逆运算得到式(7)，再通过`高斯分布的加法法则`得到式(8)从而对多步的迭代进行化简，能够仅仅使用一步求出正向过程的任意时刻的状态。
+其中$\bar{\alpha}\_t = \prod_{i = 1}^{t}\alpha_i$。由于式(6)中存在着两个完全随机的标准高斯分布，因此可以对这二者进行重参数化技巧的逆运算得到式(7)，再通过`高斯分布的加法法则`得到式(8)，从而对多步的迭代进行化简，能够仅仅使用一步求出正向过程的任意时刻的状态：
+```python
+def add_noise(x_0, t):
+    #式(10)的一步增噪过程
+    return sqrt_alpha_bar[t] * x_0 + sqrt_one_minus_alpha_bar[t] * torch.randn(size=x_0.shape).cuda()
+
+#对参数的预先缓存
+alpha = 1 - beta
+#在这里，对求得的α累乘的最前位置，额外加了一个1，这是为了编写程序时，时间戳与索引的一致
+alpha_bar = torch.cat((torch.Tensor((1,)).cuda(), alpha.cumprod(dim=0)))
+sqrt_alpha_bar = alpha_bar.sqrt()
+sqrt_one_minus_alpha_bar = (1 - alpha_bar).sqrt()
+
+timestep = 200
+x_t = add_noise(x_0, timestep)
+torchvision.io.write_png(transform_reverse(x_t).clip(0, 255).to(torch.uint8).cpu(), '%s.png' % timestep)
+```
 
 ## 逆向过程

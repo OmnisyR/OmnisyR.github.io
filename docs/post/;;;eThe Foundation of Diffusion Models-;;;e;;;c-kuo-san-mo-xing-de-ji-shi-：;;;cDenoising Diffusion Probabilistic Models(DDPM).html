@@ -180,7 +180,21 @@ x_t &amp;= \sqrt{\alpha_t} x_{t - 1} + \sqrt{1 - \alpha_t}\epsilon_t
 \tag{10}
 \end{align}
 $$</p>
-<p>其中$\bar{\alpha}_t = \prod_{i = 1}^{t}\alpha_i$。由于式(6)中存在着两个完全随机的标准高斯分布，因此可以对这二者进行重参数化技巧的逆运算得到式(7)，再通过<code class="notranslate">高斯分布的加法法则</code>得到式(8)从而对多步的迭代进行化简，能够仅仅使用一步求出正向过程的任意时刻的状态。</p>
+<p>其中$\bar{\alpha}_t = \prod_{i = 1}^{t}\alpha_i$。由于式(6)中存在着两个完全随机的标准高斯分布，因此可以对这二者进行重参数化技巧的逆运算得到式(7)，再通过<code class="notranslate">高斯分布的加法法则</code>得到式(8)，从而对多步的迭代进行化简，能够仅仅使用一步求出正向过程的任意时刻的状态：</p>
+<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">def</span> <span class="pl-en">add_noise</span>(<span class="pl-s1">x_0</span>, <span class="pl-s1">t</span>):
+    <span class="pl-c">#式(10)的一步增噪过程</span>
+    <span class="pl-k">return</span> <span class="pl-s1">sqrt_alpha_bar</span>[<span class="pl-s1">t</span>] <span class="pl-c1">*</span> <span class="pl-s1">x_0</span> <span class="pl-c1">+</span> <span class="pl-s1">sqrt_one_minus_alpha_bar</span>[<span class="pl-s1">t</span>] <span class="pl-c1">*</span> <span class="pl-s1">torch</span>.<span class="pl-c1">randn</span>(<span class="pl-s1">size</span><span class="pl-c1">=</span><span class="pl-s1">x_0</span>.<span class="pl-c1">shape</span>).<span class="pl-c1">cuda</span>()
+
+<span class="pl-c">#对参数的预先缓存</span>
+<span class="pl-s1">alpha</span> <span class="pl-c1">=</span> <span class="pl-c1">1</span> <span class="pl-c1">-</span> <span class="pl-s1">beta</span>
+<span class="pl-c">#在这里，对求得的α累乘的最前位置，额外加了一个1，这是为了编写程序时，时间戳与索引的一致</span>
+<span class="pl-s1">alpha_bar</span> <span class="pl-c1">=</span> <span class="pl-s1">torch</span>.<span class="pl-c1">cat</span>((<span class="pl-s1">torch</span>.<span class="pl-c1">Tensor</span>((<span class="pl-c1">1</span>,)).<span class="pl-c1">cuda</span>(), <span class="pl-s1">alpha</span>.<span class="pl-c1">cumprod</span>(<span class="pl-s1">dim</span><span class="pl-c1">=</span><span class="pl-c1">0</span>)))
+<span class="pl-s1">sqrt_alpha_bar</span> <span class="pl-c1">=</span> <span class="pl-s1">alpha_bar</span>.<span class="pl-c1">sqrt</span>()
+<span class="pl-s1">sqrt_one_minus_alpha_bar</span> <span class="pl-c1">=</span> (<span class="pl-c1">1</span> <span class="pl-c1">-</span> <span class="pl-s1">alpha_bar</span>).<span class="pl-c1">sqrt</span>()
+
+<span class="pl-s1">timestep</span> <span class="pl-c1">=</span> <span class="pl-c1">200</span>
+<span class="pl-s1">x_t</span> <span class="pl-c1">=</span> <span class="pl-en">add_noise</span>(<span class="pl-s1">x_0</span>, <span class="pl-s1">timestep</span>)
+<span class="pl-s1">torchvision</span>.<span class="pl-c1">io</span>.<span class="pl-c1">write_png</span>(<span class="pl-en">transform_reverse</span>(<span class="pl-s1">x_t</span>).<span class="pl-c1">clip</span>(<span class="pl-c1">0</span>, <span class="pl-c1">255</span>).<span class="pl-c1">to</span>(<span class="pl-s1">torch</span>.<span class="pl-c1">uint8</span>).<span class="pl-c1">cpu</span>(), <span class="pl-s">'%s.png'</span> <span class="pl-c1">%</span> <span class="pl-s1">timestep</span>)</pre></div>
 <h2>逆向过程</h2></div>
 <div style="font-size:small;margin-top:8px;float:right;">转载文章请注明出处</div>
 
