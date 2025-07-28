@@ -10,6 +10,7 @@
 $$
 \begin{align}
 &P(X_n|X_0) = P(X_n)
+\\
 &P(X_n|X_{n - 1}, X_{n - 2}, \dots, X_0) = P(X_n|X_{n - 1})
 \end{align}
 $$
