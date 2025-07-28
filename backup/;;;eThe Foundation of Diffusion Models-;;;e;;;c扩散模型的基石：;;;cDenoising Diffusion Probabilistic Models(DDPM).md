@@ -42,7 +42,7 @@ $$
 但是，这样的式子仍然是不可计算的，通过`重参数化技巧`，可以将任意的高斯分布进行展开，因此则有：
 
 $$
-x_t = \sqrt{1 - \beta_t} x_{t - 1} + \sqrt{\beta_t}\epsilon_t
+x_t = \sqrt{1 - \beta_t} x_{t - 1} + \sqrt{\beta_t}\epsilon
 \tag{3}
 $$
 
@@ -79,13 +79,13 @@ for timestep in tqdm(range(timesteps)):
 
 $$
 \begin{align}
-x_t &= \sqrt{\alpha_t} x_{t - 1} + \sqrt{1 - \alpha_t}\epsilon_t
+x_t &= \sqrt{\alpha_t} x_{t - 1} + \sqrt{1 - \alpha_t}\tilde{\epsilon}_t
 \tag{4}
 \\
-&= \sqrt{\alpha_t}(\sqrt{\alpha_{{t - 1}}} x_{t - 2} + \sqrt{1 - \alpha_{t - 1}}\epsilon_{t - 1}) + \sqrt{1 - \alpha_t}\epsilon_t
+&= \sqrt{\alpha_t}(\sqrt{\alpha_{{t - 1}}} x_{t - 2} + \sqrt{1 - \alpha_{t - 1}}\tilde{\epsilon}_{t - 1}) + \sqrt{1 - \alpha_t}\tilde{\epsilon}_t
 \tag{5}
 \\
-&= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 2} + \sqrt{\alpha_t(1 - \alpha_{t - 1})}\epsilon_{t - 1} + \sqrt{1 - \alpha_t}\epsilon_t
+&= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 2} + \sqrt{\alpha_t(1 - \alpha_{t - 1})}\tilde{\epsilon}_{t - 1} + \sqrt{1 - \alpha_t}\tilde{\epsilon}_t
 \tag{6}
 \\
 &= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 2} + \mathcal{N}(0, \alpha_t(1 - \alpha_{t - 1})) + \mathcal{N}(0, 1 - \alpha_t)
@@ -99,7 +99,7 @@ x_t &= \sqrt{\alpha_t} x_{t - 1} + \sqrt{1 - \alpha_t}\epsilon_t
 \\
 &= \dots
 \\
-&= \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1 - \bar{\alpha}_t}\epsilon
+&= \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1 - \bar{\alpha}_t}\epsilon_t
 \tag{10}
 \end{align}
 $$

@@ -133,7 +133,7 @@ q(x_t|x_{t - 1}) = \mathcal{N}(x_t;\sqrt{1 - \beta_t}x_{t - 1},\beta_tI)
 $$</p>
 <p>但是，这样的式子仍然是不可计算的，通过<code class="notranslate">重参数化技巧</code>，可以将任意的高斯分布进行展开，因此则有：</p>
 <p>$$
-x_t = \sqrt{1 - \beta_t} x_{t - 1} + \sqrt{\beta_t}\epsilon_t
+x_t = \sqrt{1 - \beta_t} x_{t - 1} + \sqrt{\beta_t}\epsilon
 \tag{3}
 $$</p>
 <p>这样一来，就使用了一个可计算的形式表达出了扩散模型的马尔科夫链正向过程。DDPM中定义$\beta_t$是一个从$\beta_1 = 0.001$到$\beta_T = 0.02$的线性数组，这种噪声添加方式又称线性噪声时间表。通过<code class="notranslate">下方的代码</code>便可以实现这一过程：</p>
@@ -163,31 +163,31 @@ $$</p>
       <span class="pl-s">'noising/%d.png'</span> <span class="pl-c1">%</span> <span class="pl-s1">timestep</span>
     )</pre></div>
 <p>为了式子的简洁性，记$\alpha_t + \beta_t = 1$，则有：</p>
-<p>$$
-\begin{align}
-x_t &amp;= \sqrt{\alpha_t} x_{t - 1} + \sqrt{1 - \alpha_t}\epsilon_t
-\tag{4}
-\\
-&amp;= \sqrt{\alpha_t}(\sqrt{\alpha_{{t - 1}}} x_{t - 2} + \sqrt{1 - \alpha_{t - 1}}\epsilon_{t - 1}) + \sqrt{1 - \alpha_t}\epsilon_t
-\tag{5}
-\\
-&amp;= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 2} + \sqrt{\alpha_t(1 - \alpha_{t - 1})}\epsilon_{t - 1} + \sqrt{1 - \alpha_t}\epsilon_t
-\tag{6}
-\\
-&amp;= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 2} + \mathcal{N}(0, \alpha_t(1 - \alpha_{t - 1})) + \mathcal{N}(0, 1 - \alpha_t)
-\tag{7}
-\\
-&amp;= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 2} + \mathcal{N}(0, \alpha_t(1 - \alpha_{t - 1}) + 1 - \alpha_t)
-\tag{8}
-\\
-&amp;= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 2} + \sqrt{1 - \alpha_t\alpha_{t - 1}}\bar{\epsilon}_{t, t - 1}
-\tag{9}
-\\
-&amp;= \dots
-\\
-&amp;= \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1 - \bar{\alpha}_t}\epsilon
-\tag{10}
-\end{align}
+<p>$$<br>
+\begin{align}<br>
+x_t &amp;= \sqrt{\alpha_t} x_{t - 1} + \sqrt{1 - \alpha_t}\tilde{\epsilon}<em>t<br>
+\tag{4}<br>
+\<br>
+&amp;= \sqrt{\alpha_t}(\sqrt{\alpha</em>{{t - 1}}} x_{t - 2} + \sqrt{1 - \alpha_{t - 1}}\tilde{\epsilon}<em>{t - 1}) + \sqrt{1 - \alpha_t}\tilde{\epsilon}<em>t<br>
+\tag{5}<br>
+\<br>
+&amp;= \sqrt{\alpha_t\alpha</em>{t - 1}}x</em>{t - 2} + \sqrt{\alpha_t(1 - \alpha_{t - 1})}\tilde{\epsilon}<em>{t - 1} + \sqrt{1 - \alpha_t}\tilde{\epsilon}<em>t<br>
+\tag{6}<br>
+\<br>
+&amp;= \sqrt{\alpha_t\alpha</em>{t - 1}}x</em>{t - 2} + \mathcal{N}(0, \alpha_t(1 - \alpha_{t - 1})) + \mathcal{N}(0, 1 - \alpha_t)<br>
+\tag{7}<br>
+\<br>
+&amp;= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 2} + \mathcal{N}(0, \alpha_t(1 - \alpha_{t - 1}) + 1 - \alpha_t)<br>
+\tag{8}<br>
+\<br>
+&amp;= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 2} + \sqrt{1 - \alpha_t\alpha_{t - 1}}\bar{\epsilon}_{t, t - 1}<br>
+\tag{9}<br>
+\<br>
+&amp;= \dots<br>
+\<br>
+&amp;= \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1 - \bar{\alpha}_t}\epsilon_t<br>
+\tag{10}<br>
+\end{align}<br>
 $$</p>
 <p>其中$\bar{\alpha}_t = \prod_{i = 1}^{t}\alpha_i$。由于式(6)中存在着两个完全随机的标准高斯分布，因此可以对这二者进行重参数化技巧的逆运算得到式(7)，再通过<code class="notranslate">高斯分布的加法法则</code>得到式(8)，从而对多步的迭代进行化简，能够仅仅使用一步求出正向过程的任意时刻的状态：</p>
 <div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">def</span> <span class="pl-en">add_noise</span>(<span class="pl-s1">x_0</span>, <span class="pl-s1">t</span>):
