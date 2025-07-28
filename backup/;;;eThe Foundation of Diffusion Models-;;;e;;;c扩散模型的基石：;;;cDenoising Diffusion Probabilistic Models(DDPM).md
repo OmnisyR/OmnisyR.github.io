@@ -79,13 +79,13 @@ for timestep in tqdm(range(timesteps)):
 
 $$
 \begin{align}
-x_t &= \sqrt{\alpha_t} x_{t - 1} + \sqrt{1 - \alpha_t}\tilde{\epsilon}_t
+x_t &= \sqrt{\alpha_t} x_{t - 1} + \sqrt{1 - \alpha_t}\tilde{\epsilon}\_t
 \tag{4}
 \\
-&= \sqrt{\alpha_t}(\sqrt{\alpha_{{t - 1}}} x_{t - 2} + \sqrt{1 - \alpha_{t - 1}}\tilde{\epsilon}_{t - 1}) + \sqrt{1 - \alpha_t}\tilde{\epsilon}_t
+&= \sqrt{\alpha_t}(\sqrt{\alpha_{{t - 1}}} x_{t - 2} + \sqrt{1 - \alpha_{t - 1}}\tilde{\epsilon}\_{t - 1}) + \sqrt{1 - \alpha_t}\tilde{\epsilon}\_t
 \tag{5}
 \\
-&= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 2} + \sqrt{\alpha_t(1 - \alpha_{t - 1})}\tilde{\epsilon}_{t - 1} + \sqrt{1 - \alpha_t}\tilde{\epsilon}_t
+&= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 2} + \sqrt{\alpha_t(1 - \alpha_{t - 1})}\tilde{\epsilon}\_{t - 1} + \sqrt{1 - \alpha_t}\tilde{\epsilon}\_t
 \tag{6}
 \\
 &= \sqrt{\alpha_t\alpha_{t - 1}}x_{t - 2} + \mathcal{N}(0, \alpha_t(1 - \alpha_{t - 1})) + \mathcal{N}(0, 1 - \alpha_t)
