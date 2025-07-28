@@ -122,3 +122,9 @@ torchvision.io.write_png(transform_reverse(x_t).clip(0, 255).to(torch.uint8).cpu
 ```
 
 ## 逆向过程
+相较正向过程，逆向过程则会复杂很多。逆向过程的目标是对于给定的$x_T \sim p_\theta(x_T) = \mathcal{N}(0, I)$，需要一个概率模型，能够使得$x_T$由标准高斯分布，转变为原始数据集的似然估计，即：
+
+$$
+p_\theta(x_0|x_T) = p_\theta(x_T)\prod_{t = 0}^{T - 1}q(x_t|x_{t + 1})
+\tag{11}
+$$

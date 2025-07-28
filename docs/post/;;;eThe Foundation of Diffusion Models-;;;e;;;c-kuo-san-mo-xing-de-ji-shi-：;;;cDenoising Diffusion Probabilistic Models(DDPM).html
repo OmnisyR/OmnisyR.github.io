@@ -203,7 +203,12 @@ $$</p>
 <span class="pl-s1">timestep</span> <span class="pl-c1">=</span> <span class="pl-c1">200</span>
 <span class="pl-s1">x_t</span> <span class="pl-c1">=</span> <span class="pl-en">add_noise</span>(<span class="pl-s1">x_0</span>, <span class="pl-s1">timestep</span>)
 <span class="pl-s1">torchvision</span>.<span class="pl-c1">io</span>.<span class="pl-c1">write_png</span>(<span class="pl-en">transform_reverse</span>(<span class="pl-s1">x_t</span>).<span class="pl-c1">clip</span>(<span class="pl-c1">0</span>, <span class="pl-c1">255</span>).<span class="pl-c1">to</span>(<span class="pl-s1">torch</span>.<span class="pl-c1">uint8</span>).<span class="pl-c1">cpu</span>(), <span class="pl-s">'%s.png'</span> <span class="pl-c1">%</span> <span class="pl-s1">timestep</span>)</pre></div>
-<h2>逆向过程</h2></div>
+<h2>逆向过程</h2>
+<p>相较正向过程，逆向过程则会复杂很多。逆向过程的目标是对于给定的$x_T \sim p_\theta(x_T) = \mathcal{N}(0, I)$，需要一个概率模型，能够使得$x_T$由标准高斯分布，转变为原始数据集的似然估计，即：</p>
+<p>$$
+p_\theta(x_0|x_T) = p_\theta(x_T)\prod_{t = 0}^{T - 1}q(x_t|x_{t + 1})
+\tag{11}
+$$</p></div>
 <div style="font-size:small;margin-top:8px;float:right;">转载文章请注明出处</div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
