@@ -135,5 +135,9 @@ $$
 $$
 \begin{align}
 q(x_{t - 1}|x_t) &= \frac{q(x_t|x_{t - 1})q(x_{t - 1})}{q(x_t)}
+\tag{12}
+\\
+&= \frac{q(x_t|x_{t - 1})q(x_{t - 1}|x_0)}{q(x_t|x_0)}
+\tag{13}
 \end{align}
 $$
