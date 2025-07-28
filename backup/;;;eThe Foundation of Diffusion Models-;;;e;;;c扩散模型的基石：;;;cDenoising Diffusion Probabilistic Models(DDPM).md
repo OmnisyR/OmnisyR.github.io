@@ -145,5 +145,8 @@ $$
 式(13)的三个概率都是已知的，必然可以求解，设后验分布$q(x_{t - 1}|x_t) = \mathcal{N}(\tilde{\mu}, \Sigma) = \frac{1}{\sqrt{2\pi\Sigma}}e^{\frac{(x_{t - 1} - \tilde{\mu})^2}{\Sigma}}$，则有：
 
 $$
-
+\begin{align}
+\frac{(x_{t - 1} - \tilde{\mu})^2}{\Sigma} &= \frac{(x_t - \sqrt{\alpha_t}x_{t - 1})^2}{1 - \alpha_t} + \frac{(x_{t - 1} - \sqrt{\bar{\alpha}_{t - 1}}x_0)^2}{1 - \bar{\alpha}\_t} - \frac{(x_t - \sqrt{\bar{\alpha}_t}x_0)^2}{1 - \bar{\alpha}_t}
+\tag{14}
+\end{align}
 $$
