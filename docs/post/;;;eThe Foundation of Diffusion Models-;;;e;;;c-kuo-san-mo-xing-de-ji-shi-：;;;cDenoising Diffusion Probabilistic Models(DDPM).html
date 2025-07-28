@@ -227,6 +227,23 @@ $$</p>
 \tag{14}
 \\
 &amp;= (\frac{\alpha_t}{1 - \alpha_t} + \frac{1}{1 - \bar{\alpha}_{t - 1}})x^2_{t - 1} - 2((\frac{\sqrt{\alpha_t}}{1 - \alpha_t}x_t + \frac{\sqrt{\bar{\alpha}_{t - 1}}}{1 - \bar{\alpha}_{t - 1}}x_0)x_{t - 1} + C(x_0, x_t)
+\tag{15}
+\end{align}
+$$</p>
+<p>其中，$C(x_0, x_t)$为不含$x_{t - 1}$的项，通过左右比对，易得：</p>
+<p>$$
+\begin{align}
+\Sigma &amp;= \frac{1}{\frac{\alpha_t}{1 - \alpha_t} + \frac{1}{1 - \bar{\alpha}_{t - 1}}}
+\tag{16}
+\\
+&amp;= \frac{1 - \bar{\alpha}_{t - 1}}{1 - \bar{\alpha}t}\beta_t
+\tag{17}
+\\
+\tilde{\mu} &amp;= ((\frac{\sqrt{\alpha_t}}{1 - \alpha_t}x_t + \frac{\sqrt{\bar{\alpha}_{t - 1}}}{1 - \bar{\alpha}_{t - 1}}x_0)\Sigma
+\tag{18}
+\\
+&amp;= \frac{(1 - \bar{\alpha}_{t - 1})\sqrt{\alpha_t}}{1 - \bar{\alpha}t}x_t + \frac{\sqrt{\bar{\alpha}_{t - 1}}}{1 - \bar{\alpha}_t}\beta_tx_0
+\tag{19}
 \end{align}
 $$</p></div>
 <div style="font-size:small;margin-top:8px;float:right;">转载文章请注明出处</div>
