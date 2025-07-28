@@ -20,6 +20,7 @@ $$
 ;;;;重参数化技巧::对于概率$p(x|y) = \mathcal{N}(x|ay, b)$，即$x$服从一个均值为$ay$，标准差为$\sqrt{b}$的高斯分布，那么则有$x = ay + \sqrt{b}\epsilon$，其中$\epsilon \sim \mathcal{N}(0, 1)$。;;;;
 ;;;;下方的代码::默认使用GPU加速的pytorch代码，不使用GPU加速会很难跑得动扩散模型。;;;;
 ;;;;高斯分布的加法法则::$\mathcal{N}(\mu_1, \sigma^2_1) + \mathcal{N}(\mu_2, \sigma^2_2) = \mathcal{N}(\mu_1 + \mu_2, \sigma^2_1 + \sigma^2_2)$。;;;;
+;;;;贝叶斯定理::$P(A|B) = \frac{P(B|A)P(A)}{P(B)}$。;;;;
 \denotes
 ## 介绍
 
@@ -125,6 +126,14 @@ torchvision.io.write_png(transform_reverse(x_t).clip(0, 255).to(torch.uint8).cpu
 相较正向过程，逆向过程则会复杂很多。逆向过程的目标是对于给定的$x_T \sim p_\theta(x_T) = \mathcal{N}(0, I)$，需要一个概率模型，能够使得$x_T$由标准高斯分布，转变为原始数据集的似然估计，即：
 
 $$
-p_\theta(x_0|x_T) = p_\theta(x_T)\prod_{t = 0}^{T - 1}q(x_t|x_{t + 1})
+p_\theta(x_0|x_T) = p_\theta(x_T)\prod_{t = 0}^{T - 1}p_\theta(x_t|x_{t + 1})
 \tag{11}
+$$
+
+其中，$p_\theta(x_t|x_{t + 1})$是完全未知的，对此，考虑正向过程$q(x_t|x_{t - 1})$的后验分布$q(x_{t - 1}|x_t)$，由`贝叶斯定理`：
+
+$$
+\begin{align}
+q(x_{t - 1}|x_t) &= \frac{q(x_t|x_{t - 1})q(x_{t - 1})}{q(x_t)}
+\end{align}
 $$
