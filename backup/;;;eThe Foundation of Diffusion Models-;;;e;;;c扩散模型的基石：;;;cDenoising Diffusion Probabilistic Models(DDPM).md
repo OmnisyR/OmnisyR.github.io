@@ -142,4 +142,8 @@ q(x_{t - 1}|x_t) &= \frac{q(x_t|x_{t - 1})q(x_{t - 1})}{q(x_t)}
 \end{align}
 $$
 
-式(13)的三个概率都是已知的，必然可以求解，设后验分布$q(x_{t - 1}|x_t) = \mathcal{N}(\tilde{\mu}, \sum) = \frac{1}{\sigma\sqrt{2\pi}}e^{\frac{(x_{t - 1} - \tilde{\mu})^2}{\sum}}$，则有：
+式(13)的三个概率都是已知的，必然可以求解，设后验分布$q(x_{t - 1}|x_t) = \mathcal{N}(\tilde{\mu}, \Sigma) = \frac{1}{\sqrt{2\pi\Sigma}}e^{\frac{(x_{t - 1} - \tilde{\mu})^2}{\Sigma}}$，则有：
+
+$$
+
+$$
