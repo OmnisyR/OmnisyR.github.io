@@ -1,19 +1,9 @@
 const denotes = new Map();
 
-function initMathJax() {
-  document.body.insertAdjacentHTML(
-    'beforeend',
-    `
-    <script>MathJax = {tex: {inlineMath: [["$", "$"]]}};</script>
-    <script async="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    `
-  )
-}
-
 document.addEventListener('DOMContentLoaded', function() {
   var container = document.getElementById('content')
   container.innerHTML = container.innerHTML.replace(/\\denotes([\s\S]*?)\\denotes/gm, (match, content) => {
-    content.replace(/\;;;;(.*?);;;;/g, (m, c) => {
+    content.replace(/\;;;;([\s\S]*?);;;;/g, (m, c) => {
       let arr = c.split('::')
       denotes.set(arr[0], arr[1])
       return ''
