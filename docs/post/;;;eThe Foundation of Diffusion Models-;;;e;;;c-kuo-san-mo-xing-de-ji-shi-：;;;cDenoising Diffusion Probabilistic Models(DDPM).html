@@ -252,10 +252,11 @@ $$</p>
 \tilde{\mu} &amp;= \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}_t)}}\epsilon_t(x_t, t)
 \tag{20}
 \\
-x_{t - 1} &amp;= \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}_t)}}\epsilon_t(x_t, t) + \sqrt{\frac{1 - \bar{\alpha}_{t - 1}}{1 - \bar{\alpha}_t}\beta_t}
+x_{t - 1} &amp;= \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}_t)}}\epsilon_t(x_t, t) + \sqrt{\frac{1 - \bar{\alpha}_{t - 1}}{1 - \bar{\alpha}_t}\beta_t}\epsilon
 \tag{21}
 \end{align}
-$$</p></div>
+$$</p>
+<p>其中，$\epsilon_t(x_t, t)$的含义为，对于给定的时刻$t$，从初始状态，经过一步的正向过程成为该时刻状态$x_t$，所需要的噪声。</p></div>
 <div style="font-size:small;margin-top:8px;float:right;">转载文章请注明出处</div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
