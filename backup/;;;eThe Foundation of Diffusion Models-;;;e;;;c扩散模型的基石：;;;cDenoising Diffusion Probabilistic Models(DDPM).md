@@ -28,7 +28,7 @@ $$
 扩散模型的正向过程为，对原始的图像进行一步步地噪声添加，从而在最终阶段，使得图片完全服从噪声分布，一般地，使用高斯噪声来进行这个过程。对于离散的时间$t = 0, 1, \dots, T$，在扩散模型遵循的`马尔可夫链`过程中，对于给定的$x_0 \sim q(x_0)$，即原始图像作为初始阶段，和$x_T \sim q(x_T) = \mathcal{N}(0, I)$，即完全服从标准高斯噪声的图像作为最终阶段。其各个阶段$x_0, x_1, \dots, x_T$的概率分布服从以下公式：
 
 $$
-q(x_T|x_0) = q(x_0)\prod_{t = 0}^{T - 1}q(x_{t + 1}|x_{t})
+q(x_T|x_0) = q(x_0)\prod_{t = 1}^Tq(x_t|x_{t - 1})
 \tag{1}
 $$
 
@@ -126,14 +126,14 @@ torchvision.io.write_png(transform_reverse(x_t).clip(0, 255).to(torch.uint8).cpu
 相较正向过程，逆向过程则会复杂很多。逆向过程的目标是对于给定的$x_T \sim p_\theta(x_T) = \mathcal{N}(0, I)$，需要一个概率模型，能够使得$x_T$由标准高斯分布，转变为原始数据集的似然估计，即：
 
 $$
-p_\theta(x_0|x_T) = p_\theta(x_T)\prod_{t = 0}^{T - 1}p_\theta(x_t|x_{t + 1})
+p_\theta(x_0|x_T) = p_\theta(x_T)\prod_{t = 1}^Tp_\theta(x_{t - 1}|x_t)
 \tag{11}
 $$
 
 对后验分布进行极大似然估计，其对数损失为：
 
 $$
-L_\theta = -\log p_\theta(x_0) = -\log (p_\theta(x_T)\prod_{t = 0}^{T - 1}p_\theta(x_t|x_{t + 1}))
+L_\theta = -\log p_\theta(x_0) = -\log (p_\theta(x_T)\prod_{t = 1}^Tp_\theta(x_{t - 1}|x_t))
 \tag{12}
 $$
 
@@ -141,7 +141,7 @@ $$
 
 $$
 \begin{align}
-L_\theta &\leq -\log p_\theta(x_0) + D_{KL}(q(x_{1:T}|x_0)||p_\theta(x_{1:T}|x_0)) = L_{VLB}
+L_\theta \leq L_{VLB} &= -\log p_\theta(x_0) + D_{KL}(q(x_{1:T}|x_0)||p_\theta(x_{1:T}|x_0))
 \tag{13}
 \\
 &= -\log p_\theta(x_0) + E_{q(x_{1:T}|x_0)}\log\frac{q(x_{1:T}|x_0)}{p_\theta(x_{1:T}|x_0)}
@@ -171,6 +171,9 @@ L_{VLB} &= -\log p_\theta(x_0) + E_{q(x_{1:T}|x_0)}\log\frac{q(x_{1:T}|x_0)p_\th
 \\
 &= E_{q(x_{1:T}|x_0)}\log\frac{q(x_{1:T}|x_0)}{p_\theta(x_{0:T})}
 \tag{19}
+\\
+&= E_{q(x_{1:T}|x_0)}\log\frac{\prod_{t = 1}^Tq(x_t|x_{t - 1})}{p_\theta(x_T)\prod_{t = 1}^Tp_\theta(x_{t - 1}|x_t)}
+\tag{20}
 \end{align}
 $$
 
