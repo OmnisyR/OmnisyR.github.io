@@ -133,7 +133,7 @@ $$
 对后验分布进行极大似然估计，其对数损失为：
 
 $$
--\log p_\theta(x_0) = -\log (p_\theta(x_T)\prod_{t = 0}^{T - 1}p_\theta(x_t|x_{t + 1}))
+L_\theta = -\log p_\theta(x_0) = -\log (p_\theta(x_T)\prod_{t = 0}^{T - 1}p_\theta(x_t|x_{t + 1}))
 \tag{12}
 $$
 
@@ -141,10 +141,10 @@ $$
 
 $$
 \begin{align}
--\log p_\theta(x_0) &\leq -\log p_\theta(x_0) + D_{KL}(q(x_{1:T}|x_0)||p\theta(x_{1:T}|x_0))
+L_\theta &\leq -\log p_\theta(x_0) + D_{KL}(q(x_{1:T}|x_0)||p_\theta(x_{1:T}|x_0)) = L_{VLB}
 \tag{13}
 \\
-&= -\log p_\theta(x_0) + E_{q(x_{1:T}|x_0)}\log\frac{q(x_{1:T}|x_0)}{p\theta(x_{1:T}|x_0)}
+&= -\log p_\theta(x_0) + E_{q(x_{1:T}|x_0)}\log\frac{q(x_{1:T}|x_0)}{p_\theta(x_{1:T}|x_0)}
 \tag{14}
 \end{align}
 $$
@@ -152,7 +152,7 @@ $$
 根据`贝叶斯定理`：
 
 $$
-p\theta(x_{1:T}|x_0) = \frac{p\theta(x_0|x_{1:T})p\theta(x_{1:T})}{p\theta(x_0)} = \frac{p\theta(x_0, x_{1:T})}{p\theta(x_0)} = \frac{p\theta(x_{0:T})}{p\theta(x_0)}
+p_\theta(x_{1:T}|x_0) = \frac{p_\theta(x_0|x_{1:T})p_\theta(x_{1:T})}{p_\theta(x_0)} = \frac{p_\theta(x_0, x_{1:T})}{p_\theta(x_0)} = \frac{p_\theta(x_{0:T})}{p_\theta(x_0)}
 \tag{15}
 $$
 
@@ -160,7 +160,7 @@ $$
 
 $$
 \begin{align}
--\log p_\theta(x_0) + E_{q(x_{1:T}|x_0)}\log\frac{q(x_{1:T}|x_0)}{p_\theta(x_{1:T}|x_0)} &= -\log p_\theta(x_0) + E_{q(x_{1:T}|x_0)}\log\frac{q(x_{1:T}|x_0)p_\theta(x_0)}{p_\theta(x_{0:T})}
+L_{VLB} &= -\log p_\theta(x_0) + E_{q(x_{1:T}|x_0)}\log\frac{q(x_{1:T}|x_0)p_\theta(x_0)}{p_\theta(x_{0:T})}
 \tag{16}
 \\
 &= -\log p_\theta(x_0) + E_{q(x_{1:T}|x_0)}\log\frac{q(x_{1:T}|x_0)}{p_\theta(x_{0:T})} + E_{q(x_{1:T}|x_0)}\log p_\theta(x_0)
