@@ -250,8 +250,31 @@ L_{VLB} &amp;= -\log p_\theta(x_0) + E_{q(x_{1:T}|x_0)}\log\frac{q(x_{1:T}|x_0)p
 \\
 &amp;= -E_{q(x_{1:T}|x_0)}\log p_\theta(x_T) + \sum^T_{t = 1}E_{q(x_{1:T}|x_0)}\log \frac{q(x_t|x_{t - 1})}{p_\theta(x_{t - 1}|x_t)}
 \tag{21}
+\\
+&amp;= -E_{q(x_{1:T}|x_0)}\log p_\theta(x_T) + E_{q(x_{1:T}|x_0)}\log \frac{q(x_1|x_0)}{p_\theta(x_{0}|x_1)} + \sum^T_{t = 2}E_{q(x_{1:T}|x_0)}\log \frac{q(x_t|x_{t - 1})}{p_\theta(x_{t - 1}|x_t)}
+\tag{22}
+\\
+&amp;= -E_{q(x_{1:T}|x_0)}\log p_\theta(x_T) + E_{q(x_{1:T}|x_0)}\log \frac{q(x_1|x_0)}{p_\theta(x_{0}|x_1)} + \sum^T_{t = 2}E_{q(x_{1:T}|x_0)}\log \frac{q(x_{t - 1}|x_t, x_0)q(x_t|x_0)}{p_\theta(x_{t - 1}|x_t)q(x_{t - 1}|x_0)}
+\tag{23}
+\\
+&amp;= -E_{q(x_{1:T}|x_0)}\log p_\theta(x_T) + E_{q(x_{1:T}|x_0)}\log \frac{q(x_1|x_0)}{p_\theta(x_{0}|x_1)} + \sum^T_{t = 2}E_{q(x_{1:T}|x_0)}\log \frac{q(x_{t - 1}|x_t, x_0)}{p_\theta(x_{t - 1}|x_t)} + \sum^T_{t = 2}E_{q(x_{1:T}|x_0)}\log \frac{q(x_t|x_0)}{q(x_{t - 1}|x_0)}
+\tag{24}
+\\
+&amp;= -E_{q(x_{1:T}|x_0)}\log p_\theta(x_T) + E_{q(x_{1:T}|x_0)}\log \frac{q(x_1|x_0)}{p_\theta(x_{0}|x_1)} + \sum^T_{t = 2}E_{q(x_{1:T}|x_0)}\log \frac{q(x_{t - 1}|x_t, x_0)}{p_\theta(x_{t - 1}|x_t)} + E_{q(x_{1:T}|x_0)}\log \frac{q(x_T|x_0)q(x_{T - 1}|x_0)\dots q(x_2|x_0)}{q(x_{T - 1}|x_0)q(x_{T - 2}|x_0)\dots q(x_1|x_0)}
+\tag{25}
+\\
+&amp;= -E_{q(x_{1:T}|x_0)}\log p_\theta(x_T) + E_{q(x_{1:T}|x_0)}\log \frac{q(x_1|x_0)}{p_\theta(x_{0}|x_1)} + \sum^T_{t = 2}E_{q(x_{1:T}|x_0)}\log \frac{q(x_{t - 1}|x_t, x_0)}{p_\theta(x_{t - 1}|x_t)} + E_{q(x_{1:T}|x_0)}\log \frac{q(x_T|x_0)}{q(x_1|x_0)}
+\tag{26}
+\\
+&amp;= -E_{q(x_{1:T}|x_0)}\log p_\theta(x_T) + E_{q(x_{1:T}|x_0)}\log \frac{q(x_T|x_0)}{p_\theta(x_{0}|x_1)} + \sum^T_{t = 2}E_{q(x_{1:T}|x_0)}\log \frac{q(x_{t - 1}|x_t, x_0)}{p_\theta(x_{t - 1}|x_t)}
+\tag{27}
+\\
+&amp;= E_{q(x_{1:T}|x_0)}\log \frac{q(x_T|x_0)}{p_\theta(x_T)} - E_{q(x_{1:T}|x_0)}\log p_\theta(x_{0}|x_1) + \sum^T_{t = 2}E_{q(x_{1:T}|x_0)}\log \frac{q(x_{t - 1}|x_t, x_0)}{p_\theta(x_{t - 1}|x_t)}
+\tag{28}
 \end{align}
 $$</p>
+<pre class="notranslate"><code class="notranslate">==========================================================================================================================================
+</code></pre>
 <p>考虑正向过程$q(x_t|x_{t - 1})$的后验分布$q(x_{t - 1}|x_t)$，由贝叶斯定理：</p>
 <p>$$
 \begin{align}
