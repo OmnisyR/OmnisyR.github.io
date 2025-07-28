@@ -219,7 +219,8 @@ q(x_{t - 1}|x_t) &amp;= \frac{q(x_t|x_{t - 1})q(x_{t - 1})}{q(x_t)}
 &amp;= \frac{q(x_t|x_{t - 1})q(x_{t - 1}|x_0)}{q(x_t|x_0)}
 \tag{13}
 \end{align}
-$$</p></div>
+$$</p>
+<p>式(13)的三个概率都是已知的，必然可以求解，设后验分布$q(x_{t - 1}|x_t) = \mathcal{N}(\tilde{\mu}, \sum) = \frac{1}{\sigma\sqrt{2\pi}}e^{\frac{(x_{t - 1} - \tilde{\mu})^2}{\sum}}$，则有：</p></div>
 <div style="font-size:small;margin-top:8px;float:right;">转载文章请注明出处</div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
