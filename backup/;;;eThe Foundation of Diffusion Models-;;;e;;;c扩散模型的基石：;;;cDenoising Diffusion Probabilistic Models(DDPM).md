@@ -172,9 +172,14 @@ $$
 \end{align}
 $$
 
-又由式(10)，可将$x_0$转换为$x_t$来进行表达，则：
+又由式(10)，可将$x_0$转换为$x_t$来进行表达，从而：
 
 $$
-\tilde{\mu} = \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}_t)}}
+\begin{align}
+\tilde{\mu} &= \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}\_t)}}\epsilon_t(x_t, t)
 \tag{20}
+\\
+x_{t - 1} &= \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}_t)}}\epsilon_t(x_t, t) + \sqrt{\frac{1 - \bar{\alpha}\_{t - 1}}{1 - \bar{\alpha}\_t}\beta_t}
+\tag{21}
+\end{align}
 $$
