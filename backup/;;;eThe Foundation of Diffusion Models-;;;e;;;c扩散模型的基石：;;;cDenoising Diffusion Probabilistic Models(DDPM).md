@@ -130,7 +130,51 @@ p_\theta(x_0|x_T) = p_\theta(x_T)\prod_{t = 0}^{T - 1}p_\theta(x_t|x_{t + 1})
 \tag{11}
 $$
 
-其中，$p_\theta(x_t|x_{t + 1})$是完全未知的，对此，考虑正向过程$q(x_t|x_{t - 1})$的后验分布$q(x_{t - 1}|x_t)$，由`贝叶斯定理`：
+对后验分布进行极大似然估计，其对数损失为：
+
+$$
+-\log p_\theta(x_0) = -\log (p_\theta(x_T)\prod_{t = 0}^{T - 1}p_\theta(x_t|x_{t + 1}))
+\tag{12}
+$$
+
+其中，$p_\theta(x_t|x_{t + 1})$是完全未知的，无法求解，因此考虑令该损失的上界尽可能的小。由于KL散度是非负的，所以：
+
+$$
+\begin{align}
+-\log p_\theta(x_0) &\leq -\log p_\theta(x_0) + D_{KL}(q(x_{1:T}|x_0)||p\theta(x_{1:T}|x_0))
+\tag{13}
+\\
+&= -\log p_\theta(x_0) + E_{q(x_{1:T}|x_0)}\log\frac{q(x_{1:T}|x_0)}{p\theta(x_{1:T}|x_0)}
+\tag{14}
+\end{align}
+$$
+
+根据`贝叶斯定理`：
+
+$$
+p\theta(x_{1:T}|x_0) = \frac{p\theta(x_0|x_{1:T})p\theta(x_{1:T})}{p\theta(x_0)} = \frac{p\theta(x_0, x_{1:T})}{p\theta(x_0)} = \frac{p\theta(x_{0:T})}{p\theta(x_0)}
+\tag{15}
+$$
+
+因此：
+
+$$
+\begin{align}
+-\log p_\theta(x_0) + E_{q(x_{1:T}|x_0)}\log\frac{q(x_{1:T}|x_0)}{p_\theta(x_{1:T}|x_0)} &= -\log p_\theta(x_0) + E_{q(x_{1:T}|x_0)}\log\frac{q(x_{1:T}|x_0)p_\theta(x_0)}{p_\theta(x_{0:T})}
+\tag{16}
+\\
+&= -\log p_\theta(x_0) + E_{q(x_{1:T}|x_0)}\log\frac{q(x_{1:T}|x_0)}{p_\theta(x_{0:T})} + E_{q(x_{1:T}|x_0)}\log p_\theta(x_0)
+\tag{17}
+\\
+&= -\log p_\theta(x_0) + E_{q(x_{1:T}|x_0)}\log\frac{q(x_{1:T}|x_0)}{p_\theta(x_{0:T})} + \log p_\theta(x_0)
+\tag{18}
+\\
+&= E_{q(x_{1:T}|x_0)}\log\frac{q(x_{1:T}|x_0)}{p_\theta(x_{0:T})}
+\tag{19}
+\end{align}
+$$
+
+考虑正向过程$q(x_t|x_{t - 1})$的后验分布$q(x_{t - 1}|x_t)$，由贝叶斯定理：
 
 $$
 \begin{align}
@@ -184,4 +228,4 @@ x_{t - 1} &= \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1
 \end{align}
 $$
 
-其中，$\epsilon_t(x_t, t)$的含义为，对于给定的时刻$t$，从初始状态，经过一步的正向过程成为该时刻状态$x_t$，所需要的噪声。
+其中，$\epsilon_t(x_t, t)$的含义为，对于给定的时刻$t$，从初始状态$x_0$，经过一步的正向过程成为该时刻状态$x_t$，所需要的噪声。
