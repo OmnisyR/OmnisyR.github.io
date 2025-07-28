@@ -142,7 +142,7 @@ q(x_{t - 1}|x_t) &= \frac{q(x_t|x_{t - 1})q(x_{t - 1})}{q(x_t)}
 \end{align}
 $$
 
-式(13)的三个概率都是已知的，必然可以求解，设后验分布$q(x_{t - 1}|x_t) = \mathcal{N}(\tilde{\mu}, \Sigma) = \frac{1}{\sqrt{2\pi\Sigma}}e^{\frac{(x_{t - 1} - \tilde{\mu})^2}{\Sigma}}$，则有：
+式(13)的三个概率都是已知的，必然可以求解，设后验分布$q(x_{t - 1}|x_t) = \mathcal{N}(\tilde{\mu}, \Sigma)$，则有：
 
 $$
 \begin{align}
@@ -170,4 +170,11 @@ $$
 &= \frac{(1 - \bar{\alpha}\_{t - 1})\sqrt{\alpha_t}}{1 - \bar{\alpha}\_t}x_t + \frac{\sqrt{\bar{\alpha}_{t - 1}}}{1 - \bar{\alpha}_t}\beta_tx_0
 \tag{19}
 \end{align}
+$$
+
+又由式(10)，可将$x_0$转换为$x_t$来进行表达，则：
+
+$$
+\tilde{\mu} = \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}_t)}}
+\tag{20}
 $$
