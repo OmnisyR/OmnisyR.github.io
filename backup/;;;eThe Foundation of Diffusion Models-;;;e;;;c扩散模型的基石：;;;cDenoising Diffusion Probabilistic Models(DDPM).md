@@ -146,7 +146,9 @@ $$
 
 $$
 \begin{align}
-\frac{(x_{t - 1} - \tilde{\mu})^2}{\Sigma} &= \frac{(x_t - \sqrt{\alpha_t}x_{t - 1})^2}{1 - \alpha_t} + \frac{(x_{t - 1} - \sqrt{\bar{\alpha}_{t - 1}}x_0)^2}{1 - \bar{\alpha}\_t} - \frac{(x_t - \sqrt{\bar{\alpha}_t}x_0)^2}{1 - \bar{\alpha}_t}
+\frac{(x_{t - 1} - \tilde{\mu})^2}{\Sigma} &= \frac{(x_t - \sqrt{\alpha_t}x_{t - 1})^2}{1 - \alpha_t} + \frac{(x_{t - 1} - \sqrt{\bar{\alpha}\_{t - 1}}x_0)^2}{1 - \bar{\alpha}\_{t - 1}} - \frac{(x_t - \sqrt{\bar{\alpha}\_t}x_0)^2}{1 - \bar{\alpha}\_t}
 \tag{14}
+\\
+&= (\frac{\alpha_t}{1 - \alpha_t} + \frac{1}{1 - \bar{\alpha}\_{t - 1}})x^2_{t - 1} - 2((\frac{\sqrt{\alpha_t}}{1 - \alpha_t}x_t + \frac{\sqrt{\bar{\alpha}\_{t - 1}}}{1 - \bar{\alpha}\_{t - 1}}x_0)x_{t - 1} + C(x_0, x_t)
 \end{align}
 $$
