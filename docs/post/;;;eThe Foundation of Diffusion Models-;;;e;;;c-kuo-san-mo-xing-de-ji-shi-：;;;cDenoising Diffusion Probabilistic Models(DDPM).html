@@ -248,34 +248,34 @@ L_{VLB} &amp;= -\log p_\theta(x_0) + E_{q(x_{1:T}|x_0)}\log\frac{q(x_{1:T}|x_0)p
 &amp;= E_{q(x_{1:T}|x_0)}\log\frac{\prod^T_{t = 1}q(x_t|x_{t - 1})}{p_\theta(x_T)\prod^T_{t = 1}p_\theta(x_{t - 1}|x_t)}
 \tag{20}
 \\
-&amp;= E_{q(x_{1:T}|x_0)}(-\log p_\theta(x_T) + \sum^T_{t = 1} \log \frac{q(x_t|x_{t - 1})}{p_\theta(x_{t - 1}|x_t)})
+&amp;= E_{q(x_{1:T}|x_0)}[-\log p_\theta(x_T) + \sum^T_{t = 1} \log \frac{q(x_t|x_{t - 1})}{p_\theta(x_{t - 1}|x_t)}]
 \tag{21}
 \\
-&amp;= E_{q(x_{1:T}|x_0)}(-\log p_\theta(x_T) + \log \frac{q(x_1|x_0)}{p_\theta(x_{0}|x_1)} + \sum^T_{t = 2} \log \frac{q(x_t|x_{t - 1})}{p_\theta(x_{t - 1}|x_t)})
+&amp;= E_{q(x_{1:T}|x_0)}[-\log p_\theta(x_T) + \log \frac{q(x_1|x_0)}{p_\theta(x_{0}|x_1)} + \sum^T_{t = 2} \log \frac{q(x_t|x_{t - 1})}{p_\theta(x_{t - 1}|x_t)}]
 \tag{22}
 \\
-&amp;= E_{q(x_{1:T}|x_0)}(-\log p_\theta(x_T) + \log \frac{q(x_1|x_0)}{p_\theta(x_{0}|x_1)} + \sum^T_{t = 2} \log \frac{q(x_{t - 1}|x_t, x_0)q(x_t|x_0)}{p_\theta(x_{t - 1}|x_t)q(x_{t - 1}|x_0)})
+&amp;= E_{q(x_{1:T}|x_0)}[-\log p_\theta(x_T) + \log \frac{q(x_1|x_0)}{p_\theta(x_{0}|x_1)} + \sum^T_{t = 2} \log \frac{q(x_{t - 1}|x_t, x_0)q(x_t|x_0)}{p_\theta(x_{t - 1}|x_t)q(x_{t - 1}|x_0)}]
 \tag{23}
 \\
-&amp;= E_{q(x_{1:T}|x_0)}(-\log p_\theta(x_T) + \log \frac{q(x_1|x_0)}{p_\theta(x_{0}|x_1)} + \sum^T_{t = 2} \log \frac{q(x_{t - 1}|x_t, x_0)}{p_\theta(x_{t - 1}|x_t)}
+&amp;= E_{q(x_{1:T}|x_0)}[-\log p_\theta(x_T) + \log \frac{q(x_1|x_0)}{p_\theta(x_{0}|x_1)} + \sum^T_{t = 2} \log \frac{q(x_{t - 1}|x_t, x_0)}{p_\theta(x_{t - 1}|x_t)}
 \\
-&amp;\quad +  \sum^T_{t = 2} \log \frac{q(x_t|x_0)}{q(x_{t - 1}|x_0)})
+&amp;\quad +  \sum^T_{t = 2} \log \frac{q(x_t|x_0)}{q(x_{t - 1}|x_0)}]
 \tag{24}
 \\
-&amp;= E_{q(x_{1:T}|x_0)}(-\log p_\theta(x_T) + \log \frac{q(x_1|x_0)}{p_\theta(x_{0}|x_1)} + \sum^T_{t = 2} \log \frac{q(x_{t - 1}|x_t, x_0)}{p_\theta(x_{t - 1}|x_t)}
+&amp;= E_{q(x_{1:T}|x_0)}[-\log p_\theta(x_T) + \log \frac{q(x_1|x_0)}{p_\theta(x_{0}|x_1)} + \sum^T_{t = 2} \log \frac{q(x_{t - 1}|x_t, x_0)}{p_\theta(x_{t - 1}|x_t)}
 \\
-&amp;\quad + \log \frac{q(x_T|x_0)q(x_{T - 1}|x_0)\dots q(x_2|x_0)}{q(x_{T - 1}|x_0)q(x_{T - 2}|x_0)\dots q(x_1|x_0)})
+&amp;\quad + \log \frac{q(x_T|x_0)q(x_{T - 1}|x_0)\dots q(x_2|x_0)}{q(x_{T - 1}|x_0)q(x_{T - 2}|x_0)\dots q(x_1|x_0)}]
 \tag{25}
 \\
-&amp;= E_{q(x_{1:T}|x_0)}(-\log p_\theta(x_T) + \log \frac{q(x_1|x_0)}{p_\theta(x_{0}|x_1)} + \sum^T_{t = 2} \log \frac{q(x_{t - 1}|x_t, x_0)}{p_\theta(x_{t - 1}|x_t)}
+&amp;= E_{q(x_{1:T}|x_0)}[-\log p_\theta(x_T) + \log \frac{q(x_1|x_0)}{p_\theta(x_{0}|x_1)} + \sum^T_{t = 2} \log \frac{q(x_{t - 1}|x_t, x_0)}{p_\theta(x_{t - 1}|x_t)}
 \\
-&amp;\quad + \log \frac{q(x_T|x_0)}{q(x_1|x_0)})
+&amp;\quad + \log \frac{q(x_T|x_0)}{q(x_1|x_0)}]
 \tag{26}
 \\
-&amp;= E_{q(x_{1:T}|x_0)}(-\log p_\theta(x_T) + \log \frac{q(x_T|x_0)}{p_\theta(x_{0}|x_1)} + \sum^T_{t = 2} \log \frac{q(x_{t - 1}|x_t, x_0)}{p_\theta(x_{t - 1}|x_t)})
+&amp;= E_{q(x_{1:T}|x_0)}[-\log p_\theta(x_T) + \log \frac{q(x_T|x_0)}{p_\theta(x_{0}|x_1)} + \sum^T_{t = 2} \log \frac{q(x_{t - 1}|x_t, x_0)}{p_\theta(x_{t - 1}|x_t)}]
 \tag{27}
 \\
-&amp;= E_{q(x_{1:T}|x_0)}(\log \frac{q(x_T|x_0)}{p_\theta(x_T)} - \log p_\theta(x_{0}|x_1) + \sum^T_{t = 2} \log \frac{q(x_{t - 1}|x_t, x_0)}{p_\theta(x_{t - 1}|x_t)})
+&amp;= E_{q(x_{1:T}|x_0)}[\log \frac{q(x_T|x_0)}{p_\theta(x_T)} - \log p_\theta(x_{0}|x_1) + \sum^T_{t = 2} \log \frac{q(x_{t - 1}|x_t, x_0)}{p_\theta(x_{t - 1}|x_t)}]
 \tag{28}
 \\
 &amp;= E_{q(x_T|x_0)}\log \frac{q(x_T|x_0)}{p_\theta(x_T)} - E_{q(x_1|x_0)}\log p_\theta(x_{0}|x_1) + \sum^T_{t = 2} E_{q(x_t, x_{t - 1}|x_0)}\log \frac{q(x_{t - 1}|x_t, x_0)}{p_\theta(x_{t - 1}|x_t)}
@@ -299,7 +299,9 @@ L_{VLB} &amp;= E_{q(x_T|x_0)}\log \frac{q(x_T|x_0)}{p_\theta(x_T)} - E_{q(x_1|x_
 &amp;\quad + \sum^T_{t = 2} E_{q(x_t, x_0)}E_{q(x_{t - 1}|x_t, x_0)}\log \frac{q(x_{t - 1}|x_t, x_0)}{p_\theta(x_{t - 1}|x_t)}
 \tag{31}
 \\
-&amp;= \underbrace{D_{KL}(q(x_T|x_0)||p_\theta(x_T))}_{L_T} \underbrace{- E_{q(x_1|x_0)}\log p_\theta(x_{0}|x_1)}_{L_0}
+&amp;= \underbrace{D_{KL}(q(x_T|x_0)||p_\theta(x_T))}_{L_T}
+\\
+&amp;\quad \underbrace{- E_{q(x_1|x_0)}\log p_\theta(x_{0}|x_1)}_{L_0}
 \\
 &amp;\quad + \underbrace{\sum^T_{t = 2} E_{q(x_t, x_0)}D_{KL}(q(x_{t - 1}|x_t, x_0)||p_\theta(x_{t - 1}|x_t))}_{L_{t - 1}}
 \tag{32}
