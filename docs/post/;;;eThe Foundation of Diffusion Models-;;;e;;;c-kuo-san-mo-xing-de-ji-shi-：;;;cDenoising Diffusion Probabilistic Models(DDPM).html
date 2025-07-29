@@ -305,11 +305,11 @@ L_{VLB} &amp;= E_{q(x_T|x_0)}\log \frac{q(x_T|x_0)}{p_\theta(x_T)} - E_{q(x_1|x_
 \tag{32}
 \end{align}
 $$</p>
-<pre class="notranslate"><code class="notranslate">=========================================================================================================
+<pre class="notranslate"><code class="notranslate">==========================================================================================================
 </code></pre>
 <p>考虑正向过程$q(x_t|x_{t - 1})$的后验分布$q(x_{t - 1}|x_t)$，由贝叶斯定理：</p>
 <p>$$
-q(x_{t - 1}|x_t) &amp;= \frac{q(x_t|x_{t - 1})q(x_{t - 1})}{q(x_t)} = \frac{q(x_t|x_{t - 1})q(x_{t - 1}|x_0)}{q(x_t|x_0)}
+q(x_{t - 1}|x_t) = \frac{q(x_t|x_{t - 1})q(x_{t - 1})}{q(x_t)} = \frac{q(x_t|x_{t - 1})q(x_{t - 1}|x_0)}{q(x_t|x_0)}
 \tag{13}
 $$</p>
 <p>式(13)的三个概率都是已知的，必然可以求解，设后验分布$q(x_{t - 1}|x_t) = \mathcal{N}(\tilde{\mu}, \Sigma)$，则有：</p>
