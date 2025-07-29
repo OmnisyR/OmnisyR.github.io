@@ -230,27 +230,22 @@ L_{VLB} &= E_{q(x_T|x_0)}\log \frac{q(x_T|x_0)}{p_\theta(x_T)} - E_{q(x_1|x_0)}\
 &\quad + \sum^T_{t = 2} E_{q(x_t, x_0)}E_{q(x_{t - 1}|x_t, x_0)}\log \frac{q(x_{t - 1}|x_t, x_0)}{p_\theta(x_{t - 1}|x_t)}
 \tag{31}
 \\
-&= \underbrace{D_{KL}(q(x_T|x_0)||p_\theta(x_T))}\_{L_C} \underbrace{- E_{q(x_1|x_0)}\log p_\theta(x_{0}|x_1)}\_{L_1}
+&= \underbrace{D_{KL}(q(x_T|x_0)||p_\theta(x_T))}\_{L_T} \underbrace{- E_{q(x_1|x_0)}\log p_\theta(x_{0}|x_1)}\_{L_0}
 \\
-&\quad + \underbrace{\sum^T_{t = 2} E_{q(x_t, x_0)}D_{KL}(q(x_{t - 1}|x_t, x_0)||p_\theta(x_{t - 1}|x_t))}_{L_t}
+&\quad + \underbrace{\sum^T_{t = 2} E_{q(x_t, x_0)}D_{KL}(q(x_{t - 1}|x_t, x_0)||p_\theta(x_{t - 1}|x_t))}\_{L_{t - 1}}
 \tag{32}
 \end{align}
 $$
 
 ```
-==========================================================================================================================================
+=========================================================================================================
 ```
 
 考虑正向过程$q(x_t|x_{t - 1})$的后验分布$q(x_{t - 1}|x_t)$，由贝叶斯定理：
 
 $$
-\begin{align}
-q(x_{t - 1}|x_t) &= \frac{q(x_t|x_{t - 1})q(x_{t - 1})}{q(x_t)}
-\tag{12}
-\\
-&= \frac{q(x_t|x_{t - 1})q(x_{t - 1}|x_0)}{q(x_t|x_0)}
+q(x_{t - 1}|x_t) &= \frac{q(x_t|x_{t - 1})q(x_{t - 1})}{q(x_t)} = \frac{q(x_t|x_{t - 1})q(x_{t - 1}|x_0)}{q(x_t|x_0)}
 \tag{13}
-\end{align}
 $$
 
 式(13)的三个概率都是已知的，必然可以求解，设后验分布$q(x_{t - 1}|x_t) = \mathcal{N}(\tilde{\mu}, \Sigma)$，则有：
