@@ -307,12 +307,12 @@ L_{VLB} &amp;= E_{q(x_T|x_0)}\log \frac{q(x_T|x_0)}{p_\theta(x_T)} - E_{q(x_1|x_
 \tag{32}
 \end{align}
 $$</p>
-<pre class="notranslate"><code class="notranslate">=========================================================================================================
+<pre class="notranslate"><code class="notranslate">===================================================================================================
 </code></pre>
 <p>考虑正向过程$q(x_t|x_{t - 1})$的后验分布$q(x_{t - 1}|x_t)$，由贝叶斯定理：</p>
 <p>$$
-\tag{33}
 q(x_{t - 1}|x_t) = \frac{q(x_t|x_{t - 1})q(x_{t - 1})}{q(x_t)} = \frac{q(x_t|x_{t - 1})q(x_{t - 1}|x_0)}{q(x_t|x_0)}
+\tag{33}
 $$</p>
 <p>式(13)的三个概率都是已知的，必然可以求解，设后验分布$q(x_{t - 1}|x_t) = \mathcal{N}(\tilde{\mu}, \Sigma)$，则有：</p>
 <p>$$
@@ -350,7 +350,9 @@ x_{t - 1} &amp;= \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha
 \tag{21}
 \end{align}
 $$</p>
-<p>其中，$\epsilon_t(x_t, t)$的含义为，对于给定的时刻$t$，从初始状态$x_0$，经过一步的正向过程成为该时刻状态$x_t$，所需要的噪声。</p></div>
+<p>其中，$\epsilon_t(x_t, t)$的含义为，对于给定的时刻$t$，从初始状态$x_0$，经过一步的正向过程成为该时刻状态$x_t$，所需要的噪声。</p>
+<h2>网络搭建</h2>
+<p><img src="https://OmnisyR.github.io/figs/time_embeddings.png"></p></div>
 <div style="font-size:small;margin-top:8px;float:right;">转载文章请注明出处</div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
