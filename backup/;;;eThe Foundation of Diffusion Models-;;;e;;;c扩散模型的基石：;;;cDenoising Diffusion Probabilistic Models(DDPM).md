@@ -298,4 +298,4 @@ $$
 
 `Gmeek-html<img src="https://OmnisyR.github.io/figs/time_embeddings.png">`
 
-`Gmeek-html<p align="center"><iframe src="https://www.desmos.com/calculator/5bhskj1tn0?embed" width="500" height="500" style="border: 1px solid #ccc" frameborder=0></iframe></p>`
+`Gmeek-html<p align="center"><iframe src="https://www.desmos.com/calculator/xkmphum0ou?embed" width="800" height="300" style="border: 1px solid #ccc" frameborder=0></iframe></p>`
