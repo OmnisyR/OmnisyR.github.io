@@ -240,6 +240,24 @@ L_{VLB} &= E_{q(x_T|x_0)}\log \frac{q(x_T|x_0)}{p_\theta(x_T)} - E_{q(x_1|x_0)}\
 \end{align}
 $$
 
+其中，对于$L_T$，由于$q(x_T) = \mathcal{N}(0, I)$，$p_\theta(x_T) = \mathcal{N}(0, I)$都和极大似然估计参数无关，视为常数；
+对于$L_0$，由于$1 = q(x_0|x_0) = \frac{q(x_1|x_0)q(x_0|x_0)}{q(x_1|x_0)} = q(x_0|x_1)$，因此有：
+
+$$
+\begin{align}
+L_0 &= - E_{q(x_1|x_0)}\log p_\theta(x_{0}|x_1)
+\tag{34}
+\\
+&= E_{q(x_1|x_0)}E_{q(x_0|x_0)}[q(x_0|x_0) \log q(x_0|x_0) - q(x_0|x_0) \log p_\theta(x_{0}|x_1)]
+\tag{35}
+\\
+&= E_{q(x_1, x_0)}D_{KL}(q(x_{1 - 1}|x_1, x_0)||p_\theta(x_{0 - 1}|x_0))
+\tag{36}
+\end{align}
+$$
+
+对于$L_{t - 1}$，
+
 ```
 ===================================================================================================
 ```
@@ -296,6 +314,8 @@ $$
 其中，$\epsilon_t(x_t, t)$的含义为，对于给定的时刻$t$，从初始状态$x_0$，经过一步的正向过程成为该时刻状态$x_t$，所需要的噪声。
 
 ## 网络搭建
+
+### 时间嵌入
 
 `Gmeek-html<img src="https://OmnisyR.github.io/figs/time_embeddings.png">`
 
