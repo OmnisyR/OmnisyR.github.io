@@ -215,9 +215,10 @@ $$
 $$
 \begin{align}
 &q(x_{t - 1}|x_t, x_0) = \frac{q(x_{t - 1}, x_t, x_0)}{q(x_t, x_0)} = \frac{q(x_{t - 1}, x_t| x_0)}{q(x_t, x_0)}
+\tag{30}
 \\
 \Leftrightarrow &q(x_{t - 1}, x_t| x_0) = q(x_t, x_0)q(x_{t - 1}|x_t, x_0)
-\tag{30}
+\tag{31}
 \end{align}
 $$
 
@@ -228,14 +229,14 @@ $$
 L_{VLB} &= E_{q(x_T|x_0)}\log \frac{q(x_T|x_0)}{p_\theta(x_T)} - E_{q(x_1|x_0)}\log p_\theta(x_{0}|x_1)
 \\
 &\quad + \sum^T_{t = 2} E_{q(x_t, x_0)}E_{q(x_{t - 1}|x_t, x_0)}\log \frac{q(x_{t - 1}|x_t, x_0)}{p_\theta(x_{t - 1}|x_t)}
-\tag{31}
+\tag{32}
 \\
 &= \underbrace{D_{KL}(q(x_T|x_0)||p_\theta(x_T))}\_{L_T}
 \\
 &\quad \underbrace{- E_{q(x_1|x_0)}\log p_\theta(x_{0}|x_1)}\_{L_0}
 \\
 &\quad + \underbrace{\sum^T_{t = 2} E_{q(x_t, x_0)}D_{KL}(q(x_{t - 1}|x_t, x_0)||p_\theta(x_{t - 1}|x_t))}\_{L_{t - 1}}
-\tag{32}
+\tag{33}
 \end{align}
 $$
 
@@ -298,4 +299,4 @@ $$
 
 `Gmeek-html<img src="https://OmnisyR.github.io/figs/time_embeddings.png">`
 
-`Gmeek-html<p align="center"><iframe src="https://www.desmos.com/calculator/xkmphum0ou?embed" width="800" height="300" style="border: 1px solid #ccc" frameborder=0></iframe></p>`
+`Gmeek-html<p align="center"><iframe src="https://www.desmos.com/calculator/xkmphum0ou?embed" width="800" height="400" style="border: 1px solid #ccc" frameborder=0></iframe></p>`
