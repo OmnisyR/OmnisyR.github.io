@@ -21,6 +21,7 @@ $$
 ;;;;下方的代码::默认使用GPU加速的pytorch代码，不使用GPU加速会很难跑得动扩散模型。;;;;
 ;;;;高斯分布的加法法则::$\mathcal{N}(\mu_1, \sigma^2_1) + \mathcal{N}(\mu_2, \sigma^2_2) = \mathcal{N}(\mu_1 + \mu_2, \sigma^2_1 + \sigma^2_2)$。;;;;
 ;;;;贝叶斯定理::$P(A|B) = \frac{P(B|A)P(A)}{P(B)}$。;;;;
+;;;;高斯分布的KL散度公式::对于;;;;
 \denotes
 ## 介绍
 
@@ -251,33 +252,28 @@ L_0 &= - E_{q(x_1|x_0)}\log p_\theta(x_{0}|x_1)
 &= E_{q(x_1|x_0)}E_{q(x_0|x_0)}[q(x_0|x_0) \log q(x_0|x_0) - q(x_0|x_0) \log p_\theta(x_{0}|x_1)]
 \tag{35}
 \\
-&= E_{q(x_1, x_0)}D_{KL}(q(x_{1 - 1}|x_1, x_0)||p_\theta(x_{0 - 1}|x_0))
+&= E_{q(x_1, x_0)}D_{KL}(q(x_{1 - 1}|x_1, x_0)||p_\theta(x_{0 - 1}|x_0)) = L_{t - 1}, (t = 1)
 \tag{36}
 \end{align}
 $$
 
-对于$L_{t - 1}$，
-
-```
-===================================================================================================
-```
-
-考虑正向过程$q(x_t|x_{t - 1})$的后验分布$q(x_{t - 1}|x_t)$，由贝叶斯定理：
+仅仅需要讨论$L_{t - 1}$；
+对于$L_{t - 1}$，对于正向过程$q(x_t|x_{t - 1})$的后验分布$q(x_{t - 1}|x_t)$，由贝叶斯定理：
 
 $$
 q(x_{t - 1}|x_t) = \frac{q(x_t|x_{t - 1})q(x_{t - 1})}{q(x_t)} = \frac{q(x_t|x_{t - 1})q(x_{t - 1}|x_0)}{q(x_t|x_0)}
-\tag{33}
+\tag{37}
 $$
 
-式(13)的三个概率都是已知的，必然可以求解，设后验分布$q(x_{t - 1}|x_t) = \mathcal{N}(\tilde{\mu}, \Sigma)$，则有：
+式(37)的三个概率都是已知的，必然可以求解，设后验分布$q(x_{t - 1}|x_t) = \mathcal{N}(\tilde{\mu}, \Sigma)$，则有：
 
 $$
 \begin{align}
 \frac{(x_{t - 1} - \tilde{\mu})^2}{\Sigma} &= \frac{(x_t - \sqrt{\alpha_t}x_{t - 1})^2}{1 - \alpha_t} + \frac{(x_{t - 1} - \sqrt{\bar{\alpha}\_{t - 1}}x_0)^2}{1 - \bar{\alpha}\_{t - 1}} - \frac{(x_t - \sqrt{\bar{\alpha}\_t}x_0)^2}{1 - \bar{\alpha}\_t}
-\tag{14}
+\tag{38}
 \\
 &= (\underbrace{\frac{\alpha_t}{1 - \alpha_t} + \frac{1}{1 - \bar{\alpha}\_{t - 1}}}\_{1/\Sigma})x^2_{t - 1} - 2(\underbrace{\frac{\sqrt{\alpha_t}}{1 - \alpha_t}x_t + \frac{\sqrt{\bar{\alpha}\_{t - 1}}}{1 - \bar{\alpha}\_{t - 1}}x_0}\_{\tilde{\mu}/\Sigma})x_{t - 1} + C(x_0, x_t)
-\tag{15}
+\tag{39}
 \end{align}
 $$
 
@@ -286,16 +282,16 @@ $$
 $$
 \begin{align}
 \Sigma &= \frac{1}{\frac{\alpha_t}{1 - \alpha_t} + \frac{1}{1 - \bar{\alpha}\_{t - 1}}}
-\tag{16}
+\tag{40}
 \\
 &= \frac{1 - \bar{\alpha}\_{t - 1}}{1 - \bar{\alpha}\_t}\beta_t
-\tag{17}
+\tag{41}
 \\
 \tilde{\mu} &= ((\frac{\sqrt{\alpha_t}}{1 - \alpha_t}x_t + \frac{\sqrt{\bar{\alpha}\_{t - 1}}}{1 - \bar{\alpha}\_{t - 1}}x_0)\Sigma
-\tag{18}
+\tag{42}
 \\
 &= \frac{(1 - \bar{\alpha}\_{t - 1})\sqrt{\alpha_t}}{1 - \bar{\alpha}\_t}x_t + \frac{\sqrt{\bar{\alpha}_{t - 1}}}{1 - \bar{\alpha}_t}\beta_tx_0
-\tag{19}
+\tag{43}
 \end{align}
 $$
 
@@ -304,14 +300,19 @@ $$
 $$
 \begin{align}
 \tilde{\mu} &= \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}\_t)}}\epsilon_t(x_t, t)
-\tag{20}
+\tag{44}
 \\
 x_{t - 1} &= \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}_t)}}\epsilon_t(x_t, t) + \sqrt{\frac{1 - \bar{\alpha}\_{t - 1}}{1 - \bar{\alpha}\_t}\beta_t}\epsilon
-\tag{21}
+\tag{45}
 \end{align}
 $$
 
-其中，$\epsilon_t(x_t, t)$的含义为，对于给定的时刻$t$，从初始状态$x_0$，经过一步的正向过程成为该时刻状态$x_t$，所需要的噪声。
+其中，$\epsilon_t(x_t, t)$的含义为，对于给定的时刻$t$，从初始状态$x_0$，经过一步的正向过程成为该时刻状态$x_t$，所需要的噪声。又由`高斯分布的KL散度公式`：
+
+$$
+\begin{align}
+\end{align}
+$$
 
 ## 网络搭建
 
