@@ -320,7 +320,7 @@ $$
 L_t &= \sum^T_{t = 1} E_{q(x_t, x_0)}D_{KL}(q(x_{t - 1}|x_t, x_0)||p_\theta(x_{t - 1}|x_t))
 \tag{46}
 \\
-&= \sum^T_{t = 1} E_{q(x_t, x_0)}[\frac{1}{2}\log\frac{\sigma^2_\theta}{\frac{1 - \bar{\alpha}_{t - 1}}{1 - \bar{\alpha}\_t}\beta_t} + \frac{\frac{1 - \bar{\alpha}\_{t - 1}}{1 - \bar{\alpha}\_t}\beta_t + (\tilde{\mu} - \mu_\theta)^2}{2\sigma^2_\theta} - \frac{1}{2}]
+&= \sum^T_{t = 1} E_{q(x_t, x_0)}[\frac{1}{2}\log\frac{\sigma^2_\theta}{\frac{1 - \bar{\alpha}\_{t - 1}}{1 - \bar{\alpha}\_t}\beta_t} + \frac{\frac{1 - \bar{\alpha}\_{t - 1}}{1 - \bar{\alpha}\_t}\beta_t + (\tilde{\mu} - \mu_\theta)^2}{2\sigma^2_\theta} - \frac{1}{2}]
 \tag{47}
 \end{align}
 $$
@@ -328,7 +328,7 @@ $$
 尽管$\sigma_\theta$是可学习的，但其对采样质量的提升并不显著，并未得到推广。在DDPM中，取$\sigma^2_\theta = \frac{1 - \bar{\alpha}_{t - 1}}{1 - \bar{\alpha}_t}\beta_t$，因此有：
 
 $$
-L_t &= \sum^T_{t = 1} E_{q(x_t, x_0)}(\tilde{\mu} - \mu_\theta)^2
+L_t = \sum^T_{t = 1} E_{q(x_t, x_0)}(\tilde{\mu} - \mu_\theta)^2
 \tag{48}
 $$
 
