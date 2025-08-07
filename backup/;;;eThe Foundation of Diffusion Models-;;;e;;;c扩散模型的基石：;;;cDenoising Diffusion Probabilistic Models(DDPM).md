@@ -24,7 +24,7 @@ $$
 ;;;;高斯分布的KL散度公式::对于$p_1(x) = N(\mu_1, \sigma^2_1)$以及$p_2(x) = N(\mu_2, \sigma^2_2)$，有：
 
 $$
-D_{KL}(p_1||p_2) = \frac{1}{2}\log\frac{\sigma_2}{\sigma_1} + \frac{\sigma^2_1 + (\mu_1 - \mu_2)^2}{2\sigma^2_2} - \frac{1}{2}
+D_{KL}(p_1||p_2) = \frac{1}{2}\log\frac{\sigma^2_2}{\sigma^2_1} + \frac{\sigma^2_1 + (\mu_1 - \mu_2)^2}{2\sigma^2_2} - \frac{1}{2}
 $$
 
 ;;;;
@@ -259,14 +259,12 @@ L_0 &= - E_{q(x_1|x_0)}\log p_\theta(x_{0}|x_1)
 &= E_{q(x_1|x_0)}E_{q(x_0|x_1)}[q(x_0|x_1) \log q(x_0|x_0) - q(x_0|x_1) \log p_\theta(x_{0}|x_1)]
 \tag{35}
 \\
-&= E_{q(x_1, x_0)}D_{KL}(q(x_{1 - 1}|x_1, x_0)||p_\theta(x_{1 - 1}|x_0)) = L_{t - 1}
+&= E_{q(x_1, x_0)}D_{KL}(q(x_{1 - 1}|x_1, x_0)||p_\theta(x_{1 - 1}|x_0))
 \tag{36}
 \end{align}
 $$
 
-仅仅需要讨论$L_{t - 1}$；
-
-对于$L_{t - 1}$，对于正向过程$q(x_t|x_{t - 1})$的后验分布$q(x_{t - 1}|x_t)$，由贝叶斯定理：
+与$L_{t - 1}$形式相同，记$L_0 + L_{t - 1 = L_t$，对于式中的正向过程$q(x_t|x_{t - 1})$的后验分布$q(x_{t - 1}|x_t)$，由贝叶斯定理：
 
 $$
 q(x_{t - 1}|x_t) = \frac{q(x_t|x_{t - 1})q(x_{t - 1})}{q(x_t)} = \frac{q(x_t|x_{t - 1})q(x_{t - 1}|x_0)}{q(x_t|x_0)}
@@ -319,6 +317,9 @@ $$
 
 $$
 \begin{align}
+L_t &= \sum^T_{t = 1} E_{q(x_t, x_0)}D_{KL}(q(x_{t - 1}|x_t, x_0)||p_\theta(x_{t - 1}|x_t))
+\\
+&= \sum^T_{t = 1} E_{q(x_t, x_0)}[\frac{1}{2}\log\frac{\sigma^2_\theta}{\frac{1 - \bar{\alpha}\_{t - 1}}{1 - \bar{\alpha}\_t}\beta_t} + \frac{\frac{1 - \bar{\alpha}\_{t - 1}}{1 - \bar{\alpha}\_t}\beta_t + (\tilde{\mu} - \mu_theta)^2}{2\sigma^2_\theta} - \frac{1}{2}]
 \end{align}
 $$
 
