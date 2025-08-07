@@ -136,6 +136,7 @@ $$</p>
 D_{KL}(p_1||p_2) = \frac{1}{2}\log\frac{\sigma^2_2}{\sigma^2_1} + \frac{\sigma^2_1 + (\mu_1 - \mu_2)^2}{2\sigma^2_2} - \frac{1}{2}
 $$</p>
 <p>;;;;<br>
+;;;;UNet::文章地址：<a href="https://arxiv.org/abs/1505.04597" rel="nofollow">https://arxiv.org/abs/1505.04597</a>;;;;<br>
 \denotes</p>
 <h2>介绍</h2>
 <h2>正向过程</h2>
@@ -345,7 +346,7 @@ $$</p>
 q(x_{t - 1}|x_t) = \frac{q(x_t|x_{t - 1})q(x_{t - 1})}{q(x_t)} = \frac{q(x_t|x_{t - 1})q(x_{t - 1}|x_0)}{q(x_t|x_0)}
 \tag{37}
 $$</p>
-<p>式(37)的三个概率都是已知的，必然可以求解，设后验分布$q(x_{t - 1}|x_t) = \mathcal{N}(\tilde{\mu}, \Sigma)$，则有：</p>
+<p>式(37)的三个概率都是已知的，必然可以求解，设后验分布$q(x_{t - 1}|x_t) = \mathcal{N}(\tilde{\mu}, \Sigma)$，考虑式(37)使用高斯分布密度函数展开后的指数部分，则有：</p>
 <p>$$
 \begin{align}
 \frac{(x_{t - 1} - \tilde{\mu})^2}{\Sigma} &amp;= \frac{(x_t - \sqrt{\alpha_t}x_{t - 1})^2}{1 - \alpha_t} + \frac{(x_{t - 1} - \sqrt{\bar{\alpha}_{t - 1}}x_0)^2}{1 - \bar{\alpha}_{t - 1}} - \frac{(x_t - \sqrt{\bar{\alpha}_t}x_0)^2}{1 - \bar{\alpha}_t}
@@ -407,6 +408,8 @@ x_{t - 1} = \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 
 \tag{50}
 $$</p>
 <h2>网络搭建</h2>
+<p>经过逆向过程漫长的推导，已经获得了扩散模型的损失函数，接下来就是要对预测函数进行网络搭建，该预测函数的输入为某一时刻以及该时刻对应的带噪图片，输出为预测的，从初始状态，经过正向过程成为该时刻状态，所需要的噪声。DDPM采用了<code class="notranslate">UNet</code>来进行这个过程。</p>
+<h3>UNet</h3>
 <h3>时间嵌入</h3>
 <p><img src="https://OmnisyR.github.io/figs/time_embeddings.png"></p>
 <p><p align="center"><iframe src="https://www.desmos.com/calculator/xkmphum0ou?embed" width="800" height="400" style="border: 1px solid #ccc" frameborder=0></iframe></p></p></div>
