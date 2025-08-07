@@ -49,7 +49,7 @@ x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1 - \bar{\alpha}_t}\epsilon_t
 $$
 
 ;;;;
-;;;;高斯分布的KL散度公式::对于$p_1(x) = N(\mu_1, \sigma^2_1)$以及$p_2(x) = N(\mu_2, \sigma^2_2)$，有：
+;;;;高斯分布的KL散度公式::对于$p_1(x) = \mathcal{N}(\mu_1, \sigma^2_1)$以及$p_2(x) = \mathcal{N}(\mu_2, \sigma^2_2)$，有：
 
 $$
 D_{KL}(p_1||p_2) = \frac{1}{2}\log\frac{\sigma^2_2}{\sigma^2_1} + \frac{\sigma^2_1 + (\mu_1 - \mu_2)^2}{2\sigma^2_2} - \frac{1}{2}
@@ -380,6 +380,8 @@ $$
 经过逆向过程漫长的推导，已经获得了扩散模型的损失函数，接下来就是要对预测函数进行网络搭建，该预测函数的输入为某一时刻以及该时刻对应的带噪图片，输出为预测的，从初始状态，经过正向过程成为该时刻状态，所需要的噪声。DDPM采用了`UNet`来进行这个过程。
 
 ### UNet
+
+`Gmeek-html<p align="center"><iframe class="embed-responsive-item" src="https://OmnisyR.github.io/figs/u-net-illustration-correct-scale2.pdf" width="638" height="459"></iframe></p>`
 
 ### 时间嵌入
 
