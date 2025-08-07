@@ -116,8 +116,21 @@ $$</p>
 <p>;;;;<br>
 ;;;;重参数化技巧::对于概率$p(x|y) = \mathcal{N}(x|ay, b)$，即$x$服从一个均值为$ay$，标准差为$\sqrt{b}$的高斯分布，那么则有$x = ay + \sqrt{b}\epsilon$，其中$\epsilon \sim \mathcal{N}(0, 1)$。;;;;<br>
 ;;;;下方的代码::默认使用GPU加速的pytorch代码，不使用GPU加速会很难跑得动扩散模型。;;;;<br>
-;;;;高斯分布的加法法则::$\mathcal{N}(\mu_1, \sigma^2_1) + \mathcal{N}(\mu_2, \sigma^2_2) = \mathcal{N}(\mu_1 + \mu_2, \sigma^2_1 + \sigma^2_2)$。;;;;<br>
-;;;;贝叶斯定理::$P(A|B) = \frac{P(B|A)P(A)}{P(B)}$。;;;;<br>
+;;;;高斯分布的加法法则::</p>
+<p>$$
+\mathcal{N}(\mu_1, \sigma^2_1) + \mathcal{N}(\mu_2, \sigma^2_2) = \mathcal{N}(\mu_1 + \mu_2, \sigma^2_1 + \sigma^2_2)
+$$</p>
+<p>;;;;<br>
+;;;;贝叶斯定理::</p>
+<p>$$
+P(A|B) = \frac{P(B|A)P(A)}{P(B)}
+$$</p>
+<p>;;;;<br>
+;;;;式(10)::</p>
+<p>$$
+x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1 - \bar{\alpha}_t}\epsilon_t
+$$</p>
+<p>;;;;<br>
 ;;;;高斯分布的KL散度公式::对于$p_1(x) = N(\mu_1, \sigma^2_1)$以及$p_2(x) = N(\mu_2, \sigma^2_2)$，有：</p>
 <p>$$
 D_{KL}(p_1||p_2) = \frac{1}{2}\log\frac{\sigma^2_2}{\sigma^2_1} + \frac{\sigma^2_1 + (\mu_1 - \mu_2)^2}{2\sigma^2_2} - \frac{1}{2}
@@ -358,7 +371,7 @@ $$</p>
 \tag{43}
 \end{align}
 $$</p>
-<p>又由式(10)，可将$x_0$转换为$x_t$来进行表达，从而：</p>
+<p>又由<code class="notranslate">式(10)</code>，可将$x_0$转换为$x_t$来进行表达，从而：</p>
 <p>$$
 \begin{align}
 \tilde{\mu} &amp;= \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}_t)}}\epsilon_t(x_t, t)
