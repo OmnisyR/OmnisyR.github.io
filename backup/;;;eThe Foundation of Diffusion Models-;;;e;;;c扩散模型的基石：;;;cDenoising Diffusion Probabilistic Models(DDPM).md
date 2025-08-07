@@ -342,7 +342,7 @@ $$
 逆向过程的采样公式：
 
 $$
-x_{t - 1} = \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}_t)}}\epsilon_\theta(x_t, t) + \sqrt{\frac{1 - \bar{\alpha}\_{t - 1}}{1 - \bar{\alpha}\_t}\beta_t}\epsilon
+x_{t - 1} = \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}\_t)}}\epsilon_\theta(x_t, t) + \sqrt{\frac{1 - \bar{\alpha}\_{t - 1}}{1 - \bar{\alpha}\_t}\beta_t}\epsilon
 \tag{50}
 $$
 
