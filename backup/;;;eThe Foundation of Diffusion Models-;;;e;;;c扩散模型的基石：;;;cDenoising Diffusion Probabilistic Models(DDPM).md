@@ -21,10 +21,10 @@ $$
 ;;;;下方的代码::默认使用GPU加速的pytorch代码，不使用GPU加速会很难跑得动扩散模型。;;;;
 ;;;;高斯分布的加法法则::$\mathcal{N}(\mu_1, \sigma^2_1) + \mathcal{N}(\mu_2, \sigma^2_2) = \mathcal{N}(\mu_1 + \mu_2, \sigma^2_1 + \sigma^2_2)$。;;;;
 ;;;;贝叶斯定理::$P(A|B) = \frac{P(B|A)P(A)}{P(B)}$。;;;;
-;;;;高斯分布的KL散度公式::对于$p_1(x) = N(\mu_1, \Sigma^2_1)$以及$p_2(x) = N(\mu_2, \Sigma^2_2)$，有：
+;;;;高斯分布的KL散度公式::对于$p_1(x) = N(\mu_1, \sigma^2_1)$以及$p_2(x) = N(\mu_2, \sigma^2_2)$，有：
 
 $$
-D_{KL}(p_1||p_2) = \frac{1}{2}\log\frac{\abs{\Sigma_2}}{\abs{\Sigma_1}}
+D_{KL}(p_1||p_2) = \frac{1}{2}\log\frac{\sigma_2}{\sigma_1} + \frac{\sigma^2_1 + (\mu_1 - \mu_2)^2}{2\sigma^2_2} - \frac{1}{2}
 $$
 
 ;;;;
@@ -248,6 +248,7 @@ L_{VLB} &= E_{q(x_T|x_0)}\log \frac{q(x_T|x_0)}{p_\theta(x_T)} - E_{q(x_1|x_0)}\
 $$
 
 其中，对于$L_T$，由于$q(x_T) = \mathcal{N}(0, I)$，$p_\theta(x_T) = \mathcal{N}(0, I)$都和极大似然估计参数无关，视为常数；
+
 对于$L_0$，由于$1 = q(x_0|x_0) = \frac{q(x_1|x_0)q(x_0|x_0)}{q(x_1|x_0)} = q(x_0|x_1)$，因此有：
 
 $$
@@ -258,12 +259,13 @@ L_0 &= - E_{q(x_1|x_0)}\log p_\theta(x_{0}|x_1)
 &= E_{q(x_1|x_0)}E_{q(x_0|x_1)}[q(x_0|x_1) \log q(x_0|x_0) - q(x_0|x_1) \log p_\theta(x_{0}|x_1)]
 \tag{35}
 \\
-&= E_{q(x_1, x_0)}D_{KL}(q(x_{1 - 1}|x_1, x_0)||p_\theta(x_{0 - 1}|x_0)) = L_{t - 1}, (t = 1)
+&= E_{q(x_1, x_0)}D_{KL}(q(x_{1 - 1}|x_1, x_0)||p_\theta(x_{1 - 1}|x_0)) = L_{t - 1}
 \tag{36}
 \end{align}
 $$
 
 仅仅需要讨论$L_{t - 1}$；
+
 对于$L_{t - 1}$，对于正向过程$q(x_t|x_{t - 1})$的后验分布$q(x_{t - 1}|x_t)$，由贝叶斯定理：
 
 $$
