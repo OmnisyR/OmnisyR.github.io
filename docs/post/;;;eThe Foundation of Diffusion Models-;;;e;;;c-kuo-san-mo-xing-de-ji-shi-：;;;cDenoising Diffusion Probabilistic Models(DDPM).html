@@ -121,6 +121,12 @@ $$</p>
 \mathcal{N}(\mu_1, \sigma^2_1) + \mathcal{N}(\mu_2, \sigma^2_2) = \mathcal{N}(\mu_1 + \mu_2, \sigma^2_1 + \sigma^2_2)
 $$</p>
 <p>;;;;<br>
+;;;;上界尽可能的小::有些人会存在一个典型的认识错误，即认为式(13)等价于目标为右方的KL散度为0。这个想法错在KL散度为0时，虽然KL散度的梯度为0，但右方整体的梯度不一定为0，一个很简单的例子就能有效进行说明：</p>
+<p>$$
+x^2 \leq x^2 + (2 - x)^2
+$$</p>
+<p>显然，右式在$x = 1$时取最小值，而非令$(2 - x)^2$为0的$x = 2$时。</p>
+<p>;;;;<br>
 ;;;;贝叶斯定理::</p>
 <p>$$
 P(A|B) = \frac{P(B|A)P(A)}{P(B)}
@@ -234,7 +240,7 @@ $$</p>
 L_\theta = -\log p_\theta(x_0) = -\log (p_\theta(x_T)\prod^T_{t = 1}p_\theta(x_{t - 1}|x_t))
 \tag{12}
 $$</p>
-<p>其中，$p_\theta(x_t|x_{t + 1})$是完全未知的，无法求解，因此考虑令该损失的上界尽可能的小。由于KL散度必然是非负的，所以：</p>
+<p>其中，$p_\theta(x_t|x_{t + 1})$是完全未知的，无法求解，因此考虑令该损失的<code class="notranslate">上界尽可能的小</code>。由于KL散度必然是非负的，所以：</p>
 <p>$$
 \begin{align}
 L_\theta \leq L_{VLB} &amp;= -\log p_\theta(x_0) + D_{KL}(q(x_{1:T}|x_0)||p_\theta(x_{1:T}|x_0))
