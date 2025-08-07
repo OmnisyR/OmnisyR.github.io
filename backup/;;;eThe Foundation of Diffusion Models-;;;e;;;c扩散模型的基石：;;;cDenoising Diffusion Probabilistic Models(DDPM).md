@@ -381,7 +381,7 @@ $$
 
 ### UNet
 
-`Gmeek-html<p align="center"><iframe class="embed-responsive-item" src="https://OmnisyR.github.io/figs/u-net-illustration-correct-scale2.pdf" width="638" height="460"></iframe></p>`
+`Gmeek-html<p align="center"><embed src="https://OmnisyR.github.io/figs/u-net-illustration-correct-scale2.pdf" type="application/pdf" width="638" height="459"></p>`
 
 ### 时间嵌入
 
