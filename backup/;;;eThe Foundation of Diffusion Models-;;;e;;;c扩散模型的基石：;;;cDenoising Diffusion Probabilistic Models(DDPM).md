@@ -325,11 +325,25 @@ L_t &= \sum^T_{t = 1} E_{q(x_t, x_0)}D_{KL}(q(x_{t - 1}|x_t, x_0)||p_\theta(x_{t
 \end{align}
 $$
 
-尽管$\sigma_\theta$是可学习的，但其对采样质量的提升并不显著，并未得到推广。在DDPM中，取$\sigma^2_\theta = \frac{1 - \bar{\alpha}_{t - 1}}{1 - \bar{\alpha}_t}\beta_t$，因此有：
+尽管$\sigma_\theta$是可学习的，但其对采样质量的提升并不显著，未得到推广。在DDPM中，取$\sigma^2_\theta = \frac{1 - \bar{\alpha}_{t - 1}}{1 - \bar{\alpha}_t}\beta_t$，因此有：
 
 $$
-L_t = \sum^T_{t = 1} E_{q(x_t, x_0)}(\tilde{\mu} - \mu_\theta)^2
+L_t = \sum^T_{t = 1} E_{q(x_t, x_0)}[\frac{1 - \bar{\alpha}\_t}{2(1 - \bar{\alpha}\_{t - 1})\beta_t}(\tilde{\mu} - \mu_\theta)^2]
 \tag{48}
+$$
+
+要使$L_t$尽可能小，即需要$\mu_\theta$尽可能接近$\tilde{\mu}$。若令$\mu_\theta = \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}\_t)}}\epsilon_\theta(x_t, t)$，那么只需要$\epsilon_\theta(x_t, t)$尽可能接近$\epsilon_t(x_t, t)$，即损失函数：
+
+$$
+L = ||\epsilon_\theta(x_t, t) - \epsilon_t(x_t, t)||^2_2
+\tag{49}
+$$
+
+逆向过程的采样公式：
+
+$$
+x_{t - 1} = \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}_t)}}\epsilon_\theta(x_t, t) + \sqrt{\frac{1 - \bar{\alpha}\_{t - 1}}{1 - \bar{\alpha}\_t}\beta_t}\epsilon
+\tag{50}
 $$
 
 ## 网络搭建
