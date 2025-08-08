@@ -142,7 +142,8 @@ $$</p>
 D_{KL}(p_1||p_2) = \frac{1}{2}\log\frac{\sigma^2_2}{\sigma^2_1} + \frac{\sigma^2_1 + (\mu_1 - \mu_2)^2}{2\sigma^2_2} - \frac{1}{2}
 $$</p>
 <p>;;;;<br>
-;;;;UNet::文章地址：<a href="https://arxiv.org/abs/1505.04597" rel="nofollow">https://arxiv.org/abs/1505.04597</a>;;;;<br>
+;;;;UNet::文章地址：<a href="https://arxiv.org/abs/1505.04597" rel="nofollow">https://arxiv.org/abs/1505.04597</a><br>
+UNet较为复杂，可以在Github上下载由文章<a href="https://arxiv.org/abs/2105.05233" rel="nofollow">Diffusion Models Beat GANs on Image Synthesis</a>提供的<a href="https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/unet.py">unet.py</a>以及<a href="https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/nn.py">nn.py</a>，fp16_util.py可以不用下载，运行前将unet.py中相关代码删去即可。;;;;<br>
 \denotes</p>
 <h2>介绍</h2>
 <h2>正向过程</h2>
@@ -416,7 +417,7 @@ $$</p>
 <h2>网络搭建</h2>
 <p>经过逆向过程漫长的推导，已经获得了扩散模型的损失函数，接下来就是要对预测函数进行网络搭建，该预测函数的输入为某一时刻以及该时刻对应的带噪图片，输出为预测的，从初始状态，经过正向过程成为该时刻状态，所需要的噪声。DDPM采用了<code class="notranslate">UNet</code>来进行这个过程。</p>
 <h3>UNet</h3>
-<p><p align="center"><embed src="https://OmnisyR.github.io/figs/u-net-illustration-correct-scale2.pdf" type="application/pdf" width="638" height="459"></p></p>
+<p><p align="center"><iframe class="embed-responsive-item" src="https://OmnisyR.github.io/figs/u-net-illustration-correct-scale2.pdf" width="638" height="460"></iframe></p></p>
 <h3>时间嵌入</h3>
 <p><img src="https://OmnisyR.github.io/figs/time_embeddings.png"></p>
 <p><p align="center"><iframe src="https://www.desmos.com/calculator/xkmphum0ou?embed" width="800" height="400" style="border: 1px solid #ccc" frameborder=0></iframe></p></p></div>

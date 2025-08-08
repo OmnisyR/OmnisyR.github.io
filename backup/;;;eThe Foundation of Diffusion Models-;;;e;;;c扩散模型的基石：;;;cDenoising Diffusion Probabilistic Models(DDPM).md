@@ -56,7 +56,8 @@ D_{KL}(p_1||p_2) = \frac{1}{2}\log\frac{\sigma^2_2}{\sigma^2_1} + \frac{\sigma^2
 $$
 
 ;;;;
-;;;;UNet::文章地址：https://arxiv.org/abs/1505.04597;;;;
+;;;;UNet::文章地址：https://arxiv.org/abs/1505.04597
+UNet较为复杂，可以在Github上下载由文章[Diffusion Models Beat GANs on Image Synthesis](https://arxiv.org/abs/2105.05233)提供的[unet.py](https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/unet.py)以及[nn.py](https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/nn.py)，fp16_util.py可以不用下载，运行前将unet.py中相关代码删去即可。;;;;
 \denotes
 ## 介绍
 
@@ -381,7 +382,7 @@ $$
 
 ### UNet
 
-`Gmeek-html<p align="center"><embed src="https://OmnisyR.github.io/figs/u-net-illustration-correct-scale2.pdf" type="application/pdf" width="638" height="459"></p>`
+`Gmeek-html<p align="center"><iframe class="embed-responsive-item" src="https://OmnisyR.github.io/figs/u-net-illustration-correct-scale2.pdf" width="638" height="460"></iframe></p>`
 
 ### 时间嵌入
 
