@@ -57,7 +57,9 @@ $$
 
 ;;;;
 ;;;;UNet::文章地址：https://arxiv.org/abs/1505.04597
-UNet较为复杂，可以在Github上下载由文章[Diffusion Models Beat GANs on Image Synthesis](https://arxiv.org/abs/2105.05233)提供的[unet.py](https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/unet.py)以及[nn.py](https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/nn.py)，fp16_util.py可以不用下载，运行前将unet.py中相关代码删去即可。;;;;
+UNet较为复杂，可以在Github上下载由文章[Diffusion Models Beat GANs on Image Synthesis](https://arxiv.org/abs/2105.05233)提供的[unet.py](https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/unet.py)以及[nn.py](https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/nn.py)来运行扩散模型，fp16_util.py可以不用下载，运行前将unet.py中相关代码删去即可。;;;;
+;;;;Attention is All You Need:文章地址：https://arxiv.org/abs/1706.03762:;;;;
+;;;;残差思想::文章地址https://arxiv.org/abs/1512.03385;;;;
 \denotes
 ## 介绍
 
@@ -378,14 +380,202 @@ $$
 
 ## 网络搭建
 
-经过逆向过程漫长的推导，已经获得了扩散模型的损失函数，接下来就是要对预测函数进行网络搭建，该预测函数的输入为某一时刻以及该时刻对应的带噪图片，输出为预测的，从初始状态，经过正向过程成为该时刻状态，所需要的噪声。DDPM采用了`UNet`来进行这个过程。
+经过逆向过程漫长的推导，获得了扩散模型的损失函数，接下来就是要对预测函数进行网络搭建，该预测函数的输入为某一时刻以及该时刻对应的带噪图片，输出为预测的，从初始状态，经过正向过程成为该时刻状态，所需要的噪声。DDPM采用了`UNet`来进行这个过程。
 
-### UNet
+#### 网络结构
 
-`Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/u-net-illustration-correct-scale2.svg"/></p>`
+原文章中给出了一个UNet的结构图：
 
-### 时间嵌入
+`Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/u-net-illustration-correct-scale2.png"/></p>`
+
+在该案例中，方块的上方代表着数据的通道数，左下方代表着数据的分辨率。网络的输入为$572^2$分辨率、通道数为1的图片，输出为$388^2$分辨率、通道数为2的图片。在网络内，则包含了四个核心部分：普通卷积过程；下采样；上采样以及残差过程。
+
+- 向右的短箭头代表着普通卷积过程，在每一层中，第一次卷积过程总是会将数据的通道数变为预定的、该层的通道数；
+- 向下的箭头代表着下采样，在这个过程中，总是会将数据的分辨率变为原来的一半，并在接下来进行更深层的卷积；
+- 向上的箭头代表着上采样，在这个过程中，总是会将数据的分辨率变为原来的两倍，并在接下来进行更浅层的卷积；
+- 向右的长箭头代表着残差过程，该部分利用了`残差思想`，将下采样的数据与上采样的数据相结合再进行卷积，能够有效地去除一些由于下采样导致的信息丢失问题。
+
+但是对于扩散模型而言，其输入还需要额外引入一个时间戳t，而非单单一个图片，因此还需要将图片和时间戳整合到一起，放入UNet中进行计算，这个操作又称时间嵌入。
+
+#### 时间嵌入
+
+时间嵌入算法参考了`Attention is All You Need`中的位置嵌入算法。
 
 `Gmeek-html<img src="https://OmnisyR.github.io/figs/time_embeddings.png">`
 
 `Gmeek-html<p align="center"><iframe src="https://www.desmos.com/calculator/xkmphum0ou?embed" width="800" height="400" style="border: 1px solid #ccc" frameborder=0></iframe></p>`
+
+## 训练过程
+
+```python
+import unet
+import torch
+import torchvision
+from pathlib import Path
+from torch import optim
+from torchvision.transforms.v2 import Lambda, ToTensor, RandomHorizontalFlip, Compose
+
+image_size = 32
+channels = 1
+base_channels = 128
+learning_rate = 1e-4
+time_steps = 1000
+ch_mults = {
+    32: (1, 2, 2, 2),
+    64: (1, 2, 3, 4),
+    128: (1, 1, 2, 3, 4),
+    256: (1, 1, 2, 2, 4, 4),
+    512: (0.5, 1, 1, 2, 2, 4, 4)
+}
+epochs = 1000
+cache_num = 10
+batch_size = 128
+milestone_step = 1000
+last_e = 0
+betas = linear(time_steps)
+checkpoint_folder = ''
+datasets_folder = ''
+csv_str = ''
+prefix = "checkpoint_epoch"
+suffix = ".pth"
+
+Path(checkpoint_folder).mkdir(exist_ok=True)
+Path(checkpoint_folder + '/milestone').mkdir(exist_ok=True)
+
+model = unet.UNetModel(
+    image_size=image_size,
+    in_channels=channels,
+    model_channels=base_channels,
+    out_channels=channels,
+    num_res_blocks=2,
+    attention_resolutions=(32, 16, 8),
+    dropout=0.0,
+    channel_mult=ch_mults[image_size],
+    num_heads=4,
+    num_head_channels=-1,
+).cuda()
+
+last_model = None
+last = 0
+for file in os.listdir(checkpoint_folder):
+    if file[:len(prefix)] != prefix:
+        continue
+    epochs_str = file[len(prefix) + 1:0 - len(suffix)]
+    if int(epochs_str) > last:
+        last = int(epochs_str)
+last_e = last
+if last > 0:
+    last_model = torch.load(checkpoint_folder + "/%s_%d%s" % (prefix, last, suffix), weights_only=False)
+
+if last_model is not None:
+    model.load_state_dict(last_model)
+else:
+    print("No Checkpoints Exist")
+
+parameters = sum(p.numel() for p in model.parameters() if p.requires_grad)
+count_str = "Parameters Count: "
+print(count_str + "%.2fB" % (parameters / 1e9)) if parameters > 1e9 else print(count_str + "%.2fM" % (parameters / 1e6))
+
+optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=1e-4)
+alphas = 1. - betas
+alphas_bar = torch.cat((torch.tensor((1,)).cuda(), torch.cumprod(input=alphas, dim=0)))
+sqrt_alphas_bar = torch.sqrt(alphas_bar)
+sqrt_one_minus_alphas_bar = torch.sqrt(1. - alphas_bar)
+
+transform = Compose(
+    [torchvision.transforms.Grayscale(), ToTensor(), Lambda(lambda t: (t * 2) - 1), RandomHorizontalFlip()]
+    if channels == 1 else
+    [ToTensor(), Lambda(lambda t: (t * 2) - 1), RandomHorizontalFlip()]
+)
+transform_reverse = Compose([Lambda(lambda t: (t + 1) / 2 * 255)])
+```
+
+```python
+import time
+import numpy as np
+import torch.nn.functional as F
+from tqdm import tqdm
+from torch.utils.data import DataLoader
+from torchvision import datasets
+
+def train():
+    train_loop(DataLoader(
+        datasets.ImageFolder(datasets_folder, transform=transform),
+        batch_size=batch_size,
+        shuffle=True,
+        drop_last=True,
+        pin_memory=True
+    ))
+```
+
+```python
+import time
+import numpy as np
+import torch.nn.functional as F
+from tqdm import tqdm
+from torch.utils.data import DataLoader
+from torchvision import datasets
+
+def train_loop(dataloader):
+    local_epochs = epochs - last_e
+    csv_cache = ""
+    print()
+    print("Now Strat Training")
+    for epoch in range(local_epochs):
+        losses = []
+        time.sleep(0.1)
+        global_epoch = epoch + last_e + 1
+        for step, data_batch in (pbar := tqdm(
+                enumerate(dataloader),
+                total=len(dataloader),
+                desc="Epoch: %d/ %d With Loss %f" % (global_epoch, epochs, 1)
+        )):
+            optimizer.zero_grad()
+            data_batch = data_batch[0].cuda()
+            complex_loss, t = get_loss(data_batch)
+            loss = complex_loss.sum() / 1000.
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
+            optimizer.step()
+            pbar.set_description("Epoch: %d/ %d With Loss %f " % (global_epoch, epochs, loss.item()))
+            losses.append(loss.item())
+        ave_loss = np.average(losses)
+        var_loss = np.var(losses)
+        print("μ In Epoch %d: %s" % (global_epoch, ave_loss))
+        print("σ In Epoch %d: %s" % (global_epoch, var_loss))
+        print("----------------------------------------------------------------")
+        csv_cache += "%d,%s,%s\n" % (global_epoch, ave_loss, var_loss)
+        old_model = checkpoint_folder + "/%s_%d.pt" % (
+            prefix,
+            global_epoch - cache_num * milestone_step
+        )
+        if os.path.exists(old_model):
+            os.remove(old_model)
+        if global_epoch % milestone_step == 0:
+            torch.save(
+                model.state_dict(),
+                checkpoint_folder + "/%s_%d%s" % (prefix, global_epoch, suffix)
+            )
+            with open(csv_str, 'a') as file:
+                file.write(csv_cache)
+                csv_cache = ""
+            milestone_sample(global_epoch)
+        time.sleep(0.1)
+```
+
+```python
+def add_noise(x_0, t, noise=None):
+    if noise is None:
+        noise = torch.randn_like(x_0).cuda()
+    return (extract(sqrt_alphas_bar, t, x_0.shape) * x_0
+            + extract(sqrt_one_minus_alphas_bar, t, x_0.shape) * noise)
+
+
+def get_loss(x_0):
+    t = torch.randint(time_steps, size=(batch_size,)).cuda() + 1
+    noise = torch.randn_like(x_0).cuda()
+    x_t = add_noise(x_0, t, noise)
+    return F.huber_loss(model(x_t, t), noise, reduction='none'), t
+```
+
+## 采样过程
