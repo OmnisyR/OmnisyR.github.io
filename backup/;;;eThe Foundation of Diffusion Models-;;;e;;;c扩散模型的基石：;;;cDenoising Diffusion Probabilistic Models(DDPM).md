@@ -64,7 +64,13 @@ UNet较为复杂，可以在Github上下载由文章[Diffusion Models Beat GANs 
 ;;;;式(50)::
 
 $$
-x_{t - 1} = \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}\_t)}}\epsilon_\theta(x_t, t) + \sqrt{\frac{1 - \bar{\alpha}\_{t - 1}}{1 - \bar{\alpha}\_t}\beta_t}\epsilon
+\begin{align}
+x_{t - 1} &= \frac{1}{\sqrt{\alpha_t}}x_t
+\\
+&\quad - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}\_t)}}\epsilon_\theta(x_t, t)
+\\
+&\quad + \sqrt{\frac{1 - \bar{\alpha}\_{t - 1}}{1 - \bar{\alpha}\_t}\beta_t}\epsilon
+\end{align}
 $$
 
 ;;;;
@@ -411,10 +417,10 @@ $$
 
 $$
 \begin{align}
-TES &= \sin\frac{t}{10000^{2i / d}}
+TE_{(t, i)} &= \sin\frac{t}{10000^{2i / d}}
 \tag{51}
 \\
-TEC &= \cos\frac{t}{10000^{2j / d}}
+TE_{(t, j)} &= \cos\frac{t}{10000^{2j / d}}
 \tag{52}
 \end{align}
 $$
@@ -423,7 +429,7 @@ $$
 
 `Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/time_embeddings.png"/></p>`
 
-若是以函数的形式表示，红色为$TES$，蓝色为$TEC$：
+若是以函数的形式表示，红色为$TE_{(t, i)}$，蓝色为$TE_{(t, j)}$：
 
 `Gmeek-html<p align="center"><iframe src="https://www.desmos.com/calculator/xkmphum0ou?embed" width="800" height="400" style="border: 1px solid #ccc" frameborder=0></iframe></p>`
 

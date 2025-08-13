@@ -149,7 +149,13 @@ UNet较为复杂，可以在Github上下载由文章<a href="https://arxiv.org/a
 ;;;;选择线性噪声时间表::噪声时间表有很多种，虽然网络上疑似很推崇余弦型噪声时间表，但实际操作中它会导致一种被我称为“色彩发散”的问题，还需要通过一系列手段来改善才能得到正确结果，所以刚刚接触扩散模型，可以先使用线性噪声时间表。;;;;<br>
 ;;;;式(50)::</p>
 <p>$$
-x_{t - 1} = \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}_t)}}\epsilon_\theta(x_t, t) + \sqrt{\frac{1 - \bar{\alpha}_{t - 1}}{1 - \bar{\alpha}_t}\beta_t}\epsilon
+\begin{align}
+x_{t - 1} &amp;= \frac{1}{\sqrt{\alpha_t}}x_t
+\\
+&amp;\quad - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}_t)}}\epsilon_\theta(x_t, t)
+\\
+&amp;\quad + \sqrt{\frac{1 - \bar{\alpha}_{t - 1}}{1 - \bar{\alpha}_t}\beta_t}\epsilon
+\end{align}
 $$</p>
 <p>;;;;<br>
 \denotes</p>
@@ -439,16 +445,16 @@ $$</p>
 <p>时间嵌入算法参考了<code class="notranslate">Attention is All You Need</code>中的位置嵌入算法，通过将时间戳这单个数字，展开为某个张量，再输入到网络中进行计算，最后再与普通卷积过程的只相加，进行接下来的计算。时间戳的展开服从下面的式子：</p>
 <p>$$
 \begin{align}
-TES &amp;= \sin\frac{t}{10000^{2i / d}}
+TE_{(t, i)} &amp;= \sin\frac{t}{10000^{2i / d}}
 \tag{51}
 \\
-TEC &amp;= \cos\frac{t}{10000^{2j / d}}
+TE_{(t, j)} &amp;= \cos\frac{t}{10000^{2j / d}}
 \tag{52}
 \end{align}
 $$</p>
 <p>其中，$d$表示所期望的展开维度，$i = \{1, 2, \dots, \frac{d}{2}\}$，$j = \{\frac{d}{2} + 1, \frac{d}{2} + 2, \dots, d\}$。若定义$d = 128$，则其可视化如下图所示：</p>
 <p><p align="center"><img srcset="https://OmnisyR.github.io/figs/time_embeddings.png"/></p></p>
-<p>若是以函数的形式表示，红色为$TES$，蓝色为$TEC$：</p>
+<p>若是以函数的形式表示，红色为$TE_{(t, i)}$，蓝色为$TE_{(t, j)}$：</p>
 <p><p align="center"><iframe src="https://www.desmos.com/calculator/xkmphum0ou?embed" width="800" height="400" style="border: 1px solid #ccc" frameborder=0></iframe></p></p>
 <h2>训练过程</h2>
 <p>首先导入一些必要的库：</p>
