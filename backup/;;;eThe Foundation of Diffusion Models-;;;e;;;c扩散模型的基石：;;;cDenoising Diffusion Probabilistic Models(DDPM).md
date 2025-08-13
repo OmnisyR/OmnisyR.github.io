@@ -874,20 +874,20 @@ def milestone_sample(global_epoch, solver=ddpm):
     print("----------------------------------------------------------------")
 ```
 
-## 运行代码
+## 代码运行
 这样一来，便完成了DDPM的代码实现，即可进行训练：
 ```python
 if __name__ == '__main__':
     train()
 ```
-训练的前100次迭代：
+训练的前100次迭代过程：
 
 `Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_10_100.png"/></p>`
 
-训练的500次迭代：
+训练的500次迭代过程：
 
-`Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_50_500.png" width="400" height="300"/></p>`
+`Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_50_500.png"/></p>`
 
 训练的损失值变化：
 
-`Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_loss.png"/></p>`
+`Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_loss.png" width="400" height="300"/></p>`
