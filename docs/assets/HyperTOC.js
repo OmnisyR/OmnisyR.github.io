@@ -146,13 +146,13 @@ window.addEventListener('load', function() {
   for (var i = 0; i < elements.length; i++) {
     item = elements[i]
     const key = item.textContent
+    if (denotes.get(key) === undefined){
+      continue
+    }
     item.addEventListener(
       "click",
       () => {
         const value = denotes.get(key)
-        if (value === undefined) {
-          return null
-        }
         document.getElementsByClassName("denote-title")[0].innerHTML = key
         document.getElementsByClassName('denote-content')[0].innerHTML = value
         if (value.includes('$')) {
