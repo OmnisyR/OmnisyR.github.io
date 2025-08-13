@@ -439,16 +439,16 @@ $$</p>
 <p>时间嵌入算法参考了<code class="notranslate">Attention is All You Need</code>中的位置嵌入算法，通过将时间戳这单个数字，展开为某个张量，再输入到网络中进行计算，最后再与普通卷积过程的只相加，进行接下来的计算。时间戳的展开服从下面的式子：</p>
 <p>$$
 \begin{align}
-{TE}_{(t, i)} &amp;= \sin\frac{t}{10000^{2i / d}}
+TES &amp;= \sin\frac{t}{10000^{2i / d}}
 \tag{51}
 \\
-{TE}_{(t, j + 1)} &amp;= \cos\frac{t}{10000^{2j / d}}
+TEC &amp;= \cos\frac{t}{10000^{2j / d}}
 \tag{52}
 \end{align}
 $$</p>
-<p>其中，$d$表示所期望的展开维度，$i = \left{1, 2, \dots, \frac{d}{2}\right}$，$j = \left{\frac{d}{2} + 1, \frac{d}{2} + 2, \dots, d\right}$。若定义$d = 128$，则其可视化如下图所示：</p>
+<p>其中，$d$表示所期望的展开维度，$i = \{1, 2, \dots, \frac{d}{2}\}$，$j = \{\frac{d}{2} + 1, \frac{d}{2} + 2, \dots, d\}$。若定义$d = 128$，则其可视化如下图所示：</p>
 <p><p align="center"><img srcset="https://OmnisyR.github.io/figs/time_embeddings.png"/></p></p>
-<p>若是以函数的形式表示，红色为${TE}_{(t, i)}$，蓝色为${TE}_{(t, j)}$：</p>
+<p>若是以函数的形式表示，红色为$TES$，蓝色为$TEC$：</p>
 <p><p align="center"><iframe src="https://www.desmos.com/calculator/xkmphum0ou?embed" width="800" height="400" style="border: 1px solid #ccc" frameborder=0></iframe></p></p>
 <h2>训练过程</h2>
 <p>首先导入一些必要的库：</p>
@@ -700,7 +700,8 @@ $$</p>
     <span class="pl-k">return</span> <span class="pl-c1">F</span>.<span class="pl-c1">huber_loss</span>(<span class="pl-en">model</span>(<span class="pl-s1">x_t</span>, <span class="pl-s1">t</span>), <span class="pl-s1">noise</span>, <span class="pl-s1">reduction</span><span class="pl-c1">=</span><span class="pl-s">'none'</span>), <span class="pl-s1">t</span></pre></div>
 <h2>采样过程</h2>
 <p>采样过程相较而言就简单很多，只需要进行一个迭代即可。但为方便后续开发，可以对其进行模块化编写。采样的核心方法：</p>
-<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">def</span> <span class="pl-en">sample</span>(<span class="pl-s1">formats</span>, <span class="pl-s1">configs</span>, <span class="pl-s1">batch</span><span class="pl-c1">=</span><span class="pl-c1">1</span>, <span class="pl-s1">noise</span><span class="pl-c1">=</span><span class="pl-c1">None</span>, <span class="pl-s1">steps</span><span class="pl-c1">=</span><span class="pl-c1">1000</span>, <span class="pl-s1">solver</span><span class="pl-c1">=</span><span class="pl-s1">ddpm</span>, <span class="pl-s1">time_schedule</span><span class="pl-c1">=</span><span class="pl-s1">trailing</span>, <span class="pl-s1">desc</span><span class="pl-c1">=</span><span class="pl-s">''</span>):
+<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">def</span> <span class="pl-en">sample</span>(<span class="pl-s1">formats</span>, <span class="pl-s1">configs</span>, <span class="pl-s1">batch</span><span class="pl-c1">=</span><span class="pl-c1">1</span>, <span class="pl-s1">noise</span><span class="pl-c1">=</span><span class="pl-c1">None</span>, <span class="pl-s1">steps</span><span class="pl-c1">=</span><span class="pl-c1">1000</span>,
+           <span class="pl-s1">solver</span><span class="pl-c1">=</span><span class="pl-s1">ddpm</span>, <span class="pl-s1">time_schedule</span><span class="pl-c1">=</span><span class="pl-s1">trailing</span>, <span class="pl-s1">desc</span><span class="pl-c1">=</span><span class="pl-s">''</span>):
     <span class="pl-s">"""</span>
 <span class="pl-s">    :param formats:一系列保存格式，输入为方法，详见保存格式方法</span>
 <span class="pl-s">    :param configs:保存的可修改配置，输入为词典。详见默认保存格式</span>
@@ -708,10 +709,11 @@ $$</p>
 <span class="pl-s">    :param noise:初始的噪声，如果为None，会生成随机噪声</span>
 <span class="pl-s">    :param steps:采样步数，以目前的进度而言，该值只能等于1000，快速采样将在以后的文章中介绍</span>
 <span class="pl-s">    :param solver:采样器，以目前的进度而言，该值只能等于ddpm，其他采样器将在以后的文章中介绍</span>
-<span class="pl-s">    :param time_schedule:采样时间序列，以目前的进度而言，该项就使用默认的trailing，其他序列将在以后的文章中介绍</span>
+<span class="pl-s">    :param time_schedule:采样时间序列，使用默认的trailing</span>
 <span class="pl-s">    :param desc:可在tqdm进度条中显示额外的注释说明</span>
 <span class="pl-s">    """</span>
-    <span class="pl-s1">noise</span> <span class="pl-c1">=</span> <span class="pl-s1">torch</span>.<span class="pl-c1">randn</span>(<span class="pl-s1">size</span><span class="pl-c1">=</span>(<span class="pl-s1">batch</span>, <span class="pl-s1">channels</span>, <span class="pl-s1">image_size</span>, <span class="pl-s1">image_size</span>)).<span class="pl-c1">cuda</span>() <span class="pl-k">if</span> <span class="pl-s1">noise</span> <span class="pl-c1">is</span> <span class="pl-c1">None</span> <span class="pl-k">else</span> <span class="pl-s1">noise</span>
+    <span class="pl-s1">noise</span> <span class="pl-c1">=</span> <span class="pl-s1">torch</span>.<span class="pl-c1">randn</span>(<span class="pl-s1">size</span><span class="pl-c1">=</span>(<span class="pl-s1">batch</span>, <span class="pl-s1">channels</span>, <span class="pl-s1">image_size</span>, <span class="pl-s1">image_size</span>)).<span class="pl-c1">cuda</span>() \
+        <span class="pl-k">if</span> <span class="pl-s1">noise</span> <span class="pl-c1">is</span> <span class="pl-c1">None</span> <span class="pl-k">else</span> <span class="pl-s1">noise</span>
     <span class="pl-s1">img_list</span> <span class="pl-c1">=</span> <span class="pl-en">sample_loop</span>(<span class="pl-s1">noise</span>, <span class="pl-s1">steps</span>, <span class="pl-s1">solver</span>, <span class="pl-s1">time_schedule</span>, <span class="pl-s1">desc</span>)
     <span class="pl-k">for</span> <span class="pl-s1">i</span>, <span class="pl-s1">format_</span> <span class="pl-c1">in</span> <span class="pl-en">enumerate</span>(<span class="pl-s1">formats</span>):
         <span class="pl-en">format_</span>(<span class="pl-s1">img_list</span>, {} <span class="pl-k">if</span> <span class="pl-en">len</span>(<span class="pl-s1">configs</span>) <span class="pl-c1">-</span> <span class="pl-c1">1</span> <span class="pl-c1">&lt;</span> <span class="pl-s1">i</span> <span class="pl-c1">or</span> <span class="pl-s1">configs</span>[<span class="pl-s1">i</span>] <span class="pl-c1">is</span> <span class="pl-c1">None</span> <span class="pl-k">else</span> <span class="pl-s1">configs</span>[<span class="pl-s1">i</span>])
@@ -856,7 +858,10 @@ $$</p>
     <span class="pl-c">#调用采样核心方法，使用grid作为保存格式，将结果保存到milestone文件夹，一次采样16张图片</span>
     <span class="pl-en">sample</span>(
         <span class="pl-s1">formats</span><span class="pl-c1">=</span>[<span class="pl-s1">grid</span>],
-        <span class="pl-s1">configs</span><span class="pl-c1">=</span>[{<span class="pl-s">'saving_folder'</span>: <span class="pl-s1">checkpoint_folder</span> <span class="pl-c1">+</span> <span class="pl-s">"/milestone"</span>, <span class="pl-s">'name'</span>: <span class="pl-s">'epoch_%d'</span> <span class="pl-c1">%</span> <span class="pl-s1">global_epoch</span>}],
+        <span class="pl-s1">configs</span><span class="pl-c1">=</span>[{
+            <span class="pl-s">'saving_folder'</span>: <span class="pl-s1">checkpoint_folder</span> <span class="pl-c1">+</span> <span class="pl-s">"/milestone"</span>,
+            <span class="pl-s">'name'</span>: <span class="pl-s">'epoch_%d'</span> <span class="pl-c1">%</span> <span class="pl-s1">global_epoch</span>
+        }],
         <span class="pl-s1">batch</span><span class="pl-c1">=</span><span class="pl-c1">16</span>,
         <span class="pl-s1">solver</span><span class="pl-c1">=</span><span class="pl-s1">solver</span>
     )

@@ -411,19 +411,19 @@ $$
 
 $$
 \begin{align}
-{TE}\_{(t, i)} &= \sin\frac{t}{10000^{2i / d}}
+TES &= \sin\frac{t}{10000^{2i / d}}
 \tag{51}
 \\
-{TE}_{(t, j + 1)} &= \cos\frac{t}{10000^{2j / d}}
+TEC &= \cos\frac{t}{10000^{2j / d}}
 \tag{52}
 \end{align}
 $$
 
-其中，$d$表示所期望的展开维度，$i = \left\{1, 2, \dots, \frac{d}{2}\right\}$，$j = \left\{\frac{d}{2} + 1, \frac{d}{2} + 2, \dots, d\right\}$。若定义$d = 128$，则其可视化如下图所示：
+其中，$d$表示所期望的展开维度，$i = \\{1, 2, \dots, \frac{d}{2}\\}$，$j = \\{\frac{d}{2} + 1, \frac{d}{2} + 2, \dots, d\\}$。若定义$d = 128$，则其可视化如下图所示：
 
 `Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/time_embeddings.png"/></p>`
 
-若是以函数的形式表示，红色为${TE}\_{(t, i)}$，蓝色为${TE}_{(t, j)}$：
+若是以函数的形式表示，红色为$TES$，蓝色为$TEC$：
 
 `Gmeek-html<p align="center"><iframe src="https://www.desmos.com/calculator/xkmphum0ou?embed" width="800" height="400" style="border: 1px solid #ccc" frameborder=0></iframe></p>`
 
@@ -687,7 +687,8 @@ def get_loss(x_0):
 ## 采样过程
 采样过程相较而言就简单很多，只需要进行一个迭代即可。但为方便后续开发，可以对其进行模块化编写。采样的核心方法：
 ```python
-def sample(formats, configs, batch=1, noise=None, steps=1000, solver=ddpm, time_schedule=trailing, desc=''):
+def sample(formats, configs, batch=1, noise=None, steps=1000,
+           solver=ddpm, time_schedule=trailing, desc=''):
     """
     :param formats:一系列保存格式，输入为方法，详见保存格式方法
     :param configs:保存的可修改配置，输入为词典。详见默认保存格式
@@ -695,10 +696,11 @@ def sample(formats, configs, batch=1, noise=None, steps=1000, solver=ddpm, time_
     :param noise:初始的噪声，如果为None，会生成随机噪声
     :param steps:采样步数，以目前的进度而言，该值只能等于1000，快速采样将在以后的文章中介绍
     :param solver:采样器，以目前的进度而言，该值只能等于ddpm，其他采样器将在以后的文章中介绍
-    :param time_schedule:采样时间序列，以目前的进度而言，该项就使用默认的trailing，其他序列将在以后的文章中介绍
+    :param time_schedule:采样时间序列，使用默认的trailing
     :param desc:可在tqdm进度条中显示额外的注释说明
     """
-    noise = torch.randn(size=(batch, channels, image_size, image_size)).cuda() if noise is None else noise
+    noise = torch.randn(size=(batch, channels, image_size, image_size)).cuda() \
+        if noise is None else noise
     img_list = sample_loop(noise, steps, solver, time_schedule, desc)
     for i, format_ in enumerate(formats):
         format_(img_list, {} if len(configs) - 1 < i or configs[i] is None else configs[i])
@@ -849,7 +851,10 @@ def milestone_sample(global_epoch, solver=ddpm):
     #调用采样核心方法，使用grid作为保存格式，将结果保存到milestone文件夹，一次采样16张图片
     sample(
         formats=[grid],
-        configs=[{'saving_folder': checkpoint_folder + "/milestone", 'name': 'epoch_%d' % global_epoch}],
+        configs=[{
+            'saving_folder': checkpoint_folder + "/milestone",
+            'name': 'epoch_%d' % global_epoch
+        }],
         batch=16,
         solver=solver
     )
