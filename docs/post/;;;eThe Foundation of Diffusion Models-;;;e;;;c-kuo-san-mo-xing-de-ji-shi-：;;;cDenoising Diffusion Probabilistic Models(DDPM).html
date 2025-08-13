@@ -437,18 +437,18 @@ $$</p>
 <p>但是对于扩散模型而言，其输入还需要额外引入一个时间戳t，而非单单一个图片，因此还需要将图片和时间戳整合到一起，放入UNet中进行计算，这个操作又称时间嵌入。</p>
 <h4>时间嵌入</h4>
 <p>时间嵌入算法参考了<code class="notranslate">Attention is All You Need</code>中的位置嵌入算法，通过将时间戳这单个数字，展开为某个张量，再输入到网络中进行计算，最后再与普通卷积过程的只相加，进行接下来的计算。时间戳的展开服从下面的式子：</p>
-<p>$$
-\begin{align}
-TE_{(t, i)} &amp;= \sin\frac{t}{10000^\frac{2i}{d}}
-\tag{51}
-\\
-TE_{(t, j + 1)} &amp;= \cos\frac{t}{10000^\frac{2j}{d}}
-\tag{52}
-\end{align}
+<p>$$<br>
+\begin{align}<br>
+{TE}<em>{(t, i)} &amp;= \sin\frac{t}{10000^{2i / d}}<br>
+\tag{51}<br>
+\<br>
+{TE}</em>{(t, j + 1)} &amp;= \cos\frac{t}{10000^{2j / d}}<br>
+\tag{52}<br>
+\end{align}<br>
 $$</p>
 <p>其中，$d$表示所期望的展开维度，$i = {1, 2, \dots, \frac{d}{2}}$，$j = {\frac{d}{2} + 1, \frac{d}{2} + 2, \dots, d}$。若定义$d = 128$，则其可视化如下图所示：</p>
 <p><p align="center"><img srcset="https://OmnisyR.github.io/figs/time_embeddings.png"/></p></p>
-<p>若是以函数的形式表示，红色为$TE_{(t, i)}$，蓝色为$TE_{(t, j)}$：</p>
+<p>若是以函数的形式表示，红色为${TE}<em>{(t, i)}$，蓝色为${TE}</em>{(t, j)}$：</p>
 <p><p align="center"><iframe src="https://www.desmos.com/calculator/xkmphum0ou?embed" width="800" height="400" style="border: 1px solid #ccc" frameborder=0></iframe></p></p>
 <h2>训练过程</h2>
 <p>首先导入一些必要的库：</p>

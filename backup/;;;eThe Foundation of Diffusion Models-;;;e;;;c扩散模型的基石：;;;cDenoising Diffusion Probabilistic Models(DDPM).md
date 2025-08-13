@@ -411,19 +411,19 @@ $$
 
 $$
 \begin{align}
-TE_{(t, i)} &= \sin\frac{t}{10000^\frac{2i}{d}}
+{TE}_{(t, i)} &= \sin\frac{t}{10000^{2i / d}}
 \tag{51}
 \\
-TE_{(t, j + 1)} &= \cos\frac{t}{10000^\frac{2j}{d}}
+{TE}_{(t, j + 1)} &= \cos\frac{t}{10000^{2j / d}}
 \tag{52}
 \end{align}
 $$
 
-其中，$d$表示所期望的展开维度，$i = {1, 2, \dots, \frac{d}{2}}$，$j = {\frac{d}{2} + 1, \frac{d}{2} + 2, \dots, d}$。若定义$d = 128$，则其可视化如下图所示：
+其中，$d$表示所期望的展开维度，$i = \{1, 2, \dots, \frac{d}{2}\}$，$j = \{\frac{d}{2} + 1, \frac{d}{2} + 2, \dots, d\}$。若定义$d = 128$，则其可视化如下图所示：
 
 `Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/time_embeddings.png"/></p>`
 
-若是以函数的形式表示，红色为$TE_{(t, i)}$，蓝色为$TE_{(t, j)}$：
+若是以函数的形式表示，红色为${TE}_{(t, i)}$，蓝色为${TE}_{(t, j)}$：
 
 `Gmeek-html<p align="center"><iframe src="https://www.desmos.com/calculator/xkmphum0ou?embed" width="800" height="400" style="border: 1px solid #ccc" frameborder=0></iframe></p>`
 
