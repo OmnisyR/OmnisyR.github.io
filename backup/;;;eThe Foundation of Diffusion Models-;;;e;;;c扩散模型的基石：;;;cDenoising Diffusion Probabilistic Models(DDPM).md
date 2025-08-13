@@ -58,8 +58,16 @@ $$
 ;;;;
 ;;;;UNet::文章地址：https://arxiv.org/abs/1505.04597
 UNet较为复杂，可以在Github上下载由文章[Diffusion Models Beat GANs on Image Synthesis](https://arxiv.org/abs/2105.05233)提供的[unet.py](https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/unet.py)以及[nn.py](https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/nn.py)来运行扩散模型，fp16_util.py可以不用下载，运行前将unet.py中相关代码删去即可。;;;;
-;;;;Attention is All You Need:文章地址：https://arxiv.org/abs/1706.03762:;;;;
 ;;;;残差思想::文章地址https://arxiv.org/abs/1512.03385;;;;
+;;;;Attention is All You Need::文章地址：https://arxiv.org/abs/1706.03762;;;;
+;;;;选择线性噪声时间表::噪声时间表有很多种，虽然网络上疑似很推崇余弦型噪声时间表，但实际操作中它会导致一种被我称为“色彩发散”的问题，还需要通过一系列手段来改善才能得到正确结果，所以刚刚接触扩散模型，可以先使用线性噪声时间表。;;;;
+;;;;式(50)::
+
+$$
+x_{t - 1} = \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}\_t)}}\epsilon_\theta(x_t, t) + \sqrt{\frac{1 - \bar{\alpha}\_{t - 1}}{1 - \bar{\alpha}\_t}\beta_t}\epsilon
+$$
+
+;;;;
 \denotes
 ## 介绍
 
@@ -399,9 +407,23 @@ $$
 
 #### 时间嵌入
 
-时间嵌入算法参考了`Attention is All You Need`中的位置嵌入算法。
+时间嵌入算法参考了`Attention is All You Need`中的位置嵌入算法，通过将时间戳这单个数字，展开为某个张量，再输入到网络中进行计算，最后再与普通卷积过程的只相加，进行接下来的计算。时间戳的展开服从下面的式子：
 
-`Gmeek-html<img src="https://OmnisyR.github.io/figs/time_embeddings.png">`
+$$
+\begin{align}
+TE_{(t, i)} &= \sin\frac{t}{10000^\frac{2i}{d}}
+\tag{51}
+\\
+TE_{(t, j + 1)} &= \cos\frac{t}{10000^\frac{2j}{d}}
+\tag{52}
+\end{align}
+$$
+
+其中，$d$表示所期望的展开维度，$i = {1, 2, \dots, \frac{d}{2}}$，$j = {\frac{d}{2} + 1, \frac{d}{2} + 2, \dots, d}$。若定义$d = 128$，则其可视化如下图所示：
+
+`Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/time_embeddings.png"/></p>`
+
+若是以函数的形式表示，红色为$TE_{(t, i)}$，蓝色为$TE_{(t, j)}$：
 
 `Gmeek-html<p align="center"><iframe src="https://www.desmos.com/calculator/xkmphum0ou?embed" width="800" height="400" style="border: 1px solid #ccc" frameborder=0></iframe></p>`
 
@@ -417,12 +439,12 @@ import numpy as np
 import torch.nn.functional as F
 from pathlib import Path
 from torch import optim
-from torchvision.transforms.v2 import Lambda, ToTensor, RandomHorizontalFlip, Compose
+from torchvision.transforms.v2 import Lambda, ToTensor, RandomHorizontalFlip, Compose, Grayscale
 from torch.utils.data import DataLoader
 from torchvision import datasets
 from tqdm import tqdm
 ```
-其次是一些训练配置、超参数的确定。对于$\beta$等参数，选择线性噪声时间表：
+其次是一些训练配置、超参数的确定。对于$\beta_t$等超参数，`选择线性噪声时间表`：
 ```python
 def linear(time_steps):
     beta_start = 0.0001
@@ -439,10 +461,6 @@ betas = linear(time_steps)
 alphas = 1. - betas
 #形状：[1001]
 alphas_bar = torch.cat((torch.tensor((1,)).cuda(), torch.cumprod(input=alphas, dim=0)))
-#形状：[1001]
-sqrt_alphas_bar = torch.sqrt(alphas_bar)
-#形状：[1001]
-sqrt_one_minus_alphas_bar = torch.sqrt(1. - alphas_bar)
 ```
 配置与超参数：
 ```python
@@ -463,7 +481,6 @@ cifar1
             0002.png
             ...
             1000.png
-
 """
 image_size = 32
 #通道数为3，即RGB
@@ -544,12 +561,10 @@ Lambda(lambda t: (t * 2) - 1) :将[0, 1]的浮点数缩放为[-1, 1]的浮点数
 RandomHorizontalFlip()        :对数据进行随机的水平方向的翻转
 """
 transform = Compose(
-    [torchvision.transforms.Grayscale(), ToTensor(), Lambda(lambda t: (t * 2) - 1), RandomHorizontalFlip()]
+    [Grayscale(), ToTensor(), Lambda(lambda t: (t * 2) - 1), RandomHorizontalFlip()]
     if channels == 1 else
     [ToTensor(), Lambda(lambda t: (t * 2) - 1), RandomHorizontalFlip()]
 )
-#将张量转化为图片
-transform_reverse = Compose([Lambda(lambda t: (t + 1) / 2 * 255)])
 ```
 训练的核心方法：
 ```python
@@ -670,3 +685,191 @@ def get_loss(x_0):
 ```
 
 ## 采样过程
+采样过程相较而言就简单很多，只需要进行一个迭代即可。但为方便后续开发，可以对其进行模块化编写。采样的核心方法：
+```python
+def sample(formats, configs, batch=1, noise=None, steps=1000, solver=ddpm, time_schedule=trailing, desc=''):
+    """
+    :param formats:一系列保存格式，输入为方法，详见保存格式方法
+    :param configs:保存的可修改配置，输入为词典。详见默认保存格式
+    :param batch:一批次采样的图片数量
+    :param noise:初始的噪声，如果为None，会生成随机噪声
+    :param steps:采样步数，以目前的进度而言，该值只能等于1000，快速采样将在以后的文章中介绍
+    :param solver:采样器，以目前的进度而言，该值只能等于ddpm，其他采样器将在以后的文章中介绍
+    :param time_schedule:采样时间序列，以目前的进度而言，该项就使用默认的trailing，其他序列将在以后的文章中介绍
+    :param desc:可在tqdm进度条中显示额外的注释说明
+    """
+    noise = torch.randn(size=(batch, channels, image_size, image_size)).cuda() if noise is None else noise
+    img_list = sample_loop(noise, steps, solver, time_schedule, desc)
+    for i, format_ in enumerate(formats):
+        format_(img_list, {} if len(configs) - 1 < i or configs[i] is None else configs[i])
+
+
+def sample_loop(noise, steps, solver, time_schedule, extra_desc=''):
+    #首先会创建一个列表，其中包含了初始噪声
+    result = [noise.detach().cpu()]
+    #获取采样时间戳，以目前的进度而言，该时间戳为[1, 2, ……, 1000]
+    times_s = time_schedule(steps)
+    #获取偏移的时间戳，该时间戳为[0, 1, ……, 999]
+    times_t = torch.cat((torch.tensor((0,)), times_s[:-1]))
+    #进行迭代采样
+    for i in tqdm(
+            reversed(range(steps)),
+            desc='Now Sampling...' + extra_desc,
+            total=steps
+    ):
+        #使用求解器进行单次迭代
+        noise = solver(noise, times_t[i], times_s[i])
+        #将中间状态保存到列表中
+        result.append(noise.detach().cpu())
+    #返回带有整个中间状态的列表
+    return result
+
+
+def trailing(steps):
+    return torch.arange(time_steps, 0, -time_steps / steps).flip(0).round().int().cuda()
+```
+DDPM的采样器，即`式(50)`：
+```python
+@torch.no_grad()
+def ddpm(xs, timestep, timestep_s):
+    """
+    :param xs:对应式(50)中的x_t
+    :param timestep:对应式(50)中的t - 1
+    :param timestep_s:对应式(50)中的t
+    :return:对应式(50)中的x_{t - 1}
+    """
+    #α_t = alphas[t - 1]
+    alpha = alphas[timestep]
+    #β_t = betas[t - 1]
+    beta = betas[timestep]
+    alpha_bar = alphas_bar[timestep_s]
+    alpha_bar_pre = alphas_bar[timestep]
+    #x_t前的系数
+    cof1 = 1 / alpha.sqrt()
+    #预测噪声前的系数
+    cof2 = (1 - alpha) / (alpha * (1 - alpha_bar)).sqrt()
+    #随机噪声前的系数
+    var = ((1 - alpha_bar_pre) / (1 - alpha_bar) * beta).sqrt()
+    noise = var * torch.randn(size=xs.shape).cuda()
+    #t的形状为[1]，将其形状展开为[batch_size]以放入模型中进行计算
+    timestep_s = torch.full(size=[xs.shape[0]], dtype=torch.long, fill_value=timestep_s).cuda()
+    #式(50)
+    return cof1 * xs - cof2 * model(xs, timestep_s) + noise
+```
+对于采样获得的从$t = 1000$到$t = 0$时刻全部状态，定义一个以网格形式保存采样结果的方法：
+```python
+"""
+format为grid时可使用的全部配置
+saving_folder  :保存的文件夹
+name           :保存的文件名
+reverse        :是否翻转网格长和宽
+padding_pixels :图片与图片之间的间隔
+"""
+grid_config = {
+    'saving_folder': '.',
+    'name': '_grid',
+    'reverse': False,
+    'padding_pixels': 2,
+}
+
+
+def grid(img_list, config):
+    """
+    用于保存的format方法变量
+    """
+    torchvision.io.write_png(
+        to_grid(to_rgb(img_list[-1]), config),
+        get('saving_folder', config, grid_config) + '/' + get('name', config, grid_config) + '.png'
+    )
+
+
+def to_rgb(tensor):
+    """
+    将张量变为图片格式
+    """
+    return ((tensor + torch.ones_like(tensor)) / 2 * 255).clip(0, 255).to(torch.uint8)
+
+
+def closest_divisors(num: int):
+    """
+    用于计算长和宽，使长和宽尽可能接近
+    """
+    a, b, i = 1, num, 0
+    while a < b:
+        i += 1
+        if num % i == 0:
+            a = i
+            b = num // a
+    return [b, a]
+
+
+def to_pixel_coord(num, padding_pixels: int):
+    """
+    用于计算像素点坐标，以制作网格
+    """
+    return num * image_size + (num + 1) * padding_pixels
+
+
+def to_grid(imgs, config):
+    """
+    将一批图片张量转化为单个的网格张量形式
+    """
+    batch = imgs.shape[0]
+    x, y = closest_divisors(batch)
+    if get('reverse', config, grid_config):
+        x, y = y, x
+    px = get('padding_pixels', config, grid_config)
+    width = to_pixel_coord(x, px)
+    height = to_pixel_coord(y, px)
+    result = torch.full(size=(imgs.shape[1], height, width), fill_value=1.).to(torch.uint8)
+    for j in range(batch):
+        h_coord = j // x * (image_size + px) + px
+        w_coord = j % x * (image_size + px) + px
+        result[:, h_coord:h_coord + image_size, w_coord: w_coord + image_size] = imgs[j]
+    return result
+
+
+def get(par, config, config_):
+    """
+    获取可配置的参数值
+    """
+    try:
+        return config[par]
+    except:
+        return config_[par]
+```
+进而，便可完成训练过程中所提到的milestone_sample方法：
+```python
+def milestone_sample(global_epoch, solver=ddpm):
+    milestone_path = checkpoint_folder + "/milestone"
+    if not os.path.exists(milestone_path):
+        os.mkdir(milestone_path)
+    print("Now Sampling Milestone")
+    time.sleep(0.1)
+    #调用采样核心方法，使用grid作为保存格式，将结果保存到milestone文件夹，一次采样16张图片
+    sample(
+        formats=[grid],
+        configs=[{'saving_folder': checkpoint_folder + "/milestone", 'name': 'epoch_%d' % global_epoch}],
+        batch=16,
+        solver=solver
+    )
+    print("----------------------------------------------------------------")
+```
+
+## 运行代码
+这样一来，便完成了DDPM的代码实现，即可进行训练：
+```python
+if __name__ == '__main__':
+    train()
+```
+训练的前100次迭代：
+
+`Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_10_100.png"/></p>`
+
+训练的1000次迭代：
+
+`Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_10_100.png"/></p>`
+
+训练的损失值变化：
+
+`Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_10_100.png"/></p>`
