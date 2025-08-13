@@ -434,18 +434,66 @@ $$</p>
 <p><img src="https://OmnisyR.github.io/figs/time_embeddings.png"></p>
 <p><p align="center"><iframe src="https://www.desmos.com/calculator/xkmphum0ou?embed" width="800" height="400" style="border: 1px solid #ccc" frameborder=0></iframe></p></p>
 <h2>训练过程</h2>
+<p>首先导入一些必要的库：</p>
 <div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">import</span> <span class="pl-s1">unet</span>
 <span class="pl-k">import</span> <span class="pl-s1">torch</span>
 <span class="pl-k">import</span> <span class="pl-s1">torchvision</span>
+<span class="pl-k">import</span> <span class="pl-s1">os</span>
+<span class="pl-k">import</span> <span class="pl-s1">time</span>
+<span class="pl-k">import</span> <span class="pl-s1">numpy</span> <span class="pl-k">as</span> <span class="pl-s1">np</span>
+<span class="pl-k">import</span> <span class="pl-s1">torch</span>.<span class="pl-s1">nn</span>.<span class="pl-s1">functional</span> <span class="pl-k">as</span> <span class="pl-c1">F</span>
 <span class="pl-k">from</span> <span class="pl-s1">pathlib</span> <span class="pl-k">import</span> <span class="pl-v">Path</span>
 <span class="pl-k">from</span> <span class="pl-s1">torch</span> <span class="pl-k">import</span> <span class="pl-s1">optim</span>
 <span class="pl-k">from</span> <span class="pl-s1">torchvision</span>.<span class="pl-s1">transforms</span>.<span class="pl-s1">v2</span> <span class="pl-k">import</span> <span class="pl-v">Lambda</span>, <span class="pl-v">ToTensor</span>, <span class="pl-v">RandomHorizontalFlip</span>, <span class="pl-v">Compose</span>
+<span class="pl-k">from</span> <span class="pl-s1">torch</span>.<span class="pl-s1">utils</span>.<span class="pl-s1">data</span> <span class="pl-k">import</span> <span class="pl-v">DataLoader</span>
+<span class="pl-k">from</span> <span class="pl-s1">torchvision</span> <span class="pl-k">import</span> <span class="pl-s1">datasets</span>
+<span class="pl-k">from</span> <span class="pl-s1">tqdm</span> <span class="pl-k">import</span> <span class="pl-s1">tqdm</span></pre></div>
+<p>其次是一些训练配置、超参数的确定。对于$\beta$等参数，选择线性噪声时间表：</p>
+<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">def</span> <span class="pl-en">linear</span>(<span class="pl-s1">time_steps</span>):
+    <span class="pl-s1">beta_start</span> <span class="pl-c1">=</span> <span class="pl-c1">0.0001</span>
+    <span class="pl-s1">beta_end</span> <span class="pl-c1">=</span> <span class="pl-c1">0.02</span>
+    <span class="pl-k">return</span> <span class="pl-s1">torch</span>.<span class="pl-c1">linspace</span>(<span class="pl-s1">beta_start</span>, <span class="pl-s1">beta_end</span>, <span class="pl-s1">time_steps</span>).<span class="pl-c1">cuda</span>()
 
-<span class="pl-s1">image_size</span> <span class="pl-c1">=</span> <span class="pl-c1">32</span>
-<span class="pl-s1">channels</span> <span class="pl-c1">=</span> <span class="pl-c1">1</span>
-<span class="pl-s1">base_channels</span> <span class="pl-c1">=</span> <span class="pl-c1">128</span>
-<span class="pl-s1">learning_rate</span> <span class="pl-c1">=</span> <span class="pl-c1">1e-4</span>
+
+<span class="pl-c">#时间戳选定为从0到1000，若减少或增加该值，会改变噪声时间表相关参数</span>
 <span class="pl-s1">time_steps</span> <span class="pl-c1">=</span> <span class="pl-c1">1000</span>
+<span class="pl-c">#噪声时间表相关参数的预先计算缓存</span>
+<span class="pl-c">#形状：[1000]</span>
+<span class="pl-s1">betas</span> <span class="pl-c1">=</span> <span class="pl-en">linear</span>(<span class="pl-s1">time_steps</span>)
+<span class="pl-c">#形状：[1000]</span>
+<span class="pl-s1">alphas</span> <span class="pl-c1">=</span> <span class="pl-c1">1.</span> <span class="pl-c1">-</span> <span class="pl-s1">betas</span>
+<span class="pl-c">#形状：[1001]</span>
+<span class="pl-s1">alphas_bar</span> <span class="pl-c1">=</span> <span class="pl-s1">torch</span>.<span class="pl-c1">cat</span>((<span class="pl-s1">torch</span>.<span class="pl-c1">tensor</span>((<span class="pl-c1">1</span>,)).<span class="pl-c1">cuda</span>(), <span class="pl-s1">torch</span>.<span class="pl-c1">cumprod</span>(<span class="pl-s1">input</span><span class="pl-c1">=</span><span class="pl-s1">alphas</span>, <span class="pl-s1">dim</span><span class="pl-c1">=</span><span class="pl-c1">0</span>)))
+<span class="pl-c">#形状：[1001]</span>
+<span class="pl-s1">sqrt_alphas_bar</span> <span class="pl-c1">=</span> <span class="pl-s1">torch</span>.<span class="pl-c1">sqrt</span>(<span class="pl-s1">alphas_bar</span>)
+<span class="pl-c">#形状：[1001]</span>
+<span class="pl-s1">sqrt_one_minus_alphas_bar</span> <span class="pl-c1">=</span> <span class="pl-s1">torch</span>.<span class="pl-c1">sqrt</span>(<span class="pl-c1">1.</span> <span class="pl-c1">-</span> <span class="pl-s1">alphas_bar</span>)</pre></div>
+<p>配置与超参数：</p>
+<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-s">"""</span>
+<span class="pl-s">为简便演示，使用CIFAR1作为数据集，图片尺寸为32×32</span>
+<span class="pl-s">CIFAR1指仅仅选用CIFAR10中的一类作为数据集</span>
+<span class="pl-s">数据集的文件结构为</span>
+<span class="pl-s">cifar1</span>
+<span class="pl-s">    train</span>
+<span class="pl-s">        horse</span>
+<span class="pl-s">            0001.png</span>
+<span class="pl-s">            0002.png</span>
+<span class="pl-s">            ...</span>
+<span class="pl-s">            5000.png</span>
+<span class="pl-s">    test</span>
+<span class="pl-s">        horse</span>
+<span class="pl-s">            0001.png</span>
+<span class="pl-s">            0002.png</span>
+<span class="pl-s">            ...</span>
+<span class="pl-s">            1000.png</span>
+<span class="pl-s"></span>
+<span class="pl-s">"""</span>
+<span class="pl-s1">image_size</span> <span class="pl-c1">=</span> <span class="pl-c1">32</span>
+<span class="pl-c">#通道数为3，即RGB</span>
+<span class="pl-s1">channels</span> <span class="pl-c1">=</span> <span class="pl-c1">3</span>
+<span class="pl-c">#模型的基础通道数，即最上层的通道数</span>
+<span class="pl-s1">base_channels</span> <span class="pl-c1">=</span> <span class="pl-c1">128</span>
+<span class="pl-c">#模型的不同层的通道数，分辨率为32×32时，模型的深度选则4，对应的通道数为128，256，256，256</span>
 <span class="pl-s1">ch_mults</span> <span class="pl-c1">=</span> {
     <span class="pl-c1">32</span>: (<span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">2</span>, <span class="pl-c1">2</span>),
     <span class="pl-c1">64</span>: (<span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">3</span>, <span class="pl-c1">4</span>),
@@ -453,21 +501,30 @@ $$</p>
     <span class="pl-c1">256</span>: (<span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">2</span>, <span class="pl-c1">4</span>, <span class="pl-c1">4</span>),
     <span class="pl-c1">512</span>: (<span class="pl-c1">0.5</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">2</span>, <span class="pl-c1">4</span>, <span class="pl-c1">4</span>)
 }
+<span class="pl-c">#学习率</span>
+<span class="pl-s1">learning_rate</span> <span class="pl-c1">=</span> <span class="pl-c1">1e-4</span>
+<span class="pl-c">#训练轮数，选定迭代数据集1000次（实际上该轮数是远远不够的）</span>
 <span class="pl-s1">epochs</span> <span class="pl-c1">=</span> <span class="pl-c1">1000</span>
+<span class="pl-c">#每多少轮数进行以此采样以及模型的断点保存</span>
+<span class="pl-s1">milestone_step</span> <span class="pl-c1">=</span> <span class="pl-c1">10</span>
+<span class="pl-c">#断点保存的最大数量</span>
 <span class="pl-s1">cache_num</span> <span class="pl-c1">=</span> <span class="pl-c1">10</span>
+<span class="pl-c">#一个批次训练图片的数量，在该案例下，128张适合拥有8G显存的显卡</span>
 <span class="pl-s1">batch_size</span> <span class="pl-c1">=</span> <span class="pl-c1">128</span>
-<span class="pl-s1">milestone_step</span> <span class="pl-c1">=</span> <span class="pl-c1">1000</span>
-<span class="pl-s1">last_e</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>
-<span class="pl-s1">betas</span> <span class="pl-c1">=</span> <span class="pl-en">linear</span>(<span class="pl-s1">time_steps</span>)
-<span class="pl-s1">checkpoint_folder</span> <span class="pl-c1">=</span> <span class="pl-s">''</span>
-<span class="pl-s1">datasets_folder</span> <span class="pl-c1">=</span> <span class="pl-s">''</span>
-<span class="pl-s1">csv_str</span> <span class="pl-c1">=</span> <span class="pl-s">''</span>
+<span class="pl-c">#checkpoints的拟定位置</span>
+<span class="pl-s1">checkpoint_folder</span> <span class="pl-c1">=</span> <span class="pl-s">'cifar1/cp'</span>
+<span class="pl-c">#训练集的位置</span>
+<span class="pl-s1">datasets_folder</span> <span class="pl-c1">=</span> <span class="pl-s">'cifar1/train'</span>
+<span class="pl-c">#用以收集训练时损失值的文件</span>
+<span class="pl-s1">csv_str</span> <span class="pl-c1">=</span> <span class="pl-s1">checkpoint_folder</span> <span class="pl-c1">+</span> <span class="pl-s">'/loss.csv'</span>
+<span class="pl-c">#模型断点保存文件名的前缀</span>
 <span class="pl-s1">prefix</span> <span class="pl-c1">=</span> <span class="pl-s">"checkpoint_epoch"</span>
+<span class="pl-c">#模型断点保存文件名的后缀</span>
 <span class="pl-s1">suffix</span> <span class="pl-c1">=</span> <span class="pl-s">".pth"</span>
-
+<span class="pl-c">#为checkpoints新建文件夹</span>
 <span class="pl-en">Path</span>(<span class="pl-s1">checkpoint_folder</span>).<span class="pl-c1">mkdir</span>(<span class="pl-s1">exist_ok</span><span class="pl-c1">=</span><span class="pl-c1">True</span>)
 <span class="pl-en">Path</span>(<span class="pl-s1">checkpoint_folder</span> <span class="pl-c1">+</span> <span class="pl-s">'/milestone'</span>).<span class="pl-c1">mkdir</span>(<span class="pl-s1">exist_ok</span><span class="pl-c1">=</span><span class="pl-c1">True</span>)
-
+<span class="pl-c">#新建模型</span>
 <span class="pl-s1">model</span> <span class="pl-c1">=</span> <span class="pl-s1">unet</span>.<span class="pl-c1">UNetModel</span>(
     <span class="pl-s1">image_size</span><span class="pl-c1">=</span><span class="pl-s1">image_size</span>,
     <span class="pl-s1">in_channels</span><span class="pl-c1">=</span><span class="pl-s1">channels</span>,
@@ -479,8 +536,8 @@ $$</p>
     <span class="pl-s1">channel_mult</span><span class="pl-c1">=</span><span class="pl-s1">ch_mults</span>[<span class="pl-s1">image_size</span>],
     <span class="pl-s1">num_heads</span><span class="pl-c1">=</span><span class="pl-c1">4</span>,
     <span class="pl-s1">num_head_channels</span><span class="pl-c1">=</span><span class="pl-c1">-</span><span class="pl-c1">1</span>,
-).<span class="pl-c1">cuda</span>()
-
+)
+<span class="pl-c">#若checkpoints文件夹内存在模型断点，则读取该断点</span>
 <span class="pl-s1">last_model</span> <span class="pl-c1">=</span> <span class="pl-c1">None</span>
 <span class="pl-s1">last</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>
 <span class="pl-k">for</span> <span class="pl-s1">file</span> <span class="pl-c1">in</span> <span class="pl-s1">os</span>.<span class="pl-c1">listdir</span>(<span class="pl-s1">checkpoint_folder</span>):
@@ -489,109 +546,147 @@ $$</p>
     <span class="pl-s1">epochs_str</span> <span class="pl-c1">=</span> <span class="pl-s1">file</span>[<span class="pl-en">len</span>(<span class="pl-s1">prefix</span>) <span class="pl-c1">+</span> <span class="pl-c1">1</span>:<span class="pl-c1">0</span> <span class="pl-c1">-</span> <span class="pl-en">len</span>(<span class="pl-s1">suffix</span>)]
     <span class="pl-k">if</span> <span class="pl-en">int</span>(<span class="pl-s1">epochs_str</span>) <span class="pl-c1">&gt;</span> <span class="pl-s1">last</span>:
         <span class="pl-s1">last</span> <span class="pl-c1">=</span> <span class="pl-en">int</span>(<span class="pl-s1">epochs_str</span>)
-<span class="pl-s1">last_e</span> <span class="pl-c1">=</span> <span class="pl-s1">last</span>
 <span class="pl-k">if</span> <span class="pl-s1">last</span> <span class="pl-c1">&gt;</span> <span class="pl-c1">0</span>:
     <span class="pl-s1">last_model</span> <span class="pl-c1">=</span> <span class="pl-s1">torch</span>.<span class="pl-c1">load</span>(<span class="pl-s1">checkpoint_folder</span> <span class="pl-c1">+</span> <span class="pl-s">"/%s_%d%s"</span> <span class="pl-c1">%</span> (<span class="pl-s1">prefix</span>, <span class="pl-s1">last</span>, <span class="pl-s1">suffix</span>), <span class="pl-s1">weights_only</span><span class="pl-c1">=</span><span class="pl-c1">False</span>)
-
 <span class="pl-k">if</span> <span class="pl-s1">last_model</span> <span class="pl-c1"><span class="pl-c1">is</span> <span class="pl-c1">not</span></span> <span class="pl-c1">None</span>:
     <span class="pl-s1">model</span>.<span class="pl-c1">load_state_dict</span>(<span class="pl-s1">last_model</span>)
 <span class="pl-k">else</span>:
     <span class="pl-en">print</span>(<span class="pl-s">"No Checkpoints Exist"</span>)
-
+<span class="pl-s1">model</span> <span class="pl-c1">=</span> <span class="pl-s1">model</span>.<span class="pl-c1">cuda</span>()
+<span class="pl-c">#统计模型的参数数量</span>
 <span class="pl-s1">parameters</span> <span class="pl-c1">=</span> <span class="pl-en">sum</span>(<span class="pl-s1">p</span>.<span class="pl-c1">numel</span>() <span class="pl-k">for</span> <span class="pl-s1">p</span> <span class="pl-c1">in</span> <span class="pl-s1">model</span>.<span class="pl-c1">parameters</span>() <span class="pl-k">if</span> <span class="pl-s1">p</span>.<span class="pl-c1">requires_grad</span>)
 <span class="pl-s1">count_str</span> <span class="pl-c1">=</span> <span class="pl-s">"Parameters Count: "</span>
-<span class="pl-en">print</span>(<span class="pl-s1">count_str</span> <span class="pl-c1">+</span> <span class="pl-s">"%.2fB"</span> <span class="pl-c1">%</span> (<span class="pl-s1">parameters</span> <span class="pl-c1">/</span> <span class="pl-c1">1e9</span>)) <span class="pl-k">if</span> <span class="pl-s1">parameters</span> <span class="pl-c1">&gt;</span> <span class="pl-c1">1e9</span> <span class="pl-k">else</span> <span class="pl-en">print</span>(<span class="pl-s1">count_str</span> <span class="pl-c1">+</span> <span class="pl-s">"%.2fM"</span> <span class="pl-c1">%</span> (<span class="pl-s1">parameters</span> <span class="pl-c1">/</span> <span class="pl-c1">1e6</span>))
-
+<span class="pl-en">print</span>(<span class="pl-s1">count_str</span> <span class="pl-c1">+</span> <span class="pl-s">"%.2fB"</span> <span class="pl-c1">%</span> (<span class="pl-s1">parameters</span> <span class="pl-c1">/</span> <span class="pl-c1">1e9</span>)) \
+    <span class="pl-k">if</span> <span class="pl-s1">parameters</span> <span class="pl-c1">&gt;</span> <span class="pl-c1">1e9</span> <span class="pl-k">else</span> <span class="pl-en">print</span>(<span class="pl-s1">count_str</span> <span class="pl-c1">+</span> <span class="pl-s">"%.2fM"</span> <span class="pl-c1">%</span> (<span class="pl-s1">parameters</span> <span class="pl-c1">/</span> <span class="pl-c1">1e6</span>))
+<span class="pl-c">#优化器</span>
 <span class="pl-s1">optimizer</span> <span class="pl-c1">=</span> <span class="pl-s1">optim</span>.<span class="pl-c1">AdamW</span>(<span class="pl-s1">model</span>.<span class="pl-c1">parameters</span>(), <span class="pl-s1">lr</span><span class="pl-c1">=</span><span class="pl-s1">learning_rate</span>, <span class="pl-s1">weight_decay</span><span class="pl-c1">=</span><span class="pl-c1">1e-4</span>)
-<span class="pl-s1">alphas</span> <span class="pl-c1">=</span> <span class="pl-c1">1.</span> <span class="pl-c1">-</span> <span class="pl-s1">betas</span>
-<span class="pl-s1">alphas_bar</span> <span class="pl-c1">=</span> <span class="pl-s1">torch</span>.<span class="pl-c1">cat</span>((<span class="pl-s1">torch</span>.<span class="pl-c1">tensor</span>((<span class="pl-c1">1</span>,)).<span class="pl-c1">cuda</span>(), <span class="pl-s1">torch</span>.<span class="pl-c1">cumprod</span>(<span class="pl-s1">input</span><span class="pl-c1">=</span><span class="pl-s1">alphas</span>, <span class="pl-s1">dim</span><span class="pl-c1">=</span><span class="pl-c1">0</span>)))
-<span class="pl-s1">sqrt_alphas_bar</span> <span class="pl-c1">=</span> <span class="pl-s1">torch</span>.<span class="pl-c1">sqrt</span>(<span class="pl-s1">alphas_bar</span>)
-<span class="pl-s1">sqrt_one_minus_alphas_bar</span> <span class="pl-c1">=</span> <span class="pl-s1">torch</span>.<span class="pl-c1">sqrt</span>(<span class="pl-c1">1.</span> <span class="pl-c1">-</span> <span class="pl-s1">alphas_bar</span>)
-
+<span class="pl-c">#将图片转化为张量</span>
+<span class="pl-s">"""</span>
+<span class="pl-s">ToTensor()                    :读取图片，并将其从[0, 255]的整数缩放为[0, 1]的浮点数</span>
+<span class="pl-s">Lambda(lambda t: (t * 2) - 1) :将[0, 1]的浮点数缩放为[-1, 1]的浮点数</span>
+<span class="pl-s">RandomHorizontalFlip()        :对数据进行随机的水平方向的翻转</span>
+<span class="pl-s">"""</span>
 <span class="pl-s1">transform</span> <span class="pl-c1">=</span> <span class="pl-en">Compose</span>(
     [<span class="pl-s1">torchvision</span>.<span class="pl-c1">transforms</span>.<span class="pl-c1">Grayscale</span>(), <span class="pl-en">ToTensor</span>(), <span class="pl-en">Lambda</span>(<span class="pl-k">lambda</span> <span class="pl-s1">t</span>: (<span class="pl-s1">t</span> <span class="pl-c1">*</span> <span class="pl-c1">2</span>) <span class="pl-c1">-</span> <span class="pl-c1">1</span>), <span class="pl-en">RandomHorizontalFlip</span>()]
     <span class="pl-k">if</span> <span class="pl-s1">channels</span> <span class="pl-c1">==</span> <span class="pl-c1">1</span> <span class="pl-k">else</span>
     [<span class="pl-en">ToTensor</span>(), <span class="pl-en">Lambda</span>(<span class="pl-k">lambda</span> <span class="pl-s1">t</span>: (<span class="pl-s1">t</span> <span class="pl-c1">*</span> <span class="pl-c1">2</span>) <span class="pl-c1">-</span> <span class="pl-c1">1</span>), <span class="pl-en">RandomHorizontalFlip</span>()]
 )
+<span class="pl-c">#将张量转化为图片</span>
 <span class="pl-s1">transform_reverse</span> <span class="pl-c1">=</span> <span class="pl-en">Compose</span>([<span class="pl-en">Lambda</span>(<span class="pl-k">lambda</span> <span class="pl-s1">t</span>: (<span class="pl-s1">t</span> <span class="pl-c1">+</span> <span class="pl-c1">1</span>) <span class="pl-c1">/</span> <span class="pl-c1">2</span> <span class="pl-c1">*</span> <span class="pl-c1">255</span>)])</pre></div>
-<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">import</span> <span class="pl-s1">time</span>
-<span class="pl-k">import</span> <span class="pl-s1">numpy</span> <span class="pl-k">as</span> <span class="pl-s1">np</span>
-<span class="pl-k">import</span> <span class="pl-s1">torch</span>.<span class="pl-s1">nn</span>.<span class="pl-s1">functional</span> <span class="pl-k">as</span> <span class="pl-c1">F</span>
-<span class="pl-k">from</span> <span class="pl-s1">tqdm</span> <span class="pl-k">import</span> <span class="pl-s1">tqdm</span>
-<span class="pl-k">from</span> <span class="pl-s1">torch</span>.<span class="pl-s1">utils</span>.<span class="pl-s1">data</span> <span class="pl-k">import</span> <span class="pl-v">DataLoader</span>
-<span class="pl-k">from</span> <span class="pl-s1">torchvision</span> <span class="pl-k">import</span> <span class="pl-s1">datasets</span>
-
-<span class="pl-k">def</span> <span class="pl-en">train</span>():
+<p>训练的核心方法：</p>
+<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">def</span> <span class="pl-en">train</span>():
     <span class="pl-en">train_loop</span>(<span class="pl-en">DataLoader</span>(
         <span class="pl-s1">datasets</span>.<span class="pl-c1">ImageFolder</span>(<span class="pl-s1">datasets_folder</span>, <span class="pl-s1">transform</span><span class="pl-c1">=</span><span class="pl-s1">transform</span>),
         <span class="pl-s1">batch_size</span><span class="pl-c1">=</span><span class="pl-s1">batch_size</span>,
         <span class="pl-s1">shuffle</span><span class="pl-c1">=</span><span class="pl-c1">True</span>,
         <span class="pl-s1">drop_last</span><span class="pl-c1">=</span><span class="pl-c1">True</span>,
         <span class="pl-s1">pin_memory</span><span class="pl-c1">=</span><span class="pl-c1">True</span>
-    ))</pre></div>
-<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">import</span> <span class="pl-s1">time</span>
-<span class="pl-k">import</span> <span class="pl-s1">numpy</span> <span class="pl-k">as</span> <span class="pl-s1">np</span>
-<span class="pl-k">import</span> <span class="pl-s1">torch</span>.<span class="pl-s1">nn</span>.<span class="pl-s1">functional</span> <span class="pl-k">as</span> <span class="pl-c1">F</span>
-<span class="pl-k">from</span> <span class="pl-s1">tqdm</span> <span class="pl-k">import</span> <span class="pl-s1">tqdm</span>
-<span class="pl-k">from</span> <span class="pl-s1">torch</span>.<span class="pl-s1">utils</span>.<span class="pl-s1">data</span> <span class="pl-k">import</span> <span class="pl-v">DataLoader</span>
-<span class="pl-k">from</span> <span class="pl-s1">torchvision</span> <span class="pl-k">import</span> <span class="pl-s1">datasets</span>
+    ))
+
 
 <span class="pl-k">def</span> <span class="pl-en">train_loop</span>(<span class="pl-s1">dataloader</span>):
-    <span class="pl-s1">local_epochs</span> <span class="pl-c1">=</span> <span class="pl-s1">epochs</span> <span class="pl-c1">-</span> <span class="pl-s1">last_e</span>
+    <span class="pl-c">#计算剩余需要迭代的次数</span>
+    <span class="pl-s1">local_epochs</span> <span class="pl-c1">=</span> <span class="pl-s1">epochs</span> <span class="pl-c1">-</span> <span class="pl-s1">last</span>
+    <span class="pl-c">#损失值文件的写入缓存</span>
     <span class="pl-s1">csv_cache</span> <span class="pl-c1">=</span> <span class="pl-s">""</span>
     <span class="pl-en">print</span>()
     <span class="pl-en">print</span>(<span class="pl-s">"Now Strat Training"</span>)
     <span class="pl-k">for</span> <span class="pl-s1">epoch</span> <span class="pl-c1">in</span> <span class="pl-en">range</span>(<span class="pl-s1">local_epochs</span>):
+        <span class="pl-c">#损失值的缓存</span>
         <span class="pl-s1">losses</span> <span class="pl-c1">=</span> []
+        <span class="pl-c">#若不等待，貌似tqdm的进度条会出现一些问题？</span>
         <span class="pl-s1">time</span>.<span class="pl-c1">sleep</span>(<span class="pl-c1">0.1</span>)
-        <span class="pl-s1">global_epoch</span> <span class="pl-c1">=</span> <span class="pl-s1">epoch</span> <span class="pl-c1">+</span> <span class="pl-s1">last_e</span> <span class="pl-c1">+</span> <span class="pl-c1">1</span>
+        <span class="pl-c">#计算当前的迭代次数</span>
+        <span class="pl-s1">global_epoch</span> <span class="pl-c1">=</span> <span class="pl-s1">epoch</span> <span class="pl-c1">+</span> <span class="pl-s1">last</span> <span class="pl-c1">+</span> <span class="pl-c1">1</span>
+        <span class="pl-c">#对数据集进行遍历</span>
         <span class="pl-k">for</span> <span class="pl-s1">step</span>, <span class="pl-s1">data_batch</span> <span class="pl-c1">in</span> (<span class="pl-s1">pbar</span> <span class="pl-c1">:=</span> <span class="pl-en">tqdm</span>(
                 <span class="pl-en">enumerate</span>(<span class="pl-s1">dataloader</span>),
                 <span class="pl-s1">total</span><span class="pl-c1">=</span><span class="pl-en">len</span>(<span class="pl-s1">dataloader</span>),
                 <span class="pl-s1">desc</span><span class="pl-c1">=</span><span class="pl-s">"Epoch: %d/ %d With Loss %f"</span> <span class="pl-c1">%</span> (<span class="pl-s1">global_epoch</span>, <span class="pl-s1">epochs</span>, <span class="pl-c1">1</span>)
         )):
+            <span class="pl-c">#初始化优化器</span>
             <span class="pl-s1">optimizer</span>.<span class="pl-c1">zero_grad</span>()
+            <span class="pl-c">#获取该批次的全部数据张量，其形状为[batch_size, channels, image_size, image_size]</span>
             <span class="pl-s1">data_batch</span> <span class="pl-c1">=</span> <span class="pl-s1">data_batch</span>[<span class="pl-c1">0</span>].<span class="pl-c1">cuda</span>()
+            <span class="pl-c">#获取损失值以及计算损失值所随机到的时间戳</span>
             <span class="pl-s1">complex_loss</span>, <span class="pl-s1">t</span> <span class="pl-c1">=</span> <span class="pl-en">get_loss</span>(<span class="pl-s1">data_batch</span>)
             <span class="pl-s1">loss</span> <span class="pl-c1">=</span> <span class="pl-s1">complex_loss</span>.<span class="pl-c1">sum</span>() <span class="pl-c1">/</span> <span class="pl-c1">1000.</span>
             <span class="pl-s1">loss</span>.<span class="pl-c1">backward</span>()
             <span class="pl-s1">torch</span>.<span class="pl-c1">nn</span>.<span class="pl-c1">utils</span>.<span class="pl-c1">clip_grad_norm_</span>(<span class="pl-s1">model</span>.<span class="pl-c1">parameters</span>(), <span class="pl-c1">1.</span>)
             <span class="pl-s1">optimizer</span>.<span class="pl-c1">step</span>()
             <span class="pl-s1">pbar</span>.<span class="pl-c1">set_description</span>(<span class="pl-s">"Epoch: %d/ %d With Loss %f "</span> <span class="pl-c1">%</span> (<span class="pl-s1">global_epoch</span>, <span class="pl-s1">epochs</span>, <span class="pl-s1">loss</span>.<span class="pl-c1">item</span>()))
+            <span class="pl-c">#记录该批次的损失值</span>
             <span class="pl-s1">losses</span>.<span class="pl-c1">append</span>(<span class="pl-s1">loss</span>.<span class="pl-c1">item</span>())
+        <span class="pl-c">#获取一轮迭代后的损失值的平均值及方差</span>
         <span class="pl-s1">ave_loss</span> <span class="pl-c1">=</span> <span class="pl-s1">np</span>.<span class="pl-c1">average</span>(<span class="pl-s1">losses</span>)
         <span class="pl-s1">var_loss</span> <span class="pl-c1">=</span> <span class="pl-s1">np</span>.<span class="pl-c1">var</span>(<span class="pl-s1">losses</span>)
         <span class="pl-en">print</span>(<span class="pl-s">"μ In Epoch %d: %s"</span> <span class="pl-c1">%</span> (<span class="pl-s1">global_epoch</span>, <span class="pl-s1">ave_loss</span>))
         <span class="pl-en">print</span>(<span class="pl-s">"σ In Epoch %d: %s"</span> <span class="pl-c1">%</span> (<span class="pl-s1">global_epoch</span>, <span class="pl-s1">var_loss</span>))
         <span class="pl-en">print</span>(<span class="pl-s">"----------------------------------------------------------------"</span>)
+        <span class="pl-c">#记录损失值的平均值及方差</span>
         <span class="pl-s1">csv_cache</span> <span class="pl-c1">+=</span> <span class="pl-s">"%d,%s,%s<span class="pl-cce">\n</span>"</span> <span class="pl-c1">%</span> (<span class="pl-s1">global_epoch</span>, <span class="pl-s1">ave_loss</span>, <span class="pl-s1">var_loss</span>)
-        <span class="pl-s1">old_model</span> <span class="pl-c1">=</span> <span class="pl-s1">checkpoint_folder</span> <span class="pl-c1">+</span> <span class="pl-s">"/%s_%d.pt"</span> <span class="pl-c1">%</span> (
+        <span class="pl-c">#检查是否存在超出最大缓存数量的断点</span>
+        <span class="pl-s1">old_model</span> <span class="pl-c1">=</span> <span class="pl-s1">checkpoint_folder</span> <span class="pl-c1">+</span> <span class="pl-s">"/%s_%d.%s"</span> <span class="pl-c1">%</span> (
             <span class="pl-s1">prefix</span>,
-            <span class="pl-s1">global_epoch</span> <span class="pl-c1">-</span> <span class="pl-s1">cache_num</span> <span class="pl-c1">*</span> <span class="pl-s1">milestone_step</span>
+            <span class="pl-s1">global_epoch</span> <span class="pl-c1">-</span> <span class="pl-s1">cache_num</span> <span class="pl-c1">*</span> <span class="pl-s1">milestone_step</span>,
+            <span class="pl-s1">suffix</span>
         )
         <span class="pl-k">if</span> <span class="pl-s1">os</span>.<span class="pl-c1">path</span>.<span class="pl-c1">exists</span>(<span class="pl-s1">old_model</span>):
             <span class="pl-s1">os</span>.<span class="pl-c1">remove</span>(<span class="pl-s1">old_model</span>)
         <span class="pl-k">if</span> <span class="pl-s1">global_epoch</span> <span class="pl-c1">%</span> <span class="pl-s1">milestone_step</span> <span class="pl-c1">==</span> <span class="pl-c1">0</span>:
+            <span class="pl-c">#保存断点</span>
             <span class="pl-s1">torch</span>.<span class="pl-c1">save</span>(
                 <span class="pl-s1">model</span>.<span class="pl-c1">state_dict</span>(),
                 <span class="pl-s1">checkpoint_folder</span> <span class="pl-c1">+</span> <span class="pl-s">"/%s_%d%s"</span> <span class="pl-c1">%</span> (<span class="pl-s1">prefix</span>, <span class="pl-s1">global_epoch</span>, <span class="pl-s1">suffix</span>)
             )
+            <span class="pl-c">#保存损失值信息</span>
             <span class="pl-k">with</span> <span class="pl-en">open</span>(<span class="pl-s1">csv_str</span>, <span class="pl-s">'a'</span>) <span class="pl-k">as</span> <span class="pl-s1">file</span>:
                 <span class="pl-s1">file</span>.<span class="pl-c1">write</span>(<span class="pl-s1">csv_cache</span>)
                 <span class="pl-s1">csv_cache</span> <span class="pl-c1">=</span> <span class="pl-s">""</span>
+            <span class="pl-c">#进行一次采样，该方法在接下来的章节——采样过程中给出</span>
             <span class="pl-en">milestone_sample</span>(<span class="pl-s1">global_epoch</span>)
-        <span class="pl-s1">time</span>.<span class="pl-c1">sleep</span>(<span class="pl-c1">0.1</span>)</pre></div>
-<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">def</span> <span class="pl-en">add_noise</span>(<span class="pl-s1">x_0</span>, <span class="pl-s1">t</span>, <span class="pl-s1">noise</span><span class="pl-c1">=</span><span class="pl-c1">None</span>):
+        <span class="pl-s1">time</span>.<span class="pl-c1">sleep</span>(<span class="pl-c1">0.1</span>)
+
+
+<span class="pl-k">def</span> <span class="pl-en">extract</span>(<span class="pl-s1">v</span>, <span class="pl-s1">t</span>, <span class="pl-s1">x_shape</span>):
+    <span class="pl-s">"""</span>
+<span class="pl-s">    用于将一些参数从噪声时间表超参数的预先缓存中提取出来。</span>
+<span class="pl-s">    :param v:缓存，形状为[1000]</span>
+<span class="pl-s">    :param t:需要提取的目标时间戳，形状为[batch_size]</span>
+<span class="pl-s">    :param x_shape:一个批次数据的形状，一般为[batch_size, channels, image_size, image_size]</span>
+<span class="pl-s">    :return:一般返回的形状为[batch_size, 1, 1, 1]</span>
+<span class="pl-s">    """</span>
+    <span class="pl-k">return</span> <span class="pl-s1">torch</span>.<span class="pl-c1">gather</span>(<span class="pl-s1">v</span>, <span class="pl-s1">index</span><span class="pl-c1">=</span><span class="pl-s1">t</span>, <span class="pl-s1">dim</span><span class="pl-c1">=</span><span class="pl-c1">0</span>).<span class="pl-c1">float</span>().<span class="pl-c1">cuda</span>().<span class="pl-c1">view</span>([<span class="pl-s1">t</span>.<span class="pl-c1">shape</span>[<span class="pl-c1">0</span>]] <span class="pl-c1">+</span> [<span class="pl-c1">1</span>] <span class="pl-c1">*</span> (<span class="pl-en">len</span>(<span class="pl-s1">x_shape</span>) <span class="pl-c1">-</span> <span class="pl-c1">1</span>))
+
+
+<span class="pl-k">def</span> <span class="pl-en">add_noise</span>(<span class="pl-s1">x_0</span>, <span class="pl-s1">t</span>, <span class="pl-s1">noise</span><span class="pl-c1">=</span><span class="pl-c1">None</span>):
+    <span class="pl-s">"""</span>
+<span class="pl-s">    用于添加噪声。</span>
+<span class="pl-s">    :param x_0:用于添加噪声的原始数据，形状为[batch_size, channels, image_size, image_size]</span>
+<span class="pl-s">    :param t:指定的时间戳，形状为[batch_size]</span>
+<span class="pl-s">    :param noise:指定的噪声，若为None，则会随机生成噪声</span>
+<span class="pl-s">    :return:返回指定时间戳下的带噪数据</span>
+<span class="pl-s">    """</span>
     <span class="pl-k">if</span> <span class="pl-s1">noise</span> <span class="pl-c1">is</span> <span class="pl-c1">None</span>:
         <span class="pl-s1">noise</span> <span class="pl-c1">=</span> <span class="pl-s1">torch</span>.<span class="pl-c1">randn_like</span>(<span class="pl-s1">x_0</span>).<span class="pl-c1">cuda</span>()
+    <span class="pl-c">#式(10)</span>
     <span class="pl-k">return</span> (<span class="pl-en">extract</span>(<span class="pl-s1">sqrt_alphas_bar</span>, <span class="pl-s1">t</span>, <span class="pl-s1">x_0</span>.<span class="pl-c1">shape</span>) <span class="pl-c1">*</span> <span class="pl-s1">x_0</span>
             <span class="pl-c1">+</span> <span class="pl-en">extract</span>(<span class="pl-s1">sqrt_one_minus_alphas_bar</span>, <span class="pl-s1">t</span>, <span class="pl-s1">x_0</span>.<span class="pl-c1">shape</span>) <span class="pl-c1">*</span> <span class="pl-s1">noise</span>)
 
 
 <span class="pl-k">def</span> <span class="pl-en">get_loss</span>(<span class="pl-s1">x_0</span>):
+    <span class="pl-s">"""</span>
+<span class="pl-s">    用于获取损失值，采用随机梯度下降法。</span>
+<span class="pl-s">    选取任意的时间戳，计算该时刻的带噪数据，并记录所使用的噪声，</span>
+<span class="pl-s">    再将带噪数据与时间戳作为模型输入，得到预测的噪声，</span>
+<span class="pl-s">    使用记录的噪声与预测的噪声来计算损失值。</span>
+<span class="pl-s">    :param x_0:缓存，形状为[1000]</span>
+<span class="pl-s">    :return:一般返回的形状为[batch_size, 1, 1, 1]</span>
+<span class="pl-s">    """</span>
     <span class="pl-s1">t</span> <span class="pl-c1">=</span> <span class="pl-s1">torch</span>.<span class="pl-c1">randint</span>(<span class="pl-s1">time_steps</span>, <span class="pl-s1">size</span><span class="pl-c1">=</span>(<span class="pl-s1">batch_size</span>,)).<span class="pl-c1">cuda</span>() <span class="pl-c1">+</span> <span class="pl-c1">1</span>
     <span class="pl-s1">noise</span> <span class="pl-c1">=</span> <span class="pl-s1">torch</span>.<span class="pl-c1">randn_like</span>(<span class="pl-s1">x_0</span>).<span class="pl-c1">cuda</span>()
     <span class="pl-s1">x_t</span> <span class="pl-c1">=</span> <span class="pl-en">add_noise</span>(<span class="pl-s1">x_0</span>, <span class="pl-s1">t</span>, <span class="pl-s1">noise</span>)
+    <span class="pl-c">#式(49)</span>
     <span class="pl-k">return</span> <span class="pl-c1">F</span>.<span class="pl-c1">huber_loss</span>(<span class="pl-en">model</span>(<span class="pl-s1">x_t</span>, <span class="pl-s1">t</span>), <span class="pl-s1">noise</span>, <span class="pl-s1">reduction</span><span class="pl-c1">=</span><span class="pl-s">'none'</span>), <span class="pl-s1">t</span></pre></div>
 <h2>采样过程</h2></div>
 <div style="font-size:small;margin-top:8px;float:right;">转载文章请注明出处</div>

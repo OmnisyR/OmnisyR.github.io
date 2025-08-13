@@ -406,20 +406,71 @@ $$
 `Gmeek-html<p align="center"><iframe src="https://www.desmos.com/calculator/xkmphum0ou?embed" width="800" height="400" style="border: 1px solid #ccc" frameborder=0></iframe></p>`
 
 ## 训练过程
-
+首先导入一些必要的库：
 ```python
 import unet
 import torch
 import torchvision
+import os
+import time
+import numpy as np
+import torch.nn.functional as F
 from pathlib import Path
 from torch import optim
 from torchvision.transforms.v2 import Lambda, ToTensor, RandomHorizontalFlip, Compose
+from torch.utils.data import DataLoader
+from torchvision import datasets
+from tqdm import tqdm
+```
+其次是一些训练配置、超参数的确定。对于$\beta$等参数，选择线性噪声时间表：
+```python
+def linear(time_steps):
+    beta_start = 0.0001
+    beta_end = 0.02
+    return torch.linspace(beta_start, beta_end, time_steps).cuda()
 
-image_size = 32
-channels = 1
-base_channels = 128
-learning_rate = 1e-4
+
+#时间戳选定为从0到1000，若减少或增加该值，会改变噪声时间表相关参数
 time_steps = 1000
+#噪声时间表相关参数的预先计算缓存
+#形状：[1000]
+betas = linear(time_steps)
+#形状：[1000]
+alphas = 1. - betas
+#形状：[1001]
+alphas_bar = torch.cat((torch.tensor((1,)).cuda(), torch.cumprod(input=alphas, dim=0)))
+#形状：[1001]
+sqrt_alphas_bar = torch.sqrt(alphas_bar)
+#形状：[1001]
+sqrt_one_minus_alphas_bar = torch.sqrt(1. - alphas_bar)
+```
+配置与超参数：
+```python
+"""
+为简便演示，使用CIFAR1作为数据集，图片尺寸为32×32
+CIFAR1指仅仅选用CIFAR10中的一类作为数据集
+数据集的文件结构为
+cifar1
+    train
+        horse
+            0001.png
+            0002.png
+            ...
+            5000.png
+    test
+        horse
+            0001.png
+            0002.png
+            ...
+            1000.png
+
+"""
+image_size = 32
+#通道数为3，即RGB
+channels = 3
+#模型的基础通道数，即最上层的通道数
+base_channels = 128
+#模型的不同层的通道数，分辨率为32×32时，模型的深度选则4，对应的通道数为128，256，256，256
 ch_mults = {
     32: (1, 2, 2, 2),
     64: (1, 2, 3, 4),
@@ -427,21 +478,30 @@ ch_mults = {
     256: (1, 1, 2, 2, 4, 4),
     512: (0.5, 1, 1, 2, 2, 4, 4)
 }
+#学习率
+learning_rate = 1e-4
+#训练轮数，选定迭代数据集1000次（实际上该轮数是远远不够的）
 epochs = 1000
+#每多少轮数进行以此采样以及模型的断点保存
+milestone_step = 10
+#断点保存的最大数量
 cache_num = 10
+#一个批次训练图片的数量，在该案例下，128张适合拥有8G显存的显卡
 batch_size = 128
-milestone_step = 1000
-last_e = 0
-betas = linear(time_steps)
-checkpoint_folder = ''
-datasets_folder = ''
-csv_str = ''
+#checkpoints的拟定位置
+checkpoint_folder = 'cifar1/cp'
+#训练集的位置
+datasets_folder = 'cifar1/train'
+#用以收集训练时损失值的文件
+csv_str = checkpoint_folder + '/loss.csv'
+#模型断点保存文件名的前缀
 prefix = "checkpoint_epoch"
+#模型断点保存文件名的后缀
 suffix = ".pth"
-
+#为checkpoints新建文件夹
 Path(checkpoint_folder).mkdir(exist_ok=True)
 Path(checkpoint_folder + '/milestone').mkdir(exist_ok=True)
-
+#新建模型
 model = unet.UNetModel(
     image_size=image_size,
     in_channels=channels,
@@ -453,8 +513,8 @@ model = unet.UNetModel(
     channel_mult=ch_mults[image_size],
     num_heads=4,
     num_head_channels=-1,
-).cuda()
-
+)
+#若checkpoints文件夹内存在模型断点，则读取该断点
 last_model = None
 last = 0
 for file in os.listdir(checkpoint_folder):
@@ -463,41 +523,36 @@ for file in os.listdir(checkpoint_folder):
     epochs_str = file[len(prefix) + 1:0 - len(suffix)]
     if int(epochs_str) > last:
         last = int(epochs_str)
-last_e = last
 if last > 0:
     last_model = torch.load(checkpoint_folder + "/%s_%d%s" % (prefix, last, suffix), weights_only=False)
-
 if last_model is not None:
     model.load_state_dict(last_model)
 else:
     print("No Checkpoints Exist")
-
+model = model.cuda()
+#统计模型的参数数量
 parameters = sum(p.numel() for p in model.parameters() if p.requires_grad)
 count_str = "Parameters Count: "
-print(count_str + "%.2fB" % (parameters / 1e9)) if parameters > 1e9 else print(count_str + "%.2fM" % (parameters / 1e6))
-
+print(count_str + "%.2fB" % (parameters / 1e9)) \
+    if parameters > 1e9 else print(count_str + "%.2fM" % (parameters / 1e6))
+#优化器
 optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=1e-4)
-alphas = 1. - betas
-alphas_bar = torch.cat((torch.tensor((1,)).cuda(), torch.cumprod(input=alphas, dim=0)))
-sqrt_alphas_bar = torch.sqrt(alphas_bar)
-sqrt_one_minus_alphas_bar = torch.sqrt(1. - alphas_bar)
-
+#将图片转化为张量
+"""
+ToTensor()                    :读取图片，并将其从[0, 255]的整数缩放为[0, 1]的浮点数
+Lambda(lambda t: (t * 2) - 1) :将[0, 1]的浮点数缩放为[-1, 1]的浮点数
+RandomHorizontalFlip()        :对数据进行随机的水平方向的翻转
+"""
 transform = Compose(
     [torchvision.transforms.Grayscale(), ToTensor(), Lambda(lambda t: (t * 2) - 1), RandomHorizontalFlip()]
     if channels == 1 else
     [ToTensor(), Lambda(lambda t: (t * 2) - 1), RandomHorizontalFlip()]
 )
+#将张量转化为图片
 transform_reverse = Compose([Lambda(lambda t: (t + 1) / 2 * 255)])
 ```
-
+训练的核心方法：
 ```python
-import time
-import numpy as np
-import torch.nn.functional as F
-from tqdm import tqdm
-from torch.utils.data import DataLoader
-from torchvision import datasets
-
 def train():
     train_loop(DataLoader(
         datasets.ImageFolder(datasets_folder, transform=transform),
@@ -506,75 +561,111 @@ def train():
         drop_last=True,
         pin_memory=True
     ))
-```
 
-```python
-import time
-import numpy as np
-import torch.nn.functional as F
-from tqdm import tqdm
-from torch.utils.data import DataLoader
-from torchvision import datasets
 
 def train_loop(dataloader):
-    local_epochs = epochs - last_e
+    #计算剩余需要迭代的次数
+    local_epochs = epochs - last
+    #损失值文件的写入缓存
     csv_cache = ""
     print()
     print("Now Strat Training")
     for epoch in range(local_epochs):
+        #损失值的缓存
         losses = []
+        #若不等待，貌似tqdm的进度条会出现一些问题？
         time.sleep(0.1)
-        global_epoch = epoch + last_e + 1
+        #计算当前的迭代次数
+        global_epoch = epoch + last + 1
+        #对数据集进行遍历
         for step, data_batch in (pbar := tqdm(
                 enumerate(dataloader),
                 total=len(dataloader),
                 desc="Epoch: %d/ %d With Loss %f" % (global_epoch, epochs, 1)
         )):
+            #初始化优化器
             optimizer.zero_grad()
+            #获取该批次的全部数据张量，其形状为[batch_size, channels, image_size, image_size]
             data_batch = data_batch[0].cuda()
+            #获取损失值以及计算损失值所随机到的时间戳
             complex_loss, t = get_loss(data_batch)
             loss = complex_loss.sum() / 1000.
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
             optimizer.step()
             pbar.set_description("Epoch: %d/ %d With Loss %f " % (global_epoch, epochs, loss.item()))
+            #记录该批次的损失值
             losses.append(loss.item())
+        #获取一轮迭代后的损失值的平均值及方差
         ave_loss = np.average(losses)
         var_loss = np.var(losses)
         print("μ In Epoch %d: %s" % (global_epoch, ave_loss))
         print("σ In Epoch %d: %s" % (global_epoch, var_loss))
         print("----------------------------------------------------------------")
+        #记录损失值的平均值及方差
         csv_cache += "%d,%s,%s\n" % (global_epoch, ave_loss, var_loss)
-        old_model = checkpoint_folder + "/%s_%d.pt" % (
+        #检查是否存在超出最大缓存数量的断点
+        old_model = checkpoint_folder + "/%s_%d.%s" % (
             prefix,
-            global_epoch - cache_num * milestone_step
+            global_epoch - cache_num * milestone_step,
+            suffix
         )
         if os.path.exists(old_model):
             os.remove(old_model)
         if global_epoch % milestone_step == 0:
+            #保存断点
             torch.save(
                 model.state_dict(),
                 checkpoint_folder + "/%s_%d%s" % (prefix, global_epoch, suffix)
             )
+            #保存损失值信息
             with open(csv_str, 'a') as file:
                 file.write(csv_cache)
                 csv_cache = ""
+            #进行一次采样，该方法在接下来的章节——采样过程中给出
             milestone_sample(global_epoch)
         time.sleep(0.1)
-```
 
-```python
+
+def extract(v, t, x_shape):
+    """
+    用于将一些参数从噪声时间表超参数的预先缓存中提取出来。
+    :param v:缓存，形状为[1000]
+    :param t:需要提取的目标时间戳，形状为[batch_size]
+    :param x_shape:一个批次数据的形状，一般为[batch_size, channels, image_size, image_size]
+    :return:一般返回的形状为[batch_size, 1, 1, 1]
+    """
+    return torch.gather(v, index=t, dim=0).float().cuda().view([t.shape[0]] + [1] * (len(x_shape) - 1))
+
+
 def add_noise(x_0, t, noise=None):
+    """
+    用于添加噪声。
+    :param x_0:用于添加噪声的原始数据，形状为[batch_size, channels, image_size, image_size]
+    :param t:指定的时间戳，形状为[batch_size]
+    :param noise:指定的噪声，若为None，则会随机生成噪声
+    :return:返回指定时间戳下的带噪数据
+    """
     if noise is None:
         noise = torch.randn_like(x_0).cuda()
+    #式(10)
     return (extract(sqrt_alphas_bar, t, x_0.shape) * x_0
             + extract(sqrt_one_minus_alphas_bar, t, x_0.shape) * noise)
 
 
 def get_loss(x_0):
+    """
+    用于获取损失值，采用随机梯度下降法。
+    选取任意的时间戳，计算该时刻的带噪数据，并记录所使用的噪声，
+    再将带噪数据与时间戳作为模型输入，得到预测的噪声，
+    使用记录的噪声与预测的噪声来计算损失值。
+    :param x_0:缓存，形状为[1000]
+    :return:一般返回的形状为[batch_size, 1, 1, 1]
+    """
     t = torch.randint(time_steps, size=(batch_size,)).cuda() + 1
     noise = torch.randn_like(x_0).cuda()
     x_t = add_noise(x_0, t, noise)
+    #式(49)
     return F.huber_loss(model(x_t, t), noise, reduction='none'), t
 ```
 
