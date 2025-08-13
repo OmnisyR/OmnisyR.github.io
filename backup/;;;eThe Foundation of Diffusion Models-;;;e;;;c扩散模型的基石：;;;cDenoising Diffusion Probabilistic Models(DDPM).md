@@ -2,7 +2,7 @@
 > This article currently only supports Chinese.
 
 > [!CAUTION]
-> 施工中！
+> 复制功能损坏！
 
 <!-- ##{"script":"<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>"}## -->
 \denotes
@@ -436,19 +436,21 @@ $$
 ## 训练过程
 首先导入一些必要的库：
 ```python
-import unet
-import torch
-import torchvision
 import os
 import time
-import numpy as np
-import torch.nn.functional as F
 from pathlib import Path
+
+import numpy as np
+import torch
+import torch.nn.functional as F
+import torchvision
 from torch import optim
-from torchvision.transforms.v2 import Lambda, ToTensor, RandomHorizontalFlip, Compose, Grayscale
 from torch.utils.data import DataLoader
 from torchvision import datasets
+from torchvision.transforms.v2 import Lambda, ToTensor, RandomHorizontalFlip, Compose, Grayscale
 from tqdm import tqdm
+
+import unet
 ```
 其次是一些训练配置、超参数的确定。对于$\beta_t$等超参数，`选择线性噪声时间表`：
 ```python
@@ -467,6 +469,10 @@ betas = linear(time_steps)
 alphas = 1. - betas
 #形状：[1001]
 alphas_bar = torch.cat((torch.tensor((1,)).cuda(), torch.cumprod(input=alphas, dim=0)))
+# 形状：[1001]
+sqrt_alphas_bar = torch.sqrt(alphas_bar)
+# 形状：[1001]
+sqrt_one_minus_alphas_bar = torch.sqrt(1. - alphas_bar)
 ```
 配置与超参数：
 ```python
@@ -503,8 +509,8 @@ ch_mults = {
 }
 #学习率
 learning_rate = 1e-4
-#训练轮数，选定迭代数据集1000次（实际上该轮数是远远不够的）
-epochs = 1000
+#训练轮数，选定迭代数据集500次（实际上该轮数是远远不够的）
+epochs = 500
 #每多少轮数进行以此采样以及模型的断点保存
 milestone_step = 10
 #断点保存的最大数量
@@ -691,8 +697,41 @@ def get_loss(x_0):
 ```
 
 ## 采样过程
-采样过程相较而言就简单很多，只需要进行一个迭代即可。但为方便后续开发，可以对其进行模块化编写。采样的核心方法：
+采样过程相较而言就简单很多，只需要进行一个迭代即可。但为方便后续开发，可以对其进行模块化编写。
+DDPM的采样器，即`式(50)`：
 ```python
+@torch.no_grad()
+def ddpm(xs, timestep, timestep_s):
+    """
+    :param xs:对应式(50)中的x_t
+    :param timestep:对应式(50)中的t - 1
+    :param timestep_s:对应式(50)中的t
+    :return:对应式(50)中的x_{t - 1}
+    """
+    #α_t = alphas[t - 1]
+    alpha = alphas[timestep]
+    #β_t = betas[t - 1]
+    beta = betas[timestep]
+    alpha_bar = alphas_bar[timestep_s]
+    alpha_bar_pre = alphas_bar[timestep]
+    #x_t前的系数
+    cof1 = 1 / alpha.sqrt()
+    #预测噪声前的系数
+    cof2 = (1 - alpha) / (alpha * (1 - alpha_bar)).sqrt()
+    #随机噪声前的系数
+    var = ((1 - alpha_bar_pre) / (1 - alpha_bar) * beta).sqrt()
+    noise = var * torch.randn(size=xs.shape).cuda()
+    #t的形状为[1]，将其形状展开为[batch_size]以放入模型中进行计算
+    timestep_s = torch.full(size=[xs.shape[0]], dtype=torch.long, fill_value=timestep_s).cuda()
+    #式(50)
+    return cof1 * xs - cof2 * model(xs, timestep_s) + noise
+```
+采样的核心方法：
+```python
+def trailing(steps):
+    return torch.arange(time_steps, 0, -time_steps / steps).flip(0).round().int().cuda()
+
+
 def sample(formats, configs, batch=1, noise=None, steps=1000,
            solver=ddpm, time_schedule=trailing, desc=''):
     """
@@ -731,38 +770,6 @@ def sample_loop(noise, steps, solver, time_schedule, extra_desc=''):
         result.append(noise.detach().cpu())
     #返回带有整个中间状态的列表
     return result
-
-
-def trailing(steps):
-    return torch.arange(time_steps, 0, -time_steps / steps).flip(0).round().int().cuda()
-```
-DDPM的采样器，即`式(50)`：
-```python
-@torch.no_grad()
-def ddpm(xs, timestep, timestep_s):
-    """
-    :param xs:对应式(50)中的x_t
-    :param timestep:对应式(50)中的t - 1
-    :param timestep_s:对应式(50)中的t
-    :return:对应式(50)中的x_{t - 1}
-    """
-    #α_t = alphas[t - 1]
-    alpha = alphas[timestep]
-    #β_t = betas[t - 1]
-    beta = betas[timestep]
-    alpha_bar = alphas_bar[timestep_s]
-    alpha_bar_pre = alphas_bar[timestep]
-    #x_t前的系数
-    cof1 = 1 / alpha.sqrt()
-    #预测噪声前的系数
-    cof2 = (1 - alpha) / (alpha * (1 - alpha_bar)).sqrt()
-    #随机噪声前的系数
-    var = ((1 - alpha_bar_pre) / (1 - alpha_bar) * beta).sqrt()
-    noise = var * torch.randn(size=xs.shape).cuda()
-    #t的形状为[1]，将其形状展开为[batch_size]以放入模型中进行计算
-    timestep_s = torch.full(size=[xs.shape[0]], dtype=torch.long, fill_value=timestep_s).cuda()
-    #式(50)
-    return cof1 * xs - cof2 * model(xs, timestep_s) + noise
 ```
 对于采样获得的从$t = 1000$到$t = 0$时刻全部状态，定义一个以网格形式保存采样结果的方法：
 ```python
@@ -877,10 +884,10 @@ if __name__ == '__main__':
 
 `Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_10_100.png"/></p>`
 
-训练的1000次迭代：
+训练的500次迭代：
 
-`Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_10_100.png"/></p>`
+`Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_50_500.png" width="400" height="300"/></p>`
 
 训练的损失值变化：
 
-`Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_10_100.png"/></p>`
+`Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_loss.png"/></p>`
