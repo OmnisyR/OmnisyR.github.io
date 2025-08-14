@@ -142,24 +142,24 @@ window.addEventListener('load', function() {
       backToTopButton.style = "visibility: hidden;"
     }
   };
-  var elements = document.getElementsByClassName("notranslate");
-  for (var i = 0; i < elements.length; i++) {
-    item = elements[i]
-    const key = item.textContent
-    if (denotes.get(key) === undefined){
-      continue
-    }
-    // item.addEventListener(
-    //   "click",
-    //   () => {
-    //     const value = denotes.get(key)
-    //     document.getElementsByClassName("denote-title")[0].innerHTML = key
-    //     document.getElementsByClassName('denote-content')[0].innerHTML = value
-    //     if (value.includes('$')) {
-    //       MathJax.typeset()
-    //     }
-    //   },
-    //   false,
-    // );
+  // var elements = document.getElementsByClassName("notranslate");
+  // for (var i = 0; i < elements.length; i++) {
+  //   item = elements[i]
+  //   const key = item.textContent
+  //   if (denotes.get(key) === undefined){
+  //     continue
+  //   }
+  //   item.addEventListener(
+  //     "click",
+  //     () => {
+  //       const value = denotes.get(key)
+  //       document.getElementsByClassName("denote-title")[0].innerHTML = key
+  //       document.getElementsByClassName('denote-content')[0].innerHTML = value
+  //       if (value.includes('$')) {
+  //         MathJax.typeset()
+  //       }
+  //     },
+  //     false,
+  //   );
   }
 });
