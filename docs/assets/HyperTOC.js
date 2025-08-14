@@ -120,7 +120,7 @@ window.addEventListener('load', function() {
     line-height: 1.5;
     border-bottom: 1px solid #e1e4e8;
   }
-  @media (max-width: 1249px) {
+  @media (max-width: 1670px) {
     .flex-container {
       position:static;
       top:auto;
