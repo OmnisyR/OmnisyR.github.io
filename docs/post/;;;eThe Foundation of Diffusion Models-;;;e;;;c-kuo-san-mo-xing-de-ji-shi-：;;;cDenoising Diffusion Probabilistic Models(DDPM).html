@@ -17,8 +17,10 @@
 > 复制功能损坏！
 
 <!-- ##{'script':'<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>'}## -->
-\denotes
-;;;;马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。">
+## 介绍
+
+## 正向过程
+扩散模型的正向过程为，对原始的图像进行一步步地噪声添加，从而在最终阶段，使得图片完全服从噪声分布，一般地，使用高斯噪声来进行这个过程。">
 <meta property="og:title" content=";;;eThe Foundation of Diffusion Models:;;;e;;;c扩散模型的基石：;;;cDenoising Diffusion Probabilistic Models(DDPM)">
 <meta property="og:description" content="> [!NOTE]
 > This article currently only supports Chinese.
@@ -27,8 +29,10 @@
 > 复制功能损坏！
 
 <!-- ##{'script':'<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>'}## -->
-\denotes
-;;;;马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。">
+## 介绍
+
+## 正向过程
+扩散模型的正向过程为，对原始的图像进行一步步地噪声添加，从而在最终阶段，使得图片完全服从噪声分布，一般地，使用高斯噪声来进行这个过程。">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://OmnisyR.github.io/post/%3B%3B%3BeThe%20Foundation%20of%20Diffusion%20Models-%3B%3B%3Be%3B%3B%3Bc-kuo-san-mo-xing-de-ji-shi-%EF%BC%9A%3B%3B%3BcDenoising%20Diffusion%20Probabilistic%20Models%28DDPM%29.html">
 <meta property="og:image" content="https://avatars.githubusercontent.com/u/68898477?s=400&u=262ae3b76f651c62a82042317aaae313706c859c&v=4">
@@ -104,61 +108,6 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <div class="markdown-alert markdown-alert-caution"><p class="markdown-alert-title"><svg class="octicon octicon-stop mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M4.47.22A.749.749 0 0 1 5 0h6c.199 0 .389.079.53.22l4.25 4.25c.141.14.22.331.22.53v6a.749.749 0 0 1-.22.53l-4.25 4.25A.749.749 0 0 1 11 16H5a.749.749 0 0 1-.53-.22L.22 11.53A.749.749 0 0 1 0 11V5c0-.199.079-.389.22-.53Zm.84 1.28L1.5 5.31v5.38l3.81 3.81h5.38l3.81-3.81V5.31L10.69 1.5ZM8 4a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Caution</p><p>复制功能损坏！</p>
 </div>
 
-<p>\denotes<br>
-;;;;马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。因此，马尔科夫链存在着这样的特殊性质：</p>
-<p>$$
-\begin{align}
-&amp;P(X_n|X_0) = P(X_n)
-\\
-&amp;P(X_n|X_{n - 1}, X_{n - 2}, \dots, X_0) = P(X_n|X_{n - 1})
-\end{align}
-$$</p>
-<p>;;;;<br>
-;;;;重参数化技巧::对于概率$p(x|y) = \mathcal{N}(x|ay, b)$，即$x$服从一个均值为$ay$，标准差为$\sqrt{b}$的高斯分布，那么则有$x = ay + \sqrt{b}\epsilon$，其中$\epsilon \sim \mathcal{N}(0, 1)$。;;;;<br>
-;;;;下方的代码::默认使用GPU加速的pytorch代码，不使用GPU加速会很难跑得动扩散模型。;;;;<br>
-;;;;高斯分布的加法法则::</p>
-<p>$$
-\mathcal{N}(\mu_1, \sigma^2_1) + \mathcal{N}(\mu_2, \sigma^2_2) = \mathcal{N}(\mu_1 + \mu_2, \sigma^2_1 + \sigma^2_2)
-$$</p>
-<p>;;;;<br>
-;;;;上界尽可能的小::有些人会存在一个典型的认识错误，即认为式(13)等价于目标为右方的KL散度为0。这个想法错在KL散度为0时，虽然KL散度的梯度为0，但右方整体的梯度不一定为0，一个很简单的例子就能有效进行说明：</p>
-<p>$$
-x^2 \leq x^2 + (2 - x)^2
-$$</p>
-<p>显然，右式在$x = 1$时取最小值，而非令$(2 - x)^2$为0的$x = 2$时。</p>
-<p>;;;;<br>
-;;;;贝叶斯定理::</p>
-<p>$$
-P(A|B) = \frac{P(B|A)P(A)}{P(B)}
-$$</p>
-<p>;;;;<br>
-;;;;式(10)::</p>
-<p>$$
-x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1 - \bar{\alpha}_t}\epsilon_t
-$$</p>
-<p>;;;;<br>
-;;;;高斯分布的KL散度公式::对于$p_1(x) = \mathcal{N}(\mu_1, \sigma^2_1)$以及$p_2(x) = \mathcal{N}(\mu_2, \sigma^2_2)$，有：</p>
-<p>$$
-D_{KL}(p_1||p_2) = \frac{1}{2}\log\frac{\sigma^2_2}{\sigma^2_1} + \frac{\sigma^2_1 + (\mu_1 - \mu_2)^2}{2\sigma^2_2} - \frac{1}{2}
-$$</p>
-<p>;;;;<br>
-;;;;UNet::文章地址：<a href="https://arxiv.org/abs/1505.04597" rel="nofollow">https://arxiv.org/abs/1505.04597</a><br>
-UNet较为复杂，可以在Github上下载由文章<a href="https://arxiv.org/abs/2105.05233" rel="nofollow">Diffusion Models Beat GANs on Image Synthesis</a>提供的<a href="https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/unet.py">unet.py</a>以及<a href="https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/nn.py">nn.py</a>来运行扩散模型，fp16_util.py可以不用下载，运行前将unet.py中相关代码删去即可。;;;;<br>
-;;;;残差思想::文章地址<a href="https://arxiv.org/abs/1512.03385" rel="nofollow">https://arxiv.org/abs/1512.03385</a>;;;;<br>
-;;;;Attention is All You Need::文章地址：<a href="https://arxiv.org/abs/1706.03762" rel="nofollow">https://arxiv.org/abs/1706.03762</a>;;;;<br>
-;;;;选择线性噪声时间表::噪声时间表有很多种，虽然网络上疑似很推崇余弦型噪声时间表，但实际操作中它会导致一种被我称为“色彩发散”的问题，还需要通过一系列手段来改善才能得到正确结果，所以刚刚接触扩散模型，可以先使用线性噪声时间表。;;;;<br>
-;;;;式(50)::</p>
-<p>$$
-\begin{align}
-x_{t - 1} &amp;= \frac{1}{\sqrt{\alpha_t}}x_t
-\\
-&amp;\quad - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}_t)}}\epsilon_\theta(x_t, t)
-\\
-&amp;\quad + \sqrt{\frac{1 - \bar{\alpha}_{t - 1}}{1 - \bar{\alpha}_t}\beta_t}\epsilon
-\end{align}
-$$</p>
-<p>;;;;<br>
-\denotes</p>
 <h2>介绍</h2>
 <h2>正向过程</h2>
 <p>扩散模型的正向过程为，对原始的图像进行一步步地噪声添加，从而在最终阶段，使得图片完全服从噪声分布，一般地，使用高斯噪声来进行这个过程。对于离散的时间$t = 0, 1, \dots, T$，在扩散模型遵循的<code class="notranslate">马尔可夫链</code>过程中，对于给定的$x_0 \sim q(x_0)$，即原始图像作为初始阶段，和$x_T \sim q(x_T) = \mathcal{N}(0, I)$，即完全服从标准高斯噪声的图像作为最终阶段。其各个阶段$x_0, x_1, \dots, x_T$的概率分布服从以下公式：</p>
@@ -888,7 +837,62 @@ DDPM的采样器，即<code class="notranslate">式(50)</code>：</p>
 <p>训练的500次迭代过程：</p>
 <p><p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_50_500.png"/></p></p>
 <p>训练的损失值变化：</p>
-<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_loss.png" width="400" height="300"/></p></p></div>
+<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_loss.png" width="400" height="300"/></p></p>
+<p>\denotes<br>
+;;;;马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。因此，马尔科夫链存在着这样的特殊性质：</p>
+<p>$$
+\begin{align}
+&amp;P(X_n|X_0) = P(X_n)
+\\
+&amp;P(X_n|X_{n - 1}, X_{n - 2}, \dots, X_0) = P(X_n|X_{n - 1})
+\end{align}
+$$</p>
+<p>;;;;<br>
+;;;;重参数化技巧::对于概率$p(x|y) = \mathcal{N}(x|ay, b)$，即$x$服从一个均值为$ay$，标准差为$\sqrt{b}$的高斯分布，那么则有$x = ay + \sqrt{b}\epsilon$，其中$\epsilon \sim \mathcal{N}(0, 1)$。;;;;<br>
+;;;;下方的代码::默认使用GPU加速的pytorch代码，不使用GPU加速会很难跑得动扩散模型。;;;;<br>
+;;;;高斯分布的加法法则::</p>
+<p>$$
+\mathcal{N}(\mu_1, \sigma^2_1) + \mathcal{N}(\mu_2, \sigma^2_2) = \mathcal{N}(\mu_1 + \mu_2, \sigma^2_1 + \sigma^2_2)
+$$</p>
+<p>;;;;<br>
+;;;;上界尽可能的小::有些人会存在一个典型的认识错误，即认为式(13)等价于目标为右方的KL散度为0。这个想法错在KL散度为0时，虽然KL散度的梯度为0，但右方整体的梯度不一定为0，一个很简单的例子就能有效进行说明：</p>
+<p>$$
+x^2 \leq x^2 + (2 - x)^2
+$$</p>
+<p>显然，右式在$x = 1$时取最小值，而非令$(2 - x)^2$为0的$x = 2$时。</p>
+<p>;;;;<br>
+;;;;贝叶斯定理::</p>
+<p>$$
+P(A|B) = \frac{P(B|A)P(A)}{P(B)}
+$$</p>
+<p>;;;;<br>
+;;;;式(10)::</p>
+<p>$$
+x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1 - \bar{\alpha}_t}\epsilon_t
+$$</p>
+<p>;;;;<br>
+;;;;高斯分布的KL散度公式::对于$p_1(x) = \mathcal{N}(\mu_1, \sigma^2_1)$以及$p_2(x) = \mathcal{N}(\mu_2, \sigma^2_2)$，有：</p>
+<p>$$
+D_{KL}(p_1||p_2) = \frac{1}{2}\log\frac{\sigma^2_2}{\sigma^2_1} + \frac{\sigma^2_1 + (\mu_1 - \mu_2)^2}{2\sigma^2_2} - \frac{1}{2}
+$$</p>
+<p>;;;;<br>
+;;;;UNet::文章地址：<a href="https://arxiv.org/abs/1505.04597" rel="nofollow">https://arxiv.org/abs/1505.04597</a><br>
+UNet较为复杂，可以在Github上下载由文章<a href="https://arxiv.org/abs/2105.05233" rel="nofollow">Diffusion Models Beat GANs on Image Synthesis</a>提供的<a href="https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/unet.py">unet.py</a>以及<a href="https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/nn.py">nn.py</a>来运行扩散模型，fp16_util.py可以不用下载，运行前将unet.py中相关代码删去即可。;;;;<br>
+;;;;残差思想::文章地址<a href="https://arxiv.org/abs/1512.03385" rel="nofollow">https://arxiv.org/abs/1512.03385</a>;;;;<br>
+;;;;Attention is All You Need::文章地址：<a href="https://arxiv.org/abs/1706.03762" rel="nofollow">https://arxiv.org/abs/1706.03762</a>;;;;<br>
+;;;;选择线性噪声时间表::噪声时间表有很多种，虽然网络上疑似很推崇余弦型噪声时间表，但实际操作中它会导致一种被我称为“色彩发散”的问题，还需要通过一系列手段来改善才能得到正确结果，所以刚刚接触扩散模型，可以先使用线性噪声时间表。;;;;<br>
+;;;;式(50)::</p>
+<p>$$
+\begin{align}
+x_{t - 1} &amp;= \frac{1}{\sqrt{\alpha_t}}x_t
+\\
+&amp;\quad - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}_t)}}\epsilon_\theta(x_t, t)
+\\
+&amp;\quad + \sqrt{\frac{1 - \bar{\alpha}_{t - 1}}{1 - \bar{\alpha}_t}\beta_t}\epsilon
+\end{align}
+$$</p>
+<p>;;;;<br>
+\denotes</p></div>
 <div style="font-size:small;margin-top:8px;float:right;">转载文章请注明出处</div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
