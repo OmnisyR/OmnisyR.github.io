@@ -24,7 +24,7 @@ window.addEventListener('load', function() {
   if (navigator.language === 'zh-CN') {
     tmp_str = '文章目录'
   }
-  tocElement.insertAdjacentHTML('afterbegin', '<div class="toc-title">${tmp_str}</div>')
+  tocElement.insertAdjacentHTML('afterbegin', `<div class="toc-title">${tmp_str}</div>`)
   headings.forEach(heading => {
     if (!heading.id) {
       heading.id = heading.textContent.trim().replace(/\s+/g, '-').toLowerCase()
@@ -46,14 +46,14 @@ window.addEventListener('load', function() {
   if (navigator.language === 'zh-CN') {
     tmp_str = '注释'
   }
-  denoteElement.insertAdjacentHTML('afterbegin', '<div class="denote-title">${tmp_str}</div>')
+  denoteElement.insertAdjacentHTML('afterbegin', `<div class="denote-title">${tmp_str}</div>)
   const content = document.createElement('content')
   content.id = 'denote-content'
   var tmp_str = 'Click on the text to display the annotation.'
   if (navigator.language === 'zh-CN') {
     tmp_str = '点击文本以显示注释'
   }
-  content.textContent = '${tmp_str}'
+  content.textContent = `${tmp_str}`
   content.className = 'denote-content'
   denoteElement.appendChild(content)
 
