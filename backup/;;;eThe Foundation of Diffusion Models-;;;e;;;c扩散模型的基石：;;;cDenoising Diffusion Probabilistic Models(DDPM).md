@@ -1,7 +1,6 @@
 <!-- ##{"script":"<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>"}## -->
 
-;;;e
-;;;a
+;;;e;;;a
 ;;;;Markov chain::The state at a given moment is only related to the state at the previous moment, i.e., $x_t = f(x_{t - 1})$, without the involvement of states at other moments. A chain formed by a number of such state relationships constitutes a Markov chain. Therefore, Markov chains have the following special properties:
 
 $$
@@ -70,10 +69,7 @@ x_{t - 1} &= \frac{1}{\sqrt{\alpha_t}}x_t
 $$
 
 ;;;;
-;;;a
-;;;e
-;;;c
-;;;a
+;;;a;;;e;;;c;;;a
 ;;;;马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。因此，马尔科夫链存在着这样的特殊性质：
 
 $$
@@ -142,9 +138,7 @@ x_{t - 1} &= \frac{1}{\sqrt{\alpha_t}}x_t
 $$
 
 ;;;;
-;;;a
-;;;c
-;;;e
+;;;a;;;c;;;e
 ## Introduction
 
 ## Forward Process

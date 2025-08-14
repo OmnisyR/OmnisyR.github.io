@@ -12,8 +12,7 @@
     </script>
 <meta name="description" content="<!-- ##{'script':'<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>'}## -->
 
-;;;e
-;;;a
+;;;e;;;a
 ;;;;Markov chain::The state at a given moment is only related to the state at the previous moment, i.e., $x_t = f(x_{t - 1})$, without the involvement of states at other moments. A chain formed by a number of such state relationships constitutes a Markov chain. Therefore, Markov chains have the following special properties:
 
 $$
@@ -82,16 +81,12 @@ x_{t - 1} &= \frac{1}{\sqrt{\alpha_t}}x_t
 $$
 
 ;;;;
-;;;a
-;;;e
-;;;c
-;;;a
+;;;a;;;e;;;c;;;a
 ;;;;马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。">
 <meta property="og:title" content=";;;eThe Foundation of Diffusion Models:;;;e;;;c扩散模型的基石：;;;cDenoising Diffusion Probabilistic Models(DDPM)">
 <meta property="og:description" content="<!-- ##{'script':'<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>'}## -->
 
-;;;e
-;;;a
+;;;e;;;a
 ;;;;Markov chain::The state at a given moment is only related to the state at the previous moment, i.e., $x_t = f(x_{t - 1})$, without the involvement of states at other moments. A chain formed by a number of such state relationships constitutes a Markov chain. Therefore, Markov chains have the following special properties:
 
 $$
@@ -160,10 +155,7 @@ x_{t - 1} &= \frac{1}{\sqrt{\alpha_t}}x_t
 $$
 
 ;;;;
-;;;a
-;;;e
-;;;c
-;;;a
+;;;a;;;e;;;c;;;a
 ;;;;马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://OmnisyR.github.io/post/%3B%3B%3BeThe%20Foundation%20of%20Diffusion%20Models-%3B%3B%3Be%3B%3B%3Bc-kuo-san-mo-xing-de-ji-shi-%EF%BC%9A%3B%3B%3BcDenoising%20Diffusion%20Probabilistic%20Models%28DDPM%29.html">
@@ -236,8 +228,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </div>
     <div id="content">
 <div class="markdown-body" id="postBody">
-<p>;;;e<br>
-;;;a<br>
+<p>;;;e;;;a<br>
 ;;;;Markov chain::The state at a given moment is only related to the state at the previous moment, i.e., $x_t = f(x_{t - 1})$, without the involvement of states at other moments. A chain formed by a number of such state relationships constitutes a Markov chain. Therefore, Markov chains have the following special properties:</p>
 <p>$$
 \begin{align}
@@ -291,10 +282,7 @@ x_{t - 1} &amp;= \frac{1}{\sqrt{\alpha_t}}x_t
 \end{align}
 $$</p>
 <p>;;;;<br>
-;;;a<br>
-;;;e<br>
-;;;c<br>
-;;;a<br>
+;;;a;;;e;;;c;;;a<br>
 ;;;;马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。因此，马尔科夫链存在着这样的特殊性质：</p>
 <p>$$
 \begin{align}
@@ -348,9 +336,7 @@ x_{t - 1} &amp;= \frac{1}{\sqrt{\alpha_t}}x_t
 \end{align}
 $$</p>
 <p>;;;;<br>
-;;;a<br>
-;;;c<br>
-;;;e</p>
+;;;a;;;c;;;e</p>
 <h2>Introduction</h2>
 <h2>Forward Process</h2>
 <p>The forward process of the diffusion models involve gradually adding noise to the original image, such that by the final stage, the image fully follows the noise distribution. Typically, Gaussian noise is used for this process. For discrete time points $t = 0, 1, \dots, T$, in the <code class="notranslate">Markov chain</code> process followed by the diffusion models, given $x_0 \sim q(x_0)$, i.e., the original image as the initial stage, and $x_T \sim q(x_T) = \mathcal{N}(0, I)$, i.e., the image completely following standard Gaussian noise as the final stage. The probability distributions of the various stages $x_0, x_1, \dots, x_T$ follow the following formula:</p>
