@@ -2,7 +2,7 @@ const denotes = new Map();
 
 document.addEventListener('DOMContentLoaded', function() {
   var container = document.getElementById('content')
-  container.innerHTML = container.innerHTML.replace(/;;;d([\s\S]*?);;;d/g, (match, content) => {
+  container.innerHTML = container.innerHTML.replace(/;;;a([\s\S]*?);;;a/g, (match, content) => {
     content.replace(/;;;;([\s\S]*?);;;;/g, (m, c) => {
       let arr = c.split('::')
       denotes.set(arr[0], arr[1])
@@ -20,7 +20,11 @@ window.addEventListener('load', function() {
   var tocElement = document.createElement('div')
   tocElement.className = 'toc'
   const headings = contentContainer.querySelectorAll('h1, h2, h3, h4, h5, h6')
-  tocElement.insertAdjacentHTML('afterbegin', '<div class="toc-title">文章目录</div>')
+  var tmp_str = 'Table of Contents'
+  if (navigator.language === 'zh-CN') {
+    tmp_str = '文章目录'
+  }
+  tocElement.insertAdjacentHTML('afterbegin', '<div class="toc-title">${tmp_str}</div>')
   headings.forEach(heading => {
     if (!heading.id) {
       heading.id = heading.textContent.trim().replace(/\s+/g, '-').toLowerCase()
@@ -38,10 +42,18 @@ window.addEventListener('load', function() {
 
   var denoteElement = document.createElement('div')
   denoteElement.className = 'denote'
-  denoteElement.insertAdjacentHTML('afterbegin', '<div class="denote-title">注释</div>')
+  var tmp_str = 'Annotation'
+  if (navigator.language === 'zh-CN') {
+    tmp_str = '注释'
+  }
+  denoteElement.insertAdjacentHTML('afterbegin', '<div class="denote-title">${tmp_str}</div>')
   const content = document.createElement('content')
   content.id = 'denote-content'
-  content.textContent = '点击文本以显示注释'
+  var tmp_str = 'Click on the text to display the annotation.'
+  if (navigator.language === 'zh-CN') {
+    tmp_str = '点击文本以显示注释'
+  }
+  content.textContent = '${tmp_str}'
   content.className = 'denote-content'
   denoteElement.appendChild(content)
 
@@ -145,7 +157,7 @@ window.addEventListener('load', function() {
   for (var i = 0; i < elements.length; i++) {
     item = elements[i]
     const key = item.textContent
-    if (denotes.get(key) === undefined){
+    if (denotes.get(key) === undefined) {
       continue
     }
     item.addEventListener(
