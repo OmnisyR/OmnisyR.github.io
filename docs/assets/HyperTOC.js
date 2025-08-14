@@ -1,27 +1,18 @@
 const denotes = new Map();
 
-// document.addEventListener('DOMContentLoaded', function() {
-//   var container = document.getElementById('content')
-//   container.innerHTML = container.innerHTML.replace(/\\denotes([\s\S]*?)\\denotes/gm, (match, content) => {
-//     content.replace(/\;;;;([\s\S]*?);;;;/g, (m, c) => {
-//       let arr = c.split('::')
-//       denotes.set(arr[0], arr[1])
-//       return ''
-//     })
-//     return ''
-//   })
-// });
-
-window.addEventListener('load', function() {
+document.addEventListener('DOMContentLoaded', function() {
   var container = document.getElementById('content')
-  container.innerHTML = container.innerHTML.replace(/\\denotes([\s\S]*?)\\denotes/gm, (match, content) => {
+  container.innerHTML = container.innerHTML.replace(/\<!-- ;;([\s\S]*?)\;; -->/gm, (match, content) => {
     content.replace(/\;;;;([\s\S]*?);;;;/g, (m, c) => {
       let arr = c.split('::')
       denotes.set(arr[0], arr[1])
-      return ''
+      return c
     })
-    return ''
+    return content
   })
+});
+
+window.addEventListener('load', function() {
   var box = document.createElement('div')
   box.className = 'flex-container'
   var contentContainer = document.getElementById('content')

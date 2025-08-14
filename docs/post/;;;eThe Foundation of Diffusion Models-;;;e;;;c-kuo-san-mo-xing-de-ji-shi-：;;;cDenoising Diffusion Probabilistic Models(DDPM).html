@@ -15,24 +15,16 @@
 
 > [!CAUTION]
 > 复制功能损坏！
-
-<!-- ##{'script':'<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>'}## -->
-## 介绍
-
-## 正向过程
-扩散模型的正向过程为，对原始的图像进行一步步地噪声添加，从而在最终阶段，使得图片完全服从噪声分布，一般地，使用高斯噪声来进行这个过程。">
+<!-- ;;
+;;;;马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。">
 <meta property="og:title" content=";;;eThe Foundation of Diffusion Models:;;;e;;;c扩散模型的基石：;;;cDenoising Diffusion Probabilistic Models(DDPM)">
 <meta property="og:description" content="> [!NOTE]
 > This article currently only supports Chinese.
 
 > [!CAUTION]
 > 复制功能损坏！
-
-<!-- ##{'script':'<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>'}## -->
-## 介绍
-
-## 正向过程
-扩散模型的正向过程为，对原始的图像进行一步步地噪声添加，从而在最终阶段，使得图片完全服从噪声分布，一般地，使用高斯噪声来进行这个过程。">
+<!-- ;;
+;;;;马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://OmnisyR.github.io/post/%3B%3B%3BeThe%20Foundation%20of%20Diffusion%20Models-%3B%3B%3Be%3B%3B%3Bc-kuo-san-mo-xing-de-ji-shi-%EF%BC%9A%3B%3B%3BcDenoising%20Diffusion%20Probabilistic%20Models%28DDPM%29.html">
 <meta property="og:image" content="https://avatars.githubusercontent.com/u/68898477?s=400&u=262ae3b76f651c62a82042317aaae313706c859c&v=4">
@@ -107,6 +99,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </div>
 <div class="markdown-alert markdown-alert-caution"><p class="markdown-alert-title"><svg class="octicon octicon-stop mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M4.47.22A.749.749 0 0 1 5 0h6c.199 0 .389.079.53.22l4.25 4.25c.141.14.22.331.22.53v6a.749.749 0 0 1-.22.53l-4.25 4.25A.749.749 0 0 1 11 16H5a.749.749 0 0 1-.53-.22L.22 11.53A.749.749 0 0 1 0 11V5c0-.199.079-.389.22-.53Zm.84 1.28L1.5 5.31v5.38l3.81 3.81h5.38l3.81-3.81V5.31L10.69 1.5ZM8 4a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Caution</p><p>复制功能损坏！</p>
 </div>
+
 
 <h2>介绍</h2>
 <h2>正向过程</h2>
