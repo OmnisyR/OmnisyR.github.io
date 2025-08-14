@@ -967,7 +967,7 @@ if __name__ == '__main__':
 ## 介绍
 
 ## 正向过程
-;;;eThe forward process of the diffusion models involve gradually adding noise to the original image, such that by the final stage, the image fully follows the noise distribution. Typically, Gaussian noise is used for this process. For discrete time points $t = 0, 1, \dots, T$, in the `Markov chain` process followed by the diffusion models, given $x_0 \sim q(x_0)$, i.e., the original image as the initial stage, and $x_T \sim q(x_T) = \mathcal{N}(0, I)$, i.e., the image completely following standard Gaussian noise as the final stage. The probability distributions of the various stages $x_0, x_1, \dots, x_T$ follow the following formula:;;;e;;;c扩散模型的正向过程为，对原始的图像进行一步步地噪声添加，从而在最终阶段，使得图片完全服从噪声分布，一般地，使用高斯噪声来进行这个过程。对于离散的时间$t = 0, 1, \dots, T$，在扩散模型遵循的`马尔可夫链`过程中，对于给定的$x_0 \sim q(x_0)$，即原始图像作为初始阶段，和$x_T \sim q(x_T) = \mathcal{N}(0, I)$，即完全服从标准高斯噪声的图像作为最终阶段。其各个阶段$x_0, x_1, \dots, x_T$的概率分布服从以下公式：;;;c
+扩散模型的正向过程为，对原始的图像进行一步步地噪声添加，从而在最终阶段，使得图片完全服从噪声分布，一般地，使用高斯噪声来进行这个过程。对于离散的时间$t = 0, 1, \dots, T$，在扩散模型遵循的`马尔可夫链`过程中，对于给定的$x_0 \sim q(x_0)$，即原始图像作为初始阶段，和$x_T \sim q(x_T) = \mathcal{N}(0, I)$，即完全服从标准高斯噪声的图像作为最终阶段。其各个阶段$x_0, x_1, \dots, x_T$的概率分布服从以下公式：
 
 $$
 q(x_T|x_0) = q(x_0)\prod^T_{t = 1}q(x_t|x_{t - 1})
