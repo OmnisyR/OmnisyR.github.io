@@ -46,7 +46,7 @@ window.addEventListener('load', function() {
   if (navigator.language === 'zh-CN') {
     tmp_str = '注释'
   }
-  denoteElement.insertAdjacentHTML('afterbegin', `<div class="denote-title">${tmp_str}</div>)
+  denoteElement.insertAdjacentHTML('afterbegin', `<div class="denote-title">${tmp_str}</div>`)
   const content = document.createElement('content')
   content.id = 'denote-content'
   var tmp_str = 'Click on the text to display the annotation.'
