@@ -161,4 +161,37 @@ window.addEventListener('load', function() {
       false,
     );
   }
+  let currentFeedback = null;
+  document.querySelectorAll('clipboard-copy').forEach(copyButton => {
+    copyButton.addEventListener('click', () => {
+      const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
+      const tempTextArea = document.createElement('textarea');
+      tempTextArea.value = codeContent;
+      document.body.appendChild(tempTextArea);
+      tempTextArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempTextArea);
+
+      const copyIcon = copyButton.querySelector('.octicon-copy');
+      const checkIcon = copyButton.querySelector('.octicon-check');
+      const copyFeedback = copyButton.nextElementSibling;
+
+      if (currentFeedback && currentFeedback !== copyFeedback) {
+        currentFeedback.style.display = 'none';
+      }
+      currentFeedback = copyFeedback;
+
+      copyIcon.classList.add('d-none');
+      checkIcon.classList.remove('d-none');
+      copyFeedback.style.display = 'block';
+      copyButton.style.borderColor = 'var(--color-success-fg)';
+
+      setTimeout(() => {
+        copyIcon.classList.remove('d-none');
+        checkIcon.classList.add('d-none');
+        copyFeedback.style.display = 'none';
+        copyButton.style.borderColor = '';
+      }, 2000);
+    });
+  });
 });

@@ -75,7 +75,7 @@ $$
 ;;;;
 ;;;d
 
-<!-- ##{"script":"<script src='https://OmnisyR.github.io/assets/HyperToOC.js'></script>"}## -->
+<!-- ##{"script":"<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>"}## -->
 ## 介绍
 
 ## 正向过程
