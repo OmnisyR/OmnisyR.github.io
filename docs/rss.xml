@@ -1,8 +1,81 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>OmnisyR's Blog</title><link>https://OmnisyR.github.io</link><description>;;;eRecording the bits and pieces of scientific research, development, and life.;;;e;;;c记录科研、开发以及生活的点点滴滴;;;c</description><copyright>OmnisyR's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/68898477?s=400&amp;u=262ae3b76f651c62a82042317aaae313706c859c&amp;v=4</url><title>avatar</title><link>https://OmnisyR.github.io</link></image><lastBuildDate>Thu, 14 Aug 2025 06:46:39 +0000</lastBuildDate><managingEditor>OmnisyR's Blog</managingEditor><ttl>60</ttl><webMaster>OmnisyR's Blog</webMaster><item><title>;;;eThe Foundation of Diffusion Models:;;;e;;;c扩散模型的基石：;;;cDenoising Diffusion Probabilistic Models(DDPM)</title><link>https://OmnisyR.github.io/post/%3B%3B%3BeThe%20Foundation%20of%20Diffusion%20Models-%3B%3B%3Be%3B%3B%3Bc-kuo-san-mo-xing-de-ji-shi-%EF%BC%9A%3B%3B%3BcDenoising%20Diffusion%20Probabilistic%20Models%28DDPM%29.html</link><description>&lt;!-- ##{'script':'&lt;script src='https://OmnisyR.github.io/assets/HyperTOC.js'&gt;&lt;/script&gt;'}## --&gt;
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>OmnisyR's Blog</title><link>https://OmnisyR.github.io</link><description>;;;eRecording the bits and pieces of scientific research, development, and life.;;;e;;;c记录科研、开发以及生活的点点滴滴;;;c</description><copyright>OmnisyR's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/68898477?s=400&amp;u=262ae3b76f651c62a82042317aaae313706c859c&amp;v=4</url><title>avatar</title><link>https://OmnisyR.github.io</link></image><lastBuildDate>Thu, 14 Aug 2025 07:19:40 +0000</lastBuildDate><managingEditor>OmnisyR's Blog</managingEditor><ttl>60</ttl><webMaster>OmnisyR's Blog</webMaster><item><title>;;;eThe Foundation of Diffusion Models:;;;e;;;c扩散模型的基石：;;;cDenoising Diffusion Probabilistic Models(DDPM)</title><link>https://OmnisyR.github.io/post/%3B%3B%3BeThe%20Foundation%20of%20Diffusion%20Models-%3B%3B%3Be%3B%3B%3Bc-kuo-san-mo-xing-de-ji-shi-%EF%BC%9A%3B%3B%3BcDenoising%20Diffusion%20Probabilistic%20Models%28DDPM%29.html</link><description>&lt;!-- ##{'script':'&lt;script src='https://OmnisyR.github.io/assets/HyperTOC.js'&gt;&lt;/script&gt;'}## --&gt;
 
+;;;e
 ;;;a
-;;;;;;;eMarkov chain::The state at a given moment is only related to the state at the previous moment, i.e., $x_t = f(x_{t - 1})$, without the involvement of states at other moments. A chain formed by a number of such state relationships constitutes a Markov chain. Therefore, Markov chains have the following special properties:;;;e;;;c马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。</description><guid isPermaLink="true">https://OmnisyR.github.io/post/%3B%3B%3BeThe%20Foundation%20of%20Diffusion%20Models-%3B%3B%3Be%3B%3B%3Bc-kuo-san-mo-xing-de-ji-shi-%EF%BC%9A%3B%3B%3BcDenoising%20Diffusion%20Probabilistic%20Models%28DDPM%29.html</guid><pubDate>Fri, 25 Jul 2025 07:02:25 +0000</pubDate></item><item><title>;;;eAn Overview of Diffusion Models;;;e;;;c扩散模型概述;;;c</title><link>https://OmnisyR.github.io/post/%3B%3B%3BeAn%20Overview%20of%20Diffusion%20Models%3B%3B%3Be%3B%3B%3Bc-kuo-san-mo-xing-gai-shu-%3B%3B%3Bc.html</link><description>&gt; [!NOTE]
+;;;;Markov chain::The state at a given moment is only related to the state at the previous moment, i.e., $x_t = f(x_{t - 1})$, without the involvement of states at other moments. A chain formed by a number of such state relationships constitutes a Markov chain. Therefore, Markov chains have the following special properties:
+
+$$
+\begin{align}
+&amp;P(X_n|X_0) = P(X_n)
+\\
+&amp;P(X_n|X_{n - 1}, X_{n - 2}, \dots, X_0) = P(X_n|X_{n - 1})
+\end{align}
+$$
+
+;;;;
+;;;;Reparameterization trick::For the probability $p(x|y) = \mathcal{N}(x|ay, b)$, i.e., $x$ follows a Gaussian distribution with mean $ay$ and standard deviation $\sqrt{b}$, then we have $x = ay + \sqrt{b}\epsilon$, where $\epsilon \sim \mathcal{N}(0, 1)$.;;;;
+;;;;The code below::PyTorch code that uses GPU acceleration by default. Due to the enormous computing power required by diffusion models, it is almost impossible to run diffusion models without GPU acceleration.;;;;
+;;;;Addition rule of Gaussian distribution::
+
+$$
+\mathcal{N}(\mu_1, \sigma^2_1) + \mathcal{N}(\mu_2, \sigma^2_2) = \mathcal{N}(\mu_1 + \mu_2, \sigma^2_1 + \sigma^2_2)
+$$
+
+;;;;
+;;;;The upper bound should be as small as possible::Some people may have a typical misconception, namely that equation (13) is equivalent to the KL divergence on the right side being 0. This idea is incorrect because when the KL divergence is 0, although the gradient of the KL divergence is 0, the overall gradient on the right side is not necessarily 0. A very simple example can effectively illustrate this point:
+
+$$
+x^2 \leq x^2 + (2 - x)^2
+$$
+
+Clearly, the right-hand side takes its minimum value at $x = 1$, rather than at $x = 2$, where $(2 - x)^2$ is 0.
+
+;;;;
+;;;;Bayes' theorem::
+
+$$
+P(A|B) = \frac{P(B|A)P(A)}{P(B)}
+$$
+
+;;;;
+;;;;Equation (10)::
+
+$$
+x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1 - \bar{\alpha}_t}\epsilon_t
+$$
+
+;;;;
+;;;;KL divergence formula for Gaussian distribution::For $p_1(x) = \mathcal{N}(\mu_1, \sigma^2_1)$ and $p_2(x) = \mathcal{N}(\mu_2, \sigma^2_2)$, we have:
+
+$$
+D_{KL}(p_1||p_2) = \frac{1}{2}\log\frac{\sigma^2_2}{\sigma^2_1} + \frac{\sigma^2_1 + (\mu_1 - \mu_2)^2}{2\sigma^2_2} - \frac{1}{2}
+$$
+
+;;;;
+;;;;UNet::Article address:https://arxiv.org/abs/1505.04597
+UNet is relatively complex. You can download [unet.py](https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/unet.py) and [nn.py](https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/nn.py) provided by the article [Diffusion Models Beat GANs on Image Synthesis](https://arxiv.org/abs/2105.05233) on GitHub to run the diffusion model. You do not need to download fp16_util.py. Simply delete the relevant code in unet.py before running it.;;;;
+;;;;Residual thinking::Article address:https://arxiv.org/abs/1512.03385;;;;
+;;;;Attention is All You Need::Article address:https://arxiv.org/abs/1706.03762;;;;
+;;;;Select a linear noise schedule::There are many types of noise schedules. Although cosine noise schedule seem to be highly recommended online, in actual practice, they can cause a problem I call “color divergence.” A series of measures are required to improve the results and obtain the correct outcome. Therefore, when you are just starting to learn about diffusion models, it is best to use a linear noise schedule first.;;;;
+;;;;Equation (50)::
+
+$$
+\begin{align}
+x_{t - 1} &amp;= \frac{1}{\sqrt{\alpha_t}}x_t
+\\
+&amp;\quad - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}\_t)}}\epsilon_\theta(x_t, t)
+\\
+&amp;\quad + \sqrt{\frac{1 - \bar{\alpha}\_{t - 1}}{1 - \bar{\alpha}\_t}\beta_t}\epsilon
+\end{align}
+$$
+
+;;;;
+;;;a
+;;;e
+;;;c
+;;;a
+;;;;马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。</description><guid isPermaLink="true">https://OmnisyR.github.io/post/%3B%3B%3BeThe%20Foundation%20of%20Diffusion%20Models-%3B%3B%3Be%3B%3B%3Bc-kuo-san-mo-xing-de-ji-shi-%EF%BC%9A%3B%3B%3BcDenoising%20Diffusion%20Probabilistic%20Models%28DDPM%29.html</guid><pubDate>Fri, 25 Jul 2025 07:02:25 +0000</pubDate></item><item><title>;;;eAn Overview of Diffusion Models;;;e;;;c扩散模型概述;;;c</title><link>https://OmnisyR.github.io/post/%3B%3B%3BeAn%20Overview%20of%20Diffusion%20Models%3B%3B%3Be%3B%3B%3Bc-kuo-san-mo-xing-gai-shu-%3B%3B%3Bc.html</link><description>&gt; [!NOTE]
 &gt; This article currently only supports Chinese.
 
 &gt; [!CAUTION]
