@@ -13,5 +13,5 @@
     "nightTheme":"dark_colorblind",
     "bottomText":"转载文章请注明出处",
     "primerCSS":"<link href='https://OmnisyR.github.io/assets/Primer.css' rel='stylesheet' />",
-    "allHead":"<script src='https://OmnisyR.github.io/assets/GmeekVercount.js'></script><script src='https://OmnisyR.github.io/assets/Language.js'></script><script src='https://OmnisyR.github.io/assets/Mark.js'></script>"
+    "allHead":"<script src='https://OmnisyR.github.io/assets/GmeekVercount.js'></script><script src='https://OmnisyR.github.io/assets/Language.js'></script><script src='https://OmnisyR.github.io/assets/Mark.js'></script><meta name="google-site-verification" content="jL_vSMve-woq2yALbGnRHeP86_xTVwPvJYu6vfAQiWo" />"
 }
