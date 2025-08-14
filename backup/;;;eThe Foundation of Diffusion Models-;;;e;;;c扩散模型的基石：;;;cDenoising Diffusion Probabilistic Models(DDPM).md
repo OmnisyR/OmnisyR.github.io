@@ -71,10 +71,16 @@ $$
 ;;;;
 ;;;a;;;e
 ## Introduction
+I'm not very good at describing subjective things, and most of the information about diffusion models has already been covered in [Diffusion Model Overview](https://omnisyr.github.io/post/%3B%3B%3BeAn%20Overview%20of%20Diffusion%20Models%3B%3B%3Be%3B%3B%3Bc-kuo-san-mo-xing-gai-shu-%3B%3B%3Bc.html), so I'll skip the formalities and get straight to the point!
+
+In this article, I will introduce and implement DDPM from a mathematical and coding perspective. If you just want to try it out, you can copy and paste the code directly, modify a few path parameters, and run it right away, provided your environment is properly configured!
 
 ## Forward Process
 The forward process of the diffusion models involve gradually adding noise to the original image, such that by the final stage, the image fully follows the noise distribution. Typically, Gaussian noise is used for this process. For discrete time points $t = 0, 1, \dots, T$, in the `Markov chain` process followed by the diffusion models, given $x_0 \sim q(x_0)$, i.e., the original image as the initial stage, and $x_T \sim q(x_T) = \mathcal{N}(0, I)$, i.e., the image completely following standard Gaussian noise as the final stage. The probability distributions of the various stages $x_0, x_1, \dots, x_T$ follow the following formula:;;;e;;;c
 ## 介绍
+我不擅长描述一些非客观性的东西，一些关于扩散模型的介绍在[扩散模型概述](https://omnisyr.github.io/post/%3B%3B%3BeAn%20Overview%20of%20Diffusion%20Models%3B%3B%3Be%3B%3B%3Bc-kuo-san-mo-xing-gai-shu-%3B%3B%3Bc.html)中也讲的差不多了，所以没有繁文缛节了，直接开始吧！
+
+在这篇文章中，我将从数学和代码上介绍和实现DDPM。如果你只是想单纯实践的话，在环境配置好的条件下，你可以直接复制粘贴，修改几个路径参数便可直接运行！
 
 ## 正向过程
 扩散模型的正向过程为，对原始的图像进行一步步地噪声添加，从而在最终阶段，使得图片完全服从噪声分布，一般地，使用高斯噪声来进行这个过程。对于离散的时间$t = 0, 1, \dots, T$，在扩散模型遵循的`马尔可夫链`过程中，对于给定的$x_0 \sim q(x_0)$，即原始图像作为初始阶段，和$x_T \sim q(x_T) = \mathcal{N}(0, I)$，即完全服从标准高斯噪声的图像作为最终阶段。其各个阶段$x_0, x_1, \dots, x_T$的概率分布服从以下公式：;;;c
