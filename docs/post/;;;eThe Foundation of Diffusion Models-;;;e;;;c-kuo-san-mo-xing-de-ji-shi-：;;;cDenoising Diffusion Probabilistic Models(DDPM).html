@@ -114,9 +114,9 @@ $$</p>
 <p>;;;eClearly, the right-hand side takes its minimum value at $x = 1$, rather than at $x = 2$, where $(2 - x)^2$ is 0.;;;e;;;c显然，右式在$x = 1$时取最小值，而非令$(2 - x)^2$为0的$x = 2$时。;;;c</p>
 <p>;;;;<br>
 ;;;;;;;eBayes' theorem;;;e;;;c贝叶斯定理;;;c::</p>
-<p>$$<br>
-P(A|B) = \frac{P(B|A)P(A)}{P(B)}<br>
-$$``</p>
+<p>$$
+P(A|B) = \frac{P(B|A)P(A)}{P(B)}
+$$</p>
 <p>;;;;<br>
 ;;;;;;;eEquation ;;;e;;;c式;;;c(10)::</p>
 <p>$$
@@ -745,7 +745,8 @@ $$</p>
 <span class="pl-k">def</span> <span class="pl-en">add_noise</span>(<span class="pl-s1">x_0</span>, <span class="pl-s1">t</span>, <span class="pl-s1">noise</span><span class="pl-c1">=</span><span class="pl-c1">None</span>):
     <span class="pl-s">"""</span>
 <span class="pl-s">    Used to add noise.</span>
-<span class="pl-s">    :param x_0: Original data used to add noise, with shape [batch_size, channels, image_size, image_size]</span>
+<span class="pl-s">    :param x_0:</span>
+<span class="pl-s">        Original data used to add noise, with shape [batch_size, channels, image_size, image_size]</span>
 <span class="pl-s">    :param t: Specified timestamp, with shape [batch_size]</span>
 <span class="pl-s">    :param noise: Specified noise; if None, noise will be randomly generated</span>
 <span class="pl-s">    :return: Returns the noisy data at the specified timestamp</span>

@@ -34,7 +34,7 @@ $$
 
 $$
 P(A|B) = \frac{P(B|A)P(A)}{P(B)}
-$$``
+$$
 
 ;;;;
 ;;;;;;;eEquation ;;;e;;;c式;;;c(10)::
@@ -747,7 +747,8 @@ def extract(v, t, x_shape):
 def add_noise(x_0, t, noise=None):
     """
     Used to add noise.
-    :param x_0: Original data used to add noise, with shape [batch_size, channels, image_size, image_size]
+    :param x_0:
+        Original data used to add noise, with shape [batch_size, channels, image_size, image_size]
     :param t: Specified timestamp, with shape [batch_size]
     :param noise: Specified noise; if None, noise will be randomly generated
     :return: Returns the noisy data at the specified timestamp
