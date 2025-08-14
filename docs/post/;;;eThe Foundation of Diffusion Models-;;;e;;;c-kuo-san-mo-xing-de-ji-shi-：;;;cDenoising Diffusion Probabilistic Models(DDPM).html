@@ -33,7 +33,7 @@ $$
 $$
 
 ;;;;
-;;;;The upper bound should be as small as possible::Some people may have a typical misconception, namely that equation (13) is equivalent to the KL divergence on the right side being 0. This idea is incorrect because when the KL divergence is 0, although the gradient of the KL divergence is 0, the overall gradient on the right side is not necessarily 0. A very simple example can effectively illustrate this point:
+;;;;The upper bound of this loss as small as possible::Some people may have a typical misconception, namely that equation (13) is equivalent to the KL divergence on the right side being 0. This idea is incorrect because when the KL divergence is 0, although the gradient of the KL divergence is 0, the overall gradient on the right side is not necessarily 0. A very simple example can effectively illustrate this point:
 
 $$
 x^2 \leq x^2 + (2 - x)^2
@@ -46,7 +46,7 @@ Clearly, the right-hand side takes its minimum value at $x = 1$, rather than at 
 
 $$
 P(A|B) = \frac{P(B|A)P(A)}{P(B)}
-$$
+$$``
 
 ;;;;
 ;;;;Equation (10)::
@@ -56,7 +56,7 @@ x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1 - \bar{\alpha}_t}\epsilon_t
 $$
 
 ;;;;
-;;;;KL divergence formula for Gaussian distribution::For $p_1(x) = \mathcal{N}(\mu_1, \sigma^2_1)$ and $p_2(x) = \mathcal{N}(\mu_2, \sigma^2_2)$, we have:
+;;;;KL divergence formula for Gaussian distributions::For $p_1(x) = \mathcal{N}(\mu_1, \sigma^2_1)$ and $p_2(x) = \mathcal{N}(\mu_2, \sigma^2_2)$, we have:
 
 $$
 D_{KL}(p_1||p_2) = \frac{1}{2}\log\frac{\sigma^2_2}{\sigma^2_1} + \frac{\sigma^2_1 + (\mu_1 - \mu_2)^2}{2\sigma^2_2} - \frac{1}{2}
@@ -107,7 +107,7 @@ $$
 $$
 
 ;;;;
-;;;;The upper bound should be as small as possible::Some people may have a typical misconception, namely that equation (13) is equivalent to the KL divergence on the right side being 0. This idea is incorrect because when the KL divergence is 0, although the gradient of the KL divergence is 0, the overall gradient on the right side is not necessarily 0. A very simple example can effectively illustrate this point:
+;;;;The upper bound of this loss as small as possible::Some people may have a typical misconception, namely that equation (13) is equivalent to the KL divergence on the right side being 0. This idea is incorrect because when the KL divergence is 0, although the gradient of the KL divergence is 0, the overall gradient on the right side is not necessarily 0. A very simple example can effectively illustrate this point:
 
 $$
 x^2 \leq x^2 + (2 - x)^2
@@ -120,7 +120,7 @@ Clearly, the right-hand side takes its minimum value at $x = 1$, rather than at 
 
 $$
 P(A|B) = \frac{P(B|A)P(A)}{P(B)}
-$$
+$$``
 
 ;;;;
 ;;;;Equation (10)::
@@ -130,7 +130,7 @@ x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1 - \bar{\alpha}_t}\epsilon_t
 $$
 
 ;;;;
-;;;;KL divergence formula for Gaussian distribution::For $p_1(x) = \mathcal{N}(\mu_1, \sigma^2_1)$ and $p_2(x) = \mathcal{N}(\mu_2, \sigma^2_2)$, we have:
+;;;;KL divergence formula for Gaussian distributions::For $p_1(x) = \mathcal{N}(\mu_1, \sigma^2_1)$ and $p_2(x) = \mathcal{N}(\mu_2, \sigma^2_2)$, we have:
 
 $$
 D_{KL}(p_1||p_2) = \frac{1}{2}\log\frac{\sigma^2_2}{\sigma^2_1} + \frac{\sigma^2_1 + (\mu_1 - \mu_2)^2}{2\sigma^2_2} - \frac{1}{2}
@@ -245,23 +245,23 @@ $$</p>
 \mathcal{N}(\mu_1, \sigma^2_1) + \mathcal{N}(\mu_2, \sigma^2_2) = \mathcal{N}(\mu_1 + \mu_2, \sigma^2_1 + \sigma^2_2)
 $$</p>
 <p>;;;;<br>
-;;;;The upper bound should be as small as possible::Some people may have a typical misconception, namely that equation (13) is equivalent to the KL divergence on the right side being 0. This idea is incorrect because when the KL divergence is 0, although the gradient of the KL divergence is 0, the overall gradient on the right side is not necessarily 0. A very simple example can effectively illustrate this point:</p>
+;;;;The upper bound of this loss as small as possible::Some people may have a typical misconception, namely that equation (13) is equivalent to the KL divergence on the right side being 0. This idea is incorrect because when the KL divergence is 0, although the gradient of the KL divergence is 0, the overall gradient on the right side is not necessarily 0. A very simple example can effectively illustrate this point:</p>
 <p>$$
 x^2 \leq x^2 + (2 - x)^2
 $$</p>
 <p>Clearly, the right-hand side takes its minimum value at $x = 1$, rather than at $x = 2$, where $(2 - x)^2$ is 0.</p>
 <p>;;;;<br>
 ;;;;Bayes' theorem::</p>
-<p>$$
-P(A|B) = \frac{P(B|A)P(A)}{P(B)}
-$$</p>
+<p>$$<br>
+P(A|B) = \frac{P(B|A)P(A)}{P(B)}<br>
+$$``</p>
 <p>;;;;<br>
 ;;;;Equation (10)::</p>
 <p>$$
 x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1 - \bar{\alpha}_t}\epsilon_t
 $$</p>
 <p>;;;;<br>
-;;;;KL divergence formula for Gaussian distribution::For $p_1(x) = \mathcal{N}(\mu_1, \sigma^2_1)$ and $p_2(x) = \mathcal{N}(\mu_2, \sigma^2_2)$, we have:</p>
+;;;;KL divergence formula for Gaussian distributions::For $p_1(x) = \mathcal{N}(\mu_1, \sigma^2_1)$ and $p_2(x) = \mathcal{N}(\mu_2, \sigma^2_2)$, we have:</p>
 <p>$$
 D_{KL}(p_1||p_2) = \frac{1}{2}\log\frac{\sigma^2_2}{\sigma^2_1} + \frac{\sigma^2_1 + (\mu_1 - \mu_2)^2}{2\sigma^2_2} - \frac{1}{2}
 $$</p>
@@ -361,27 +361,27 @@ $$</p>
 <span class="pl-k">from</span> <span class="pl-s1">torchvision</span>.<span class="pl-s1">transforms</span>.<span class="pl-s1">v2</span> <span class="pl-k">import</span> <span class="pl-v">Compose</span>, <span class="pl-v">ToTensor</span>, <span class="pl-v">Lambda</span>
 <span class="pl-k">from</span> <span class="pl-s1">tqdm</span> <span class="pl-k">import</span> <span class="pl-s1">tqdm</span>
 
-<span class="pl-c">#时间长度设置为较为常用的1000</span>
+<span class="pl-c">#The timesteps is set to the commonly used 1000.</span>
 <span class="pl-s1">timesteps</span> <span class="pl-c1">=</span> <span class="pl-c1">1000</span>
-<span class="pl-c">#将图片的色彩值转化为-1到1之间的张量</span>
+<span class="pl-c">#Convert the color values of the image into a tensor between -1 and 1.</span>
 <span class="pl-s1">transform</span> <span class="pl-c1">=</span> <span class="pl-en">Compose</span>([<span class="pl-en">ToTensor</span>(), <span class="pl-en">Lambda</span>(<span class="pl-k">lambda</span> <span class="pl-s1">t</span>: (<span class="pl-s1">t</span> <span class="pl-c1">*</span> <span class="pl-c1">2</span>) <span class="pl-c1">-</span> <span class="pl-c1">1</span>)])
-<span class="pl-c">#将色彩值为-1到1之间的图片转化为0到255之间</span>
+<span class="pl-c">#Convert images with color values between -1 and 1 to values between 0 and 255.</span>
 <span class="pl-s1">transform_reverse</span> <span class="pl-c1">=</span> <span class="pl-en">Compose</span>([<span class="pl-en">Lambda</span>(<span class="pl-k">lambda</span> <span class="pl-s1">t</span>: (<span class="pl-s1">t</span> <span class="pl-c1">+</span> <span class="pl-c1">1</span>) <span class="pl-c1">/</span> <span class="pl-c1">2</span> <span class="pl-c1">*</span> <span class="pl-c1">255</span>)])
-<span class="pl-c">#读取并将图片转化为张量</span>
+<span class="pl-c">#Read and convert images into tensors.</span>
 <span class="pl-s1">x_t</span> <span class="pl-c1">=</span> <span class="pl-en">transform</span>(<span class="pl-v">Image</span>.<span class="pl-c1">open</span>(<span class="pl-s">'xxx.png'</span>)).<span class="pl-c1">cuda</span>()
-<span class="pl-c">#使用线性噪声时间表</span>
+<span class="pl-c">#Use a linear noise schedule.</span>
 <span class="pl-s1">beta</span> <span class="pl-c1">=</span> <span class="pl-s1">torch</span>.<span class="pl-c1">linspace</span>(<span class="pl-c1">0.001</span>, <span class="pl-c1">0.02</span>, <span class="pl-s1">timesteps</span>).<span class="pl-c1">cuda</span>()
 <span class="pl-k">for</span> <span class="pl-s1">timestep</span> <span class="pl-c1">in</span> <span class="pl-en">tqdm</span>(<span class="pl-en">range</span>(<span class="pl-s1">timesteps</span>)):
-    <span class="pl-c">#每一步的随机噪声</span>
+    <span class="pl-c">#Random noise at each step.</span>
     <span class="pl-s1">ep</span> <span class="pl-c1">=</span> <span class="pl-s1">torch</span>.<span class="pl-c1">randn</span>(<span class="pl-s1">size</span><span class="pl-c1">=</span><span class="pl-s1">x_t</span>.<span class="pl-c1">shape</span>).<span class="pl-c1">cuda</span>()
-    <span class="pl-c">#式(3)的迭代增噪过程</span>
+    <span class="pl-c">#Iterative noise addition process of equation (3).</span>
     <span class="pl-s1">x_t</span> <span class="pl-c1">=</span> (<span class="pl-c1">1</span> <span class="pl-c1">-</span> <span class="pl-s1">beta</span>[<span class="pl-s1">timestep</span>]).<span class="pl-c1">sqrt</span>().<span class="pl-c1">item</span>() <span class="pl-c1">*</span> <span class="pl-s1">x_t</span> <span class="pl-c1">+</span> <span class="pl-s1">beta</span>[<span class="pl-s1">timestep</span>].<span class="pl-c1">sqrt</span>() <span class="pl-c1">*</span> <span class="pl-s1">ep</span>
-    <span class="pl-c">#保存图片到本地</span>
+    <span class="pl-c">#Save image to local.</span>
     <span class="pl-s1">torchvision</span>.<span class="pl-c1">io</span>.<span class="pl-c1">write_png</span>(
       <span class="pl-en">transform_reverse</span>(<span class="pl-s1">x_t</span>).<span class="pl-c1">clip</span>(<span class="pl-c1">0</span>, <span class="pl-c1">255</span>).<span class="pl-c1">to</span>(<span class="pl-s1">torch</span>.<span class="pl-c1">uint8</span>).<span class="pl-c1">cpu</span>(),
       <span class="pl-s">'noising/%d.png'</span> <span class="pl-c1">%</span> <span class="pl-s1">timestep</span>
     )</pre></div>
-<p>为了式子的简洁性，记$\alpha_t + \beta_t = 1$，则有：</p>
+<p>For simplicity, let $\alpha_t + \beta_t = 1$, then we have:</p>
 <p>$$
 \begin{align}
 x_t &amp;= \sqrt{\alpha_t} x_{t - 1} + \sqrt{1 - \alpha_t}\tilde{\epsilon}_t
@@ -408,14 +408,15 @@ x_t &amp;= \sqrt{\alpha_t} x_{t - 1} + \sqrt{1 - \alpha_t}\tilde{\epsilon}_t
 \tag{10}
 \end{align}
 $$</p>
-<p>其中$\bar{\alpha}_t = \prod_{i = 1}^{t}\alpha_i$。由于式(6)中存在着两个完全随机的标准高斯分布，因此可以对这二者进行重参数化技巧的逆运算得到式(7)，再通过<code class="notranslate">高斯分布的加法法则</code>得到式(8)，从而对多步的迭代进行化简，能够仅仅使用一步求出正向过程的任意时刻的状态：</p>
+<p>where $\bar{\alpha}_t = \prod_{i = 1}^{t}\alpha_i$. Since there are two completely random standard Gaussian distributions in equation (6), we can perform the inverse operation of the reparameterization technique on these two to obtain equation (7), and then use the <code class="notranslate">Addition rule of Gaussian distribution</code> to obtain equation (8), thereby simplifying the multi-step iteration and enabling us to calculate the state at any time in the forward process in a single step:</p>
 <div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">def</span> <span class="pl-en">add_noise</span>(<span class="pl-s1">x_0</span>, <span class="pl-s1">t</span>):
-    <span class="pl-c">#式(10)的一步增噪过程</span>
+    <span class="pl-c">#The one-step noise addition process in equation (10).</span>
     <span class="pl-k">return</span> <span class="pl-s1">sqrt_alpha_bar</span>[<span class="pl-s1">t</span>] <span class="pl-c1">*</span> <span class="pl-s1">x_0</span> <span class="pl-c1">+</span> <span class="pl-s1">sqrt_one_minus_alpha_bar</span>[<span class="pl-s1">t</span>] <span class="pl-c1">*</span> <span class="pl-s1">torch</span>.<span class="pl-c1">randn</span>(<span class="pl-s1">size</span><span class="pl-c1">=</span><span class="pl-s1">x_0</span>.<span class="pl-c1">shape</span>).<span class="pl-c1">cuda</span>()
 
-<span class="pl-c">#对参数的预先缓存</span>
+<span class="pl-c">#Pre-caching of parameters.</span>
 <span class="pl-s1">alpha</span> <span class="pl-c1">=</span> <span class="pl-c1">1</span> <span class="pl-c1">-</span> <span class="pl-s1">beta</span>
-<span class="pl-c">#在这里，对求得的α累乘的最前位置，额外加了一个1，这是为了编写程序时，时间戳与索引的一致</span>
+<span class="pl-c">#Here, an extra 1 is added to the front position of the obtained α product.</span>
+<span class="pl-c">#This is to ensure consistency between the timestamp and the index when writing the program.</span>
 <span class="pl-s1">alpha_bar</span> <span class="pl-c1">=</span> <span class="pl-s1">torch</span>.<span class="pl-c1">cat</span>((<span class="pl-s1">torch</span>.<span class="pl-c1">Tensor</span>((<span class="pl-c1">1</span>,)).<span class="pl-c1">cuda</span>(), <span class="pl-s1">alpha</span>.<span class="pl-c1">cumprod</span>(<span class="pl-s1">dim</span><span class="pl-c1">=</span><span class="pl-c1">0</span>)))
 <span class="pl-s1">sqrt_alpha_bar</span> <span class="pl-c1">=</span> <span class="pl-s1">alpha_bar</span>.<span class="pl-c1">sqrt</span>()
 <span class="pl-s1">sqrt_one_minus_alpha_bar</span> <span class="pl-c1">=</span> (<span class="pl-c1">1</span> <span class="pl-c1">-</span> <span class="pl-s1">alpha_bar</span>).<span class="pl-c1">sqrt</span>()
@@ -423,18 +424,18 @@ $$</p>
 <span class="pl-s1">timestep</span> <span class="pl-c1">=</span> <span class="pl-c1">200</span>
 <span class="pl-s1">x_t</span> <span class="pl-c1">=</span> <span class="pl-en">add_noise</span>(<span class="pl-s1">x_0</span>, <span class="pl-s1">timestep</span>)
 <span class="pl-s1">torchvision</span>.<span class="pl-c1">io</span>.<span class="pl-c1">write_png</span>(<span class="pl-en">transform_reverse</span>(<span class="pl-s1">x_t</span>).<span class="pl-c1">clip</span>(<span class="pl-c1">0</span>, <span class="pl-c1">255</span>).<span class="pl-c1">to</span>(<span class="pl-s1">torch</span>.<span class="pl-c1">uint8</span>).<span class="pl-c1">cpu</span>(), <span class="pl-s">'%s.png'</span> <span class="pl-c1">%</span> <span class="pl-s1">timestep</span>)</pre></div>
-<h2>逆向过程</h2>
-<p>相较正向过程，逆向过程则会复杂很多。逆向过程的目标是对于给定的$x_T \sim p_\theta(x_T) = \mathcal{N}(0, I)$，需要一个概率模型，能够使得$x_T$由标准高斯分布，转变为原始数据集的似然估计，即：</p>
+<h2>Reverse Process</h2>
+<p>Compared to the forward process, the reverse process is much more complex. The goal of the inverse process is to obtain a probabilistic model for a given $x_T \sim p_\theta(x_T) = \mathcal{N}(0, I)$, such that $x_T$ can be transformed from a standard Gaussian distribution into a likelihood estimate of the original data set, i.e.:</p>
 <p>$$
 p_\theta(x_0|x_T) = p_\theta(x_T)\prod^T_{t = 1}p_\theta(x_{t - 1}|x_t)
 \tag{11}
 $$</p>
-<p>若对其进行极大似然估计，其对数损失为：</p>
+<p>If we perform maximum likelihood estimation, the log loss is:</p>
 <p>$$
 L_\theta = -\log p_\theta(x_0) = -\log (p_\theta(x_T)\prod^T_{t = 1}p_\theta(x_{t - 1}|x_t))
 \tag{12}
 $$</p>
-<p>其中，$p_\theta(x_t|x_{t + 1})$是完全未知的，无法求解，因此考虑令该损失的<code class="notranslate">上界尽可能的小</code>。由于KL散度必然是非负的，所以：</p>
+<p>Among these, $p_\theta(x_t|x_{t + 1})$ is completely unknown and cannot be solved, so we consider making <code class="notranslate">The upper bound of this loss as small as possible</code>. Since the KL divergence is necessarily non-negative, we have:</p>
 <p>$$
 \begin{align}
 L_\theta \leq L_{VLB} &amp;= -\log p_\theta(x_0) + D_{KL}(q(x_{1:T}|x_0)||p_\theta(x_{1:T}|x_0))
@@ -444,12 +445,12 @@ L_\theta \leq L_{VLB} &amp;= -\log p_\theta(x_0) + D_{KL}(q(x_{1:T}|x_0)||p_\the
 \tag{14}
 \end{align}
 $$</p>
-<p>根据<code class="notranslate">贝叶斯定理</code>：</p>
+<p>According to <code class="notranslate">Bayes' theorem</code>:</p>
 <p>$$
 p_\theta(x_{1:T}|x_0) = \frac{p_\theta(x_0|x_{1:T})p_\theta(x_{1:T})}{p_\theta(x_0)} = \frac{p_\theta(x_0, x_{1:T})}{p_\theta(x_0)} = \frac{p_\theta(x_{0:T})}{p_\theta(x_0)}
 \tag{15}
 $$</p>
-<p>因此：</p>
+<p>Therefore:</p>
 <p>$$
 \begin{align}
 L_{VLB} &amp;= -\log p_\theta(x_0) + E_{q(x_{1:T}|x_0)}\log\frac{q(x_{1:T}|x_0)p_\theta(x_0)}{p_\theta(x_{0:T})}
@@ -501,7 +502,7 @@ L_{VLB} &amp;= -\log p_\theta(x_0) + E_{q(x_{1:T}|x_0)}\log\frac{q(x_{1:T}|x_0)p
 \tag{29}
 \end{align}
 $$</p>
-<p>又：</p>
+<p>Also:</p>
 <p>$$
 \begin{align}
 &amp;q(x_{t - 1}|x_t, x_0) = \frac{q(x_{t - 1}, x_t, x_0)}{q(x_t, x_0)} = \frac{q(x_{t - 1}, x_t| x_0)}{q(x_t, x_0)}
@@ -511,7 +512,7 @@ $$</p>
 \tag{31}
 \end{align}
 $$</p>
-<p>从而：</p>
+<p>Therefore:</p>
 <p>$$
 \begin{align}
 L_{VLB} &amp;= E_{q(x_T|x_0)}\log \frac{q(x_T|x_0)}{p_\theta(x_T)} - E_{q(x_1|x_0)}\log p_\theta(x_{0}|x_1)
@@ -527,8 +528,8 @@ L_{VLB} &amp;= E_{q(x_T|x_0)}\log \frac{q(x_T|x_0)}{p_\theta(x_T)} - E_{q(x_1|x_
 \tag{33}
 \end{align}
 $$</p>
-<p>其中，对于$L_T$，由于$q(x_T) = \mathcal{N}(0, I)$，$p_\theta(x_T) = \mathcal{N}(0, I)$都和极大似然估计参数无关，视为常数；</p>
-<p>对于$L_0$，由于$1 = q(x_0|x_0) = \frac{q(x_1|x_0)q(x_0|x_0)}{q(x_1|x_0)} = q(x_0|x_1)$，因此有：</p>
+<p>Among them, for $L_T$, since $q(x_T) = \mathcal{N}(0, I)$ and $p_\theta(x_T) = \mathcal{N}(0, I)$ are both independent of the maximum likelihood estimation parameters, they are regarded as constants.</p>
+<p>For $L_0$, since $1 = q(x_0|x_0) = \frac{q(x_1|x_0)q(x_0|x_0)}{q(x_1|x_0)} = q(x_0|x_1)$, we have:</p>
 <p>$$
 \begin{align}
 L_0 &amp;= - E_{q(x_1|x_0)}\log p_\theta(x_{0}|x_1)
@@ -541,12 +542,12 @@ L_0 &amp;= - E_{q(x_1|x_0)}\log p_\theta(x_{0}|x_1)
 \tag{36}
 \end{align}
 $$</p>
-<p>与$L_{t - 1}$形式相同，记$L_0 + L_{t - 1} = L_t$，对于式中的正向过程$q(x_t|x_{t - 1})$的后验分布$q(x_{t - 1}|x_t)$，由贝叶斯定理：</p>
+<p>For $L_0$, since $1 = q(x_0|x_0) = \frac{q(x_1|x_0)q(x_0|x_0)}{q(x_1|x_0)} = q(x_0|x_1)$, Therefore, we have: Similar to the form of $L_{t - 1}$, let $L_0 + L_{t - 1} = L_t$. For the posterior distribution $q(x_{t - 1}|x_t)$ of the forward process $q(x_t|x_{t - 1})$ in the equation, by Bayes' theorem:</p>
 <p>$$
 q(x_{t - 1}|x_t) = \frac{q(x_t|x_{t - 1})q(x_{t - 1})}{q(x_t)} = \frac{q(x_t|x_{t - 1})q(x_{t - 1}|x_0)}{q(x_t|x_0)}
 \tag{37}
 $$</p>
-<p>式(37)的三个概率都是已知的，必然可以求解，设后验分布$q(x_{t - 1}|x_t) = \mathcal{N}(\tilde{\mu}, \Sigma)$，考虑式(37)使用高斯分布密度函数展开后的指数部分，则有：</p>
+<p>The three probabilities in equation (37) are known and can be solved. Let the posterior distribution be $q(x_{t - 1}|x_t) = \mathcal{N}(\tilde{\mu}, \Sigma)$. Considering the exponential part of equation (37) expanded using the Gaussian distribution density function, we have:</p>
 <p>$$
 \begin{align}
 \frac{(x_{t - 1} - \tilde{\mu})^2}{\Sigma} &amp;= \frac{(x_t - \sqrt{\alpha_t}x_{t - 1})^2}{1 - \alpha_t} + \frac{(x_{t - 1} - \sqrt{\bar{\alpha}_{t - 1}}x_0)^2}{1 - \bar{\alpha}_{t - 1}} - \frac{(x_t - \sqrt{\bar{\alpha}_t}x_0)^2}{1 - \bar{\alpha}_t}
@@ -556,7 +557,7 @@ $$</p>
 \tag{39}
 \end{align}
 $$</p>
-<p>其中，$C(x_0, x_t)$为不含$x_{t - 1}$的项，通过左右比对，易得：</p>
+<p>where $C(x_0, x_t)$ is the term that does not contain $x_{t - 1}$. Through left-right comparison, it is easy to obtain:</p>
 <p>$$
 \begin{align}
 \Sigma &amp;= \frac{1}{\frac{\alpha_t}{1 - \alpha_t} + \frac{1}{1 - \bar{\alpha}_{t - 1}}}
@@ -572,7 +573,7 @@ $$</p>
 \tag{43}
 \end{align}
 $$</p>
-<p>又由<code class="notranslate">式(10)</code>，可将$x_0$转换为$x_t$来进行表达，从而：</p>
+<p>Then, from <code class="notranslate">Equation (10)</code>, $x_0$ can be converted to $x_t$ for expression, thus:</p>
 <p>$$
 \begin{align}
 \tilde{\mu} &amp;= \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}_t)}}\epsilon_t(x_t, t)
@@ -582,7 +583,7 @@ x_{t - 1} &amp;= \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha
 \tag{45}
 \end{align}
 $$</p>
-<p>其中，$\epsilon_t(x_t, t)$的含义为，对于给定的时刻$t$，从初始状态$x_0$，经过一步的正向过程成为该时刻状态$x_t$，所需要的噪声。若定义$p_\theta(x_{t - 1}|x_t) = \mathcal{N}(\mu_\theta, \sigma^2_\theta)$，由<code class="notranslate">高斯分布的KL散度公式</code>：</p>
+<p>where $\epsilon_t(x_t, t)$ denotes the noise required to transition from the initial state $x_0$ to the state $x_t$ at time $t$ through a single forward step. If we define $p_\theta(x_{t - 1}|x_t) = \mathcal{N}(\mu_\theta, \sigma^2_\theta)$, then by the <code class="notranslate">KL divergence formula for Gaussian distributions</code>:</p>
 <p>$$
 \begin{align}
 L_t &amp;= \sum^T_{t = 1} E_{q(x_t, x_0)}D_{KL}(q(x_{t - 1}|x_t, x_0)||p_\theta(x_{t - 1}|x_t))
@@ -592,36 +593,36 @@ L_t &amp;= \sum^T_{t = 1} E_{q(x_t, x_0)}D_{KL}(q(x_{t - 1}|x_t, x_0)||p_\theta(
 \tag{47}
 \end{align}
 $$</p>
-<p>尽管$\sigma_\theta$是可学习的，但其对采样质量的提升并不显著，未得到推广。在DDPM中，取$\sigma^2_\theta = \frac{1 - \bar{\alpha}_{t - 1}}{1 - \bar{\alpha}_t}\beta_t$，因此有：</p>
+<p>Although $\sigma_\theta$ is learnable, its improvement in sampling quality is not significant and has not been widely adopted. In DDPM, we set $\sigma^2_\theta = \frac{1 - \bar{\alpha}_{t - 1}}{1 - \bar{\alpha}_t}\beta_t$, so we have:</p>
 <p>$$
 L_t = \sum^T_{t = 1} E_{q(x_t, x_0)}[\frac{1 - \bar{\alpha}_t}{2(1 - \bar{\alpha}_{t - 1})\beta_t}(\tilde{\mu} - \mu_\theta)^2]
 \tag{48}
 $$</p>
-<p>要使$L_t$尽可能小，即需要$\mu_\theta$尽可能接近$\tilde{\mu}$。若令$\mu_\theta = \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}_t)}}\epsilon_\theta(x_t, t)$，那么只需要$\epsilon_\theta(x_t, t)$尽可能接近$\epsilon_t(x_t, t)$，即损失函数：</p>
+<p>To minimize $L_t$, it is necessary for $\mu_\theta$ to be as close as possible to $\tilde{\mu}$. If we set $\mu_\theta = \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}_t)}}\ epsilon_\theta(x_t, t)$, then we only need $\epsilon_\theta(x_t, t)$ to be as close as possible to $\epsilon_t(x_t, t)$, i.e., the loss function:</p>
 <p>$$
 L = ||\epsilon_\theta(x_t, t) - \epsilon_t(x_t, t)||^2_2
 \tag{49}
 $$</p>
-<p>逆向过程的采样公式：</p>
+<p>Sampling formula for the reverse process:</p>
 <p>$$
 x_{t - 1} = \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}_t)}}\epsilon_\theta(x_t, t) + \sqrt{\frac{1 - \bar{\alpha}_{t - 1}}{1 - \bar{\alpha}_t}\beta_t}\epsilon
 \tag{50}
 $$</p>
-<h2>网络搭建</h2>
-<p>经过逆向过程漫长的推导，获得了扩散模型的损失函数，接下来就是要对预测函数进行网络搭建，该预测函数的输入为某一时刻以及该时刻对应的带噪图片，输出为预测的，从初始状态，经过正向过程成为该时刻状态，所需要的噪声。DDPM采用了<code class="notranslate">UNet</code>来进行这个过程。</p>
-<h3>网络结构</h3>
-<p>原文章中给出了一个UNet的结构图：</p>
+<h2>Network Setup</h2>
+<p>After a lengthy process of reverse derivation, the loss function of the diffusion model was obtained. The next step is to build a network for the prediction function, whose input is a certain time point and the corresponding noisy image at that time point, and whose output is the predicted noise required to transform the initial state into the state at that time point through the forward process. DDPM uses <code class="notranslate">UNet</code> to perform this process.</p>
+<h3>Network Structure</h3>
+<p>The original article provides a structural diagram of UNet:</p>
 <p><p align="center"><img srcset="https://OmnisyR.github.io/figs/u-net-illustration-correct-scale2.png"/></p></p>
-<p>在该案例中，方块的上方代表着数据的通道数，左下方代表着数据的分辨率。网络的输入为$572^2$分辨率、通道数为1的图片，输出为$388^2$分辨率、通道数为2的图片。在网络内，则包含了四个核心部分：普通卷积过程；下采样；上采样以及残差过程。</p>
+<p>In this case, the upper part of the square represents the number of data channels, and the lower left part represents the data resolution. The network inputs a $572^2$ resolution image with 1 channel and outputs a $388^2$ resolution image with 2 channels. The network contains four core components: ordinary convolution process, downsampling, upsampling, and residual process.</p>
 <ul>
-<li>向右的短箭头代表着普通卷积过程，在每一层中，第一次卷积过程总是会将数据的通道数变为预定的、该层的通道数；</li>
-<li>向下的箭头代表着下采样，在这个过程中，总是会将数据的分辨率变为原来的一半，并在接下来进行更深层的卷积；</li>
-<li>向上的箭头代表着上采样，在这个过程中，总是会将数据的分辨率变为原来的两倍，并在接下来进行更浅层的卷积；</li>
-<li>向右的长箭头代表着残差过程，该部分利用了<code class="notranslate">残差思想</code>，将下采样的数据与上采样的数据相结合再进行卷积，能够有效地去除一些由于下采样导致的信息丢失问题。</li>
+<li>The short arrow pointing to the right represents the standard convolution process, where in each layer, the first convolution operation always reduces the number of channels in the data to the predefined number of channels for that layer;</li>
+<li>The downward arrow represents downsampling, during which the resolution of the data is always reduced to half of its original value, followed by deeper convolution operations;</li>
+<li>The upward arrow represents upsampling, where the resolution of the data is always doubled, followed by convolution at a shallower layer;</li>
+<li>The long right arrow represents the residual process, which utilizes the “residual idea” to combine downsampled data with upsampled data before convolution, effectively mitigating information loss caused by downsampling.</li>
 </ul>
-<p>但是对于扩散模型而言，其输入还需要额外引入一个时间戳t，而非单单一个图片，因此还需要将图片和时间戳整合到一起，放入UNet中进行计算，这个操作又称时间嵌入。</p>
-<h3>时间嵌入</h3>
-<p>时间嵌入算法参考了<code class="notranslate">Attention is All You Need</code>中的位置嵌入算法，通过将时间戳这单个数字，展开为某个张量，再输入到网络中进行计算，最后再与普通卷积过程的只相加，进行接下来的计算。时间戳的展开服从下面的式子：</p>
+<p>However, for diffusion models, the input requires an additional timestamp t in addition to a single image. Therefore, the image and timestamp must be integrated and fed into UNet for computation. This operation is also known as time embedding.</p>
+<h3>Time Embedding</h3>
+<p>The time embedding algorithm refers to the position embedding algorithm in <code class="notranslate">Attention is All You Need</code>. It expands the single number of the timestamp into a tensor, inputs it into the network for calculation, and then adds it to the ordinary convolution process for further calculation. The expansion of the timestamp obeys the following equation:</p>
 <p>$$
 \begin{align}
 TE_{(t, i)} &amp;= \sin\frac{t}{10000^{2i / d}}
@@ -631,12 +632,12 @@ TE_{(t, j)} &amp;= \cos\frac{t}{10000^{2j / d}}
 \tag{52}
 \end{align}
 $$</p>
-<p>其中，$d$表示所期望的展开维度，$i = \{1, 2, \dots, \frac{d}{2}\}$，$j = \{\frac{d}{2} + 1, \frac{d}{2} + 2, \dots, d\}$。若定义$d = 128$，则其可视化如下图所示：</p>
+<p>In this context, $d$ denotes the desired dimension of expansion, $i = {1, 2, \dots, \frac{d}{2}}$, and $j = {\frac{d}{2} + 1, \frac{d}{2} + 2, \dots, d}$. If $d = 128$ is defined, its visualization is shown in the figure below:</p>
 <p><p align="center"><img srcset="https://OmnisyR.github.io/figs/time_embeddings.png"/></p></p>
-<p>若是以函数的形式表示，红色为$TE_{(t, i)}$，蓝色为$TE_{(t, j)}$：</p>
+<p>If represented as function graphs, the red $TE_{(t, i)}$ and blue $TE_{(t, j)}$ change with dimension as shown below:</p>
 <p><p align="center"><iframe src="https://www.desmos.com/calculator/xkmphum0ou?embed" width="800" height="400" style="border: 1px solid #ccc" frameborder=0></iframe></p></p>
-<h2>训练过程</h2>
-<p>首先导入一些必要的库：</p>
+<h2>Training Process</h2>
+<p>First, import some necessary libraries:</p>
 <div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">import</span> <span class="pl-s1">os</span>
 <span class="pl-k">import</span> <span class="pl-s1">time</span>
 <span class="pl-k">from</span> <span class="pl-s1">pathlib</span> <span class="pl-k">import</span> <span class="pl-v">Path</span>
@@ -652,51 +653,54 @@ $$</p>
 <span class="pl-k">from</span> <span class="pl-s1">tqdm</span> <span class="pl-k">import</span> <span class="pl-s1">tqdm</span>
 
 <span class="pl-k">import</span> <span class="pl-s1">unet</span></pre></div>
-<p>其次是一些训练配置、超参数的确定。对于$\beta_t$等超参数，<code class="notranslate">选择线性噪声时间表</code>：</p>
+<p>Next is the determination of training configurations and hyperparameters. For hyperparameters such as $\beta_t$, select the linear noise schedule:</p>
 <div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">def</span> <span class="pl-en">linear</span>(<span class="pl-s1">time_steps</span>):
     <span class="pl-s1">beta_start</span> <span class="pl-c1">=</span> <span class="pl-c1">0.0001</span>
     <span class="pl-s1">beta_end</span> <span class="pl-c1">=</span> <span class="pl-c1">0.02</span>
     <span class="pl-k">return</span> <span class="pl-s1">torch</span>.<span class="pl-c1">linspace</span>(<span class="pl-s1">beta_start</span>, <span class="pl-s1">beta_end</span>, <span class="pl-s1">time_steps</span>).<span class="pl-c1">cuda</span>()
 
 
-<span class="pl-c">#时间戳选定为从0到1000，若减少或增加该值，会改变噪声时间表相关参数</span>
+<span class="pl-c">#The timestamp is set from 0 to 1000.</span>
+<span class="pl-c">#Reducing or increasing this value will change the parameters related to the noise schedule.</span>
 <span class="pl-s1">time_steps</span> <span class="pl-c1">=</span> <span class="pl-c1">1000</span>
-<span class="pl-c">#噪声时间表相关参数的预先计算缓存</span>
-<span class="pl-c">#形状：[1000]</span>
+<span class="pl-c">#Pre-computed cache of noise schedule-related parameters.</span>
+<span class="pl-c">#Shape:[1000]</span>
 <span class="pl-s1">betas</span> <span class="pl-c1">=</span> <span class="pl-en">linear</span>(<span class="pl-s1">time_steps</span>)
-<span class="pl-c">#形状：[1000]</span>
+<span class="pl-c">#Shape:[1000]</span>
 <span class="pl-s1">alphas</span> <span class="pl-c1">=</span> <span class="pl-c1">1.</span> <span class="pl-c1">-</span> <span class="pl-s1">betas</span>
-<span class="pl-c">#形状：[1001]</span>
+<span class="pl-c">#Shape:[1001]</span>
 <span class="pl-s1">alphas_bar</span> <span class="pl-c1">=</span> <span class="pl-s1">torch</span>.<span class="pl-c1">cat</span>((<span class="pl-s1">torch</span>.<span class="pl-c1">tensor</span>((<span class="pl-c1">1</span>,)).<span class="pl-c1">cuda</span>(), <span class="pl-s1">torch</span>.<span class="pl-c1">cumprod</span>(<span class="pl-s1">input</span><span class="pl-c1">=</span><span class="pl-s1">alphas</span>, <span class="pl-s1">dim</span><span class="pl-c1">=</span><span class="pl-c1">0</span>)))
-<span class="pl-c"># 形状：[1001]</span>
+<span class="pl-c">#Shape:[1001]</span>
 <span class="pl-s1">sqrt_alphas_bar</span> <span class="pl-c1">=</span> <span class="pl-s1">torch</span>.<span class="pl-c1">sqrt</span>(<span class="pl-s1">alphas_bar</span>)
-<span class="pl-c"># 形状：[1001]</span>
+<span class="pl-c">#Shape:[1001]</span>
 <span class="pl-s1">sqrt_one_minus_alphas_bar</span> <span class="pl-c1">=</span> <span class="pl-s1">torch</span>.<span class="pl-c1">sqrt</span>(<span class="pl-c1">1.</span> <span class="pl-c1">-</span> <span class="pl-s1">alphas_bar</span>)</pre></div>
-<p>配置与超参数：</p>
+<p>Configuration and hyperparameters:</p>
 <div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-s">"""</span>
-<span class="pl-s">为简便演示，使用CIFAR1作为数据集，图片尺寸为32×32</span>
-<span class="pl-s">CIFAR1指仅仅选用CIFAR10中的一类作为数据集</span>
-<span class="pl-s">数据集的文件结构为</span>
+<span class="pl-s">For simplicity, CIFAR1 is used as the dataset, with image dimensions of 32×32.</span>
+<span class="pl-s">CIFAR1 refers to using only one category from CIFAR10 as the dataset.</span>
+<span class="pl-s">The file structure of the dataset is as follows:</span>
 <span class="pl-s">cifar1</span>
-<span class="pl-s">    train</span>
-<span class="pl-s">        horse</span>
-<span class="pl-s">            0001.png</span>
-<span class="pl-s">            0002.png</span>
-<span class="pl-s">            ...</span>
-<span class="pl-s">            5000.png</span>
-<span class="pl-s">    test</span>
-<span class="pl-s">        horse</span>
-<span class="pl-s">            0001.png</span>
-<span class="pl-s">            0002.png</span>
-<span class="pl-s">            ...</span>
-<span class="pl-s">            1000.png</span>
+<span class="pl-s">  | train</span>
+<span class="pl-s">      | horse</span>
+<span class="pl-s">          | 0001.png</span>
+<span class="pl-s">          | 0002.png</span>
+<span class="pl-s">          | ...</span>
+<span class="pl-s">          | 5000.png</span>
+<span class="pl-s">  | test</span>
+<span class="pl-s">      | horse</span>
+<span class="pl-s">          | 0001.png</span>
+<span class="pl-s">          | 0002.png</span>
+<span class="pl-s">          | ...</span>
+<span class="pl-s">          | 1000.png</span>
 <span class="pl-s">"""</span>
 <span class="pl-s1">image_size</span> <span class="pl-c1">=</span> <span class="pl-c1">32</span>
-<span class="pl-c">#通道数为3，即RGB</span>
+<span class="pl-c">#The number of channels is 3, i.e., RGB.</span>
 <span class="pl-s1">channels</span> <span class="pl-c1">=</span> <span class="pl-c1">3</span>
-<span class="pl-c">#模型的基础通道数，即最上层的通道数</span>
+<span class="pl-c">#The number of base channels in the model, i.e., the number of channels in the top layer.</span>
 <span class="pl-s1">base_channels</span> <span class="pl-c1">=</span> <span class="pl-c1">128</span>
-<span class="pl-c">#模型的不同层的通道数，分辨率为32×32时，模型的深度选则4，对应的通道数为128，256，256，256</span>
+<span class="pl-c">#The number of channels in different layers of the model,</span>
+<span class="pl-c">#with a resolution of 32×32, the model depth is selected as 4,</span>
+<span class="pl-c">#corresponding to 128, 256, 256, 256 channels.</span>
 <span class="pl-s1">ch_mults</span> <span class="pl-c1">=</span> {
     <span class="pl-c1">32</span>: (<span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">2</span>, <span class="pl-c1">2</span>),
     <span class="pl-c1">64</span>: (<span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">3</span>, <span class="pl-c1">4</span>),
@@ -704,30 +708,32 @@ $$</p>
     <span class="pl-c1">256</span>: (<span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">2</span>, <span class="pl-c1">4</span>, <span class="pl-c1">4</span>),
     <span class="pl-c1">512</span>: (<span class="pl-c1">0.5</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">2</span>, <span class="pl-c1">4</span>, <span class="pl-c1">4</span>)
 }
-<span class="pl-c">#学习率</span>
+<span class="pl-c">#Learning rate.</span>
 <span class="pl-s1">learning_rate</span> <span class="pl-c1">=</span> <span class="pl-c1">1e-4</span>
-<span class="pl-c">#训练轮数，选定迭代数据集500次（实际上该轮数是远远不够的）</span>
+<span class="pl-c">#Training rounds: Select the iterative dataset 500 times</span>
+<span class="pl-c">#(in reality, this number of rounds is far from sufficient).</span>
 <span class="pl-s1">epochs</span> <span class="pl-c1">=</span> <span class="pl-c1">500</span>
-<span class="pl-c">#每多少轮数进行以此采样以及模型的断点保存</span>
+<span class="pl-c">#Rounds used for sampling and model checkpoint saving.</span>
 <span class="pl-s1">milestone_step</span> <span class="pl-c1">=</span> <span class="pl-c1">10</span>
-<span class="pl-c">#断点保存的最大数量</span>
+<span class="pl-c">#Maximum number of checkpoints saved.</span>
 <span class="pl-s1">cache_num</span> <span class="pl-c1">=</span> <span class="pl-c1">10</span>
-<span class="pl-c">#一个批次训练图片的数量，在该案例下，128张适合拥有8G显存的显卡</span>
+<span class="pl-c">#The number of images trained in a batch.</span>
+<span class="pl-c">#In this case, 128 images are suitable for a graphics card with 8G of memory.</span>
 <span class="pl-s1">batch_size</span> <span class="pl-c1">=</span> <span class="pl-c1">128</span>
-<span class="pl-c">#checkpoints的拟定位置</span>
+<span class="pl-c">#Proposed locations for checkpoints.</span>
 <span class="pl-s1">checkpoint_folder</span> <span class="pl-c1">=</span> <span class="pl-s">'cifar1/cp'</span>
-<span class="pl-c">#训练集的位置</span>
+<span class="pl-c">#Location of training set.</span>
 <span class="pl-s1">datasets_folder</span> <span class="pl-c1">=</span> <span class="pl-s">'cifar1/train'</span>
-<span class="pl-c">#用以收集训练时损失值的文件</span>
+<span class="pl-c">#File used to collect loss values during training.</span>
 <span class="pl-s1">csv_str</span> <span class="pl-c1">=</span> <span class="pl-s1">checkpoint_folder</span> <span class="pl-c1">+</span> <span class="pl-s">'/loss.csv'</span>
-<span class="pl-c">#模型断点保存文件名的前缀</span>
+<span class="pl-c">#Prefix for model checkpoint save file names.</span>
 <span class="pl-s1">prefix</span> <span class="pl-c1">=</span> <span class="pl-s">"checkpoint_epoch"</span>
-<span class="pl-c">#模型断点保存文件名的后缀</span>
+<span class="pl-c">#suffix for model checkpoint save file names.</span>
 <span class="pl-s1">suffix</span> <span class="pl-c1">=</span> <span class="pl-s">".pth"</span>
-<span class="pl-c">#为checkpoints新建文件夹</span>
+<span class="pl-c">#Create a new folder for checkpoints.</span>
 <span class="pl-en">Path</span>(<span class="pl-s1">checkpoint_folder</span>).<span class="pl-c1">mkdir</span>(<span class="pl-s1">exist_ok</span><span class="pl-c1">=</span><span class="pl-c1">True</span>)
 <span class="pl-en">Path</span>(<span class="pl-s1">checkpoint_folder</span> <span class="pl-c1">+</span> <span class="pl-s">'/milestone'</span>).<span class="pl-c1">mkdir</span>(<span class="pl-s1">exist_ok</span><span class="pl-c1">=</span><span class="pl-c1">True</span>)
-<span class="pl-c">#新建模型</span>
+<span class="pl-c">#Create a new model.</span>
 <span class="pl-s1">model</span> <span class="pl-c1">=</span> <span class="pl-s1">unet</span>.<span class="pl-c1">UNetModel</span>(
     <span class="pl-s1">image_size</span><span class="pl-c1">=</span><span class="pl-s1">image_size</span>,
     <span class="pl-s1">in_channels</span><span class="pl-c1">=</span><span class="pl-s1">channels</span>,
@@ -740,7 +746,7 @@ $$</p>
     <span class="pl-s1">num_heads</span><span class="pl-c1">=</span><span class="pl-c1">4</span>,
     <span class="pl-s1">num_head_channels</span><span class="pl-c1">=</span><span class="pl-c1">-</span><span class="pl-c1">1</span>,
 )
-<span class="pl-c">#若checkpoints文件夹内存在模型断点，则读取该断点</span>
+<span class="pl-c">#If there are checkpoints in the checkpoints folder, read the latest checkpoint.</span>
 <span class="pl-s1">last_model</span> <span class="pl-c1">=</span> <span class="pl-c1">None</span>
 <span class="pl-s1">last</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>
 <span class="pl-k">for</span> <span class="pl-s1">file</span> <span class="pl-c1">in</span> <span class="pl-s1">os</span>.<span class="pl-c1">listdir</span>(<span class="pl-s1">checkpoint_folder</span>):
@@ -756,25 +762,26 @@ $$</p>
 <span class="pl-k">else</span>:
     <span class="pl-en">print</span>(<span class="pl-s">"No Checkpoints Exist"</span>)
 <span class="pl-s1">model</span> <span class="pl-c1">=</span> <span class="pl-s1">model</span>.<span class="pl-c1">cuda</span>()
-<span class="pl-c">#统计模型的参数数量</span>
+<span class="pl-c">#Parameter count in computational models.</span>
 <span class="pl-s1">parameters</span> <span class="pl-c1">=</span> <span class="pl-en">sum</span>(<span class="pl-s1">p</span>.<span class="pl-c1">numel</span>() <span class="pl-k">for</span> <span class="pl-s1">p</span> <span class="pl-c1">in</span> <span class="pl-s1">model</span>.<span class="pl-c1">parameters</span>() <span class="pl-k">if</span> <span class="pl-s1">p</span>.<span class="pl-c1">requires_grad</span>)
 <span class="pl-s1">count_str</span> <span class="pl-c1">=</span> <span class="pl-s">"Parameters Count: "</span>
 <span class="pl-en">print</span>(<span class="pl-s1">count_str</span> <span class="pl-c1">+</span> <span class="pl-s">"%.2fB"</span> <span class="pl-c1">%</span> (<span class="pl-s1">parameters</span> <span class="pl-c1">/</span> <span class="pl-c1">1e9</span>)) \
     <span class="pl-k">if</span> <span class="pl-s1">parameters</span> <span class="pl-c1">&gt;</span> <span class="pl-c1">1e9</span> <span class="pl-k">else</span> <span class="pl-en">print</span>(<span class="pl-s1">count_str</span> <span class="pl-c1">+</span> <span class="pl-s">"%.2fM"</span> <span class="pl-c1">%</span> (<span class="pl-s1">parameters</span> <span class="pl-c1">/</span> <span class="pl-c1">1e6</span>))
-<span class="pl-c">#优化器</span>
+<span class="pl-c">#Optimizer.</span>
 <span class="pl-s1">optimizer</span> <span class="pl-c1">=</span> <span class="pl-s1">optim</span>.<span class="pl-c1">AdamW</span>(<span class="pl-s1">model</span>.<span class="pl-c1">parameters</span>(), <span class="pl-s1">lr</span><span class="pl-c1">=</span><span class="pl-s1">learning_rate</span>, <span class="pl-s1">weight_decay</span><span class="pl-c1">=</span><span class="pl-c1">1e-4</span>)
-<span class="pl-c">#将图片转化为张量</span>
+<span class="pl-c">#Convert images to tensors.</span>
 <span class="pl-s">"""</span>
-<span class="pl-s">ToTensor()                    :读取图片，并将其从[0, 255]的整数缩放为[0, 1]的浮点数</span>
-<span class="pl-s">Lambda(lambda t: (t * 2) - 1) :将[0, 1]的浮点数缩放为[-1, 1]的浮点数</span>
-<span class="pl-s">RandomHorizontalFlip()        :对数据进行随机的水平方向的翻转</span>
+<span class="pl-s">ToTensor()                    :</span>
+<span class="pl-s">    Reads an image and scales its integers from [0, 255] to floating-point numbers in the range [0, 1]</span>
+<span class="pl-s">Lambda(lambda t: (t * 2) - 1) : Scale floating-point numbers in the range [0, 1] to the range [-1, 1]</span>
+<span class="pl-s">RandomHorizontalFlip()        : Randomly flip the data horizontally</span>
 <span class="pl-s">"""</span>
 <span class="pl-s1">transform</span> <span class="pl-c1">=</span> <span class="pl-en">Compose</span>(
     [<span class="pl-en">Grayscale</span>(), <span class="pl-en">ToTensor</span>(), <span class="pl-en">Lambda</span>(<span class="pl-k">lambda</span> <span class="pl-s1">t</span>: (<span class="pl-s1">t</span> <span class="pl-c1">*</span> <span class="pl-c1">2</span>) <span class="pl-c1">-</span> <span class="pl-c1">1</span>), <span class="pl-en">RandomHorizontalFlip</span>()]
     <span class="pl-k">if</span> <span class="pl-s1">channels</span> <span class="pl-c1">==</span> <span class="pl-c1">1</span> <span class="pl-k">else</span>
     [<span class="pl-en">ToTensor</span>(), <span class="pl-en">Lambda</span>(<span class="pl-k">lambda</span> <span class="pl-s1">t</span>: (<span class="pl-s1">t</span> <span class="pl-c1">*</span> <span class="pl-c1">2</span>) <span class="pl-c1">-</span> <span class="pl-c1">1</span>), <span class="pl-en">RandomHorizontalFlip</span>()]
 )</pre></div>
-<p>训练的核心方法：</p>
+<p>Core training methods:</p>
 <div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">def</span> <span class="pl-en">train</span>():
     <span class="pl-en">train_loop</span>(<span class="pl-en">DataLoader</span>(
         <span class="pl-s1">datasets</span>.<span class="pl-c1">ImageFolder</span>(<span class="pl-s1">datasets_folder</span>, <span class="pl-s1">transform</span><span class="pl-c1">=</span><span class="pl-s1">transform</span>),
@@ -1366,7 +1373,7 @@ TE_{(t, j)} &amp;= \cos\frac{t}{10000^{2j / d}}
 $$</p>
 <p>其中，$d$表示所期望的展开维度，$i = \{1, 2, \dots, \frac{d}{2}\}$，$j = \{\frac{d}{2} + 1, \frac{d}{2} + 2, \dots, d\}$。若定义$d = 128$，则其可视化如下图所示：</p>
 <p><p align="center"><img srcset="https://OmnisyR.github.io/figs/time_embeddings.png"/></p></p>
-<p>若是以函数的形式表示，红色为$TE_{(t, i)}$，蓝色为$TE_{(t, j)}$：</p>
+<p>若是以函数图像的形式表示，红色的$TE_{(t, i)}$与蓝色的$TE_{(t, j)}$随着维度的变化如下所示：</p>
 <p><p align="center"><iframe src="https://www.desmos.com/calculator/xkmphum0ou?embed" width="800" height="400" style="border: 1px solid #ccc" frameborder=0></iframe></p></p>
 <h2>训练过程</h2>
 <p>首先导入一些必要的库：</p>
@@ -1401,9 +1408,9 @@ $$</p>
 <span class="pl-s1">alphas</span> <span class="pl-c1">=</span> <span class="pl-c1">1.</span> <span class="pl-c1">-</span> <span class="pl-s1">betas</span>
 <span class="pl-c">#形状：[1001]</span>
 <span class="pl-s1">alphas_bar</span> <span class="pl-c1">=</span> <span class="pl-s1">torch</span>.<span class="pl-c1">cat</span>((<span class="pl-s1">torch</span>.<span class="pl-c1">tensor</span>((<span class="pl-c1">1</span>,)).<span class="pl-c1">cuda</span>(), <span class="pl-s1">torch</span>.<span class="pl-c1">cumprod</span>(<span class="pl-s1">input</span><span class="pl-c1">=</span><span class="pl-s1">alphas</span>, <span class="pl-s1">dim</span><span class="pl-c1">=</span><span class="pl-c1">0</span>)))
-<span class="pl-c"># 形状：[1001]</span>
+<span class="pl-c">#形状：[1001]</span>
 <span class="pl-s1">sqrt_alphas_bar</span> <span class="pl-c1">=</span> <span class="pl-s1">torch</span>.<span class="pl-c1">sqrt</span>(<span class="pl-s1">alphas_bar</span>)
-<span class="pl-c"># 形状：[1001]</span>
+<span class="pl-c">#形状：[1001]</span>
 <span class="pl-s1">sqrt_one_minus_alphas_bar</span> <span class="pl-c1">=</span> <span class="pl-s1">torch</span>.<span class="pl-c1">sqrt</span>(<span class="pl-c1">1.</span> <span class="pl-c1">-</span> <span class="pl-s1">alphas_bar</span>)</pre></div>
 <p>配置与超参数：</p>
 <div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-s">"""</span>
@@ -1411,18 +1418,18 @@ $$</p>
 <span class="pl-s">CIFAR1指仅仅选用CIFAR10中的一类作为数据集</span>
 <span class="pl-s">数据集的文件结构为</span>
 <span class="pl-s">cifar1</span>
-<span class="pl-s">    train</span>
-<span class="pl-s">        horse</span>
-<span class="pl-s">            0001.png</span>
-<span class="pl-s">            0002.png</span>
-<span class="pl-s">            ...</span>
-<span class="pl-s">            5000.png</span>
-<span class="pl-s">    test</span>
-<span class="pl-s">        horse</span>
-<span class="pl-s">            0001.png</span>
-<span class="pl-s">            0002.png</span>
-<span class="pl-s">            ...</span>
-<span class="pl-s">            1000.png</span>
+<span class="pl-s">  | train</span>
+<span class="pl-s">      | horse</span>
+<span class="pl-s">          | 0001.png</span>
+<span class="pl-s">          | 0002.png</span>
+<span class="pl-s">          | ...</span>
+<span class="pl-s">          | 5000.png</span>
+<span class="pl-s">  | test</span>
+<span class="pl-s">      | horse</span>
+<span class="pl-s">          | 0001.png</span>
+<span class="pl-s">          | 0002.png</span>
+<span class="pl-s">          | ...</span>
+<span class="pl-s">          | 1000.png</span>
 <span class="pl-s">"""</span>
 <span class="pl-s1">image_size</span> <span class="pl-c1">=</span> <span class="pl-c1">32</span>
 <span class="pl-c">#通道数为3，即RGB</span>
@@ -1441,9 +1448,9 @@ $$</p>
 <span class="pl-s1">learning_rate</span> <span class="pl-c1">=</span> <span class="pl-c1">1e-4</span>
 <span class="pl-c">#训练轮数，选定迭代数据集500次（实际上该轮数是远远不够的）</span>
 <span class="pl-s1">epochs</span> <span class="pl-c1">=</span> <span class="pl-c1">500</span>
-<span class="pl-c">#每多少轮数进行以此采样以及模型的断点保存</span>
+<span class="pl-c">#每多少轮数进行以此采样以及模型的检查点保存</span>
 <span class="pl-s1">milestone_step</span> <span class="pl-c1">=</span> <span class="pl-c1">10</span>
-<span class="pl-c">#断点保存的最大数量</span>
+<span class="pl-c">#检查点保存的最大数量</span>
 <span class="pl-s1">cache_num</span> <span class="pl-c1">=</span> <span class="pl-c1">10</span>
 <span class="pl-c">#一个批次训练图片的数量，在该案例下，128张适合拥有8G显存的显卡</span>
 <span class="pl-s1">batch_size</span> <span class="pl-c1">=</span> <span class="pl-c1">128</span>
@@ -1453,9 +1460,9 @@ $$</p>
 <span class="pl-s1">datasets_folder</span> <span class="pl-c1">=</span> <span class="pl-s">'cifar1/train'</span>
 <span class="pl-c">#用以收集训练时损失值的文件</span>
 <span class="pl-s1">csv_str</span> <span class="pl-c1">=</span> <span class="pl-s1">checkpoint_folder</span> <span class="pl-c1">+</span> <span class="pl-s">'/loss.csv'</span>
-<span class="pl-c">#模型断点保存文件名的前缀</span>
+<span class="pl-c">#模型检查点保存文件名的前缀</span>
 <span class="pl-s1">prefix</span> <span class="pl-c1">=</span> <span class="pl-s">"checkpoint_epoch"</span>
-<span class="pl-c">#模型断点保存文件名的后缀</span>
+<span class="pl-c">#模型检查点保存文件名的后缀</span>
 <span class="pl-s1">suffix</span> <span class="pl-c1">=</span> <span class="pl-s">".pth"</span>
 <span class="pl-c">#为checkpoints新建文件夹</span>
 <span class="pl-en">Path</span>(<span class="pl-s1">checkpoint_folder</span>).<span class="pl-c1">mkdir</span>(<span class="pl-s1">exist_ok</span><span class="pl-c1">=</span><span class="pl-c1">True</span>)
@@ -1473,7 +1480,7 @@ $$</p>
     <span class="pl-s1">num_heads</span><span class="pl-c1">=</span><span class="pl-c1">4</span>,
     <span class="pl-s1">num_head_channels</span><span class="pl-c1">=</span><span class="pl-c1">-</span><span class="pl-c1">1</span>,
 )
-<span class="pl-c">#若checkpoints文件夹内存在模型断点，则读取该断点</span>
+<span class="pl-c">#若checkpoints文件夹内存在模型检查点，则读取最新的检查点</span>
 <span class="pl-s1">last_model</span> <span class="pl-c1">=</span> <span class="pl-c1">None</span>
 <span class="pl-s1">last</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>
 <span class="pl-k">for</span> <span class="pl-s1">file</span> <span class="pl-c1">in</span> <span class="pl-s1">os</span>.<span class="pl-c1">listdir</span>(<span class="pl-s1">checkpoint_folder</span>):

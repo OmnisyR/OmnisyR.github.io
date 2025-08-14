@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>OmnisyR's Blog</title><link>https://OmnisyR.github.io</link><description>;;;eRecording the bits and pieces of scientific research, development, and life.;;;e;;;c记录科研、开发以及生活的点点滴滴;;;c</description><copyright>OmnisyR's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/68898477?s=400&amp;u=262ae3b76f651c62a82042317aaae313706c859c&amp;v=4</url><title>avatar</title><link>https://OmnisyR.github.io</link></image><lastBuildDate>Thu, 14 Aug 2025 07:36:18 +0000</lastBuildDate><managingEditor>OmnisyR's Blog</managingEditor><ttl>60</ttl><webMaster>OmnisyR's Blog</webMaster><item><title>;;;eThe Foundation of Diffusion Models:;;;e;;;c扩散模型的基石：;;;cDenoising Diffusion Probabilistic Models(DDPM)</title><link>https://OmnisyR.github.io/post/%3B%3B%3BeThe%20Foundation%20of%20Diffusion%20Models-%3B%3B%3Be%3B%3B%3Bc-kuo-san-mo-xing-de-ji-shi-%EF%BC%9A%3B%3B%3BcDenoising%20Diffusion%20Probabilistic%20Models%28DDPM%29.html</link><description>&lt;!-- ##{'script':'&lt;script src='https://OmnisyR.github.io/assets/HyperTOC.js'&gt;&lt;/script&gt;'}## --&gt;
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>OmnisyR's Blog</title><link>https://OmnisyR.github.io</link><description>;;;eRecording the bits and pieces of scientific research, development, and life.;;;e;;;c记录科研、开发以及生活的点点滴滴;;;c</description><copyright>OmnisyR's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/68898477?s=400&amp;u=262ae3b76f651c62a82042317aaae313706c859c&amp;v=4</url><title>avatar</title><link>https://OmnisyR.github.io</link></image><lastBuildDate>Thu, 14 Aug 2025 08:00:23 +0000</lastBuildDate><managingEditor>OmnisyR's Blog</managingEditor><ttl>60</ttl><webMaster>OmnisyR's Blog</webMaster><item><title>;;;eThe Foundation of Diffusion Models:;;;e;;;c扩散模型的基石：;;;cDenoising Diffusion Probabilistic Models(DDPM)</title><link>https://OmnisyR.github.io/post/%3B%3B%3BeThe%20Foundation%20of%20Diffusion%20Models-%3B%3B%3Be%3B%3B%3Bc-kuo-san-mo-xing-de-ji-shi-%EF%BC%9A%3B%3B%3BcDenoising%20Diffusion%20Probabilistic%20Models%28DDPM%29.html</link><description>&lt;!-- ##{'script':'&lt;script src='https://OmnisyR.github.io/assets/HyperTOC.js'&gt;&lt;/script&gt;'}## --&gt;
 
 ;;;e;;;a
 ;;;;Markov chain::The state at a given moment is only related to the state at the previous moment, i.e., $x_t = f(x_{t - 1})$, without the involvement of states at other moments. A chain formed by a number of such state relationships constitutes a Markov chain. Therefore, Markov chains have the following special properties:
@@ -22,7 +22,7 @@ $$
 $$
 
 ;;;;
-;;;;The upper bound should be as small as possible::Some people may have a typical misconception, namely that equation (13) is equivalent to the KL divergence on the right side being 0. This idea is incorrect because when the KL divergence is 0, although the gradient of the KL divergence is 0, the overall gradient on the right side is not necessarily 0. A very simple example can effectively illustrate this point:
+;;;;The upper bound of this loss as small as possible::Some people may have a typical misconception, namely that equation (13) is equivalent to the KL divergence on the right side being 0. This idea is incorrect because when the KL divergence is 0, although the gradient of the KL divergence is 0, the overall gradient on the right side is not necessarily 0. A very simple example can effectively illustrate this point:
 
 $$
 x^2 \leq x^2 + (2 - x)^2
@@ -35,7 +35,7 @@ Clearly, the right-hand side takes its minimum value at $x = 1$, rather than at 
 
 $$
 P(A|B) = \frac{P(B|A)P(A)}{P(B)}
-$$
+$$``
 
 ;;;;
 ;;;;Equation (10)::
@@ -45,7 +45,7 @@ x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1 - \bar{\alpha}_t}\epsilon_t
 $$
 
 ;;;;
-;;;;KL divergence formula for Gaussian distribution::For $p_1(x) = \mathcal{N}(\mu_1, \sigma^2_1)$ and $p_2(x) = \mathcal{N}(\mu_2, \sigma^2_2)$, we have:
+;;;;KL divergence formula for Gaussian distributions::For $p_1(x) = \mathcal{N}(\mu_1, \sigma^2_1)$ and $p_2(x) = \mathcal{N}(\mu_2, \sigma^2_2)$, we have:
 
 $$
 D_{KL}(p_1||p_2) = \frac{1}{2}\log\frac{\sigma^2_2}{\sigma^2_1} + \frac{\sigma^2_1 + (\mu_1 - \mu_2)^2}{2\sigma^2_2} - \frac{1}{2}

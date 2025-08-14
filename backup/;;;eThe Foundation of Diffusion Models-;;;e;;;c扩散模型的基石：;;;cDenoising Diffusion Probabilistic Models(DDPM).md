@@ -21,7 +21,7 @@ $$
 $$
 
 ;;;;
-;;;;The upper bound should be as small as possible::Some people may have a typical misconception, namely that equation (13) is equivalent to the KL divergence on the right side being 0. This idea is incorrect because when the KL divergence is 0, although the gradient of the KL divergence is 0, the overall gradient on the right side is not necessarily 0. A very simple example can effectively illustrate this point:
+;;;;The upper bound of this loss as small as possible::Some people may have a typical misconception, namely that equation (13) is equivalent to the KL divergence on the right side being 0. This idea is incorrect because when the KL divergence is 0, although the gradient of the KL divergence is 0, the overall gradient on the right side is not necessarily 0. A very simple example can effectively illustrate this point:
 
 $$
 x^2 \leq x^2 + (2 - x)^2
@@ -34,7 +34,7 @@ Clearly, the right-hand side takes its minimum value at $x = 1$, rather than at 
 
 $$
 P(A|B) = \frac{P(B|A)P(A)}{P(B)}
-$$
+$$``
 
 ;;;;
 ;;;;Equation (10)::
@@ -44,7 +44,7 @@ x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1 - \bar{\alpha}_t}\epsilon_t
 $$
 
 ;;;;
-;;;;KL divergence formula for Gaussian distribution::For $p_1(x) = \mathcal{N}(\mu_1, \sigma^2_1)$ and $p_2(x) = \mathcal{N}(\mu_2, \sigma^2_2)$, we have:
+;;;;KL divergence formula for Gaussian distributions::For $p_1(x) = \mathcal{N}(\mu_1, \sigma^2_1)$ and $p_2(x) = \mathcal{N}(\mu_2, \sigma^2_2)$, we have:
 
 $$
 D_{KL}(p_1||p_2) = \frac{1}{2}\log\frac{\sigma^2_2}{\sigma^2_1} + \frac{\sigma^2_1 + (\mu_1 - \mu_2)^2}{2\sigma^2_2} - \frac{1}{2}
@@ -171,29 +171,29 @@ from PIL import Image
 from torchvision.transforms.v2 import Compose, ToTensor, Lambda
 from tqdm import tqdm
 
-#时间长度设置为较为常用的1000
+#The timesteps is set to the commonly used 1000.
 timesteps = 1000
-#将图片的色彩值转化为-1到1之间的张量
+#Convert the color values of the image into a tensor between -1 and 1.
 transform = Compose([ToTensor(), Lambda(lambda t: (t * 2) - 1)])
-#将色彩值为-1到1之间的图片转化为0到255之间
+#Convert images with color values between -1 and 1 to values between 0 and 255.
 transform_reverse = Compose([Lambda(lambda t: (t + 1) / 2 * 255)])
-#读取并将图片转化为张量
+#Read and convert images into tensors.
 x_t = transform(Image.open('xxx.png')).cuda()
-#使用线性噪声时间表
+#Use a linear noise schedule.
 beta = torch.linspace(0.001, 0.02, timesteps).cuda()
 for timestep in tqdm(range(timesteps)):
-    #每一步的随机噪声
+    #Random noise at each step.
     ep = torch.randn(size=x_t.shape).cuda()
-    #式(3)的迭代增噪过程
+    #Iterative noise addition process of equation (3).
     x_t = (1 - beta[timestep]).sqrt().item() * x_t + beta[timestep].sqrt() * ep
-    #保存图片到本地
+    #Save image to local.
     torchvision.io.write_png(
       transform_reverse(x_t).clip(0, 255).to(torch.uint8).cpu(),
       'noising/%d.png' % timestep
     )
 ```
 
-为了式子的简洁性，记$\alpha_t + \beta_t = 1$，则有：
+For simplicity, let $\alpha_t + \beta_t = 1$, then we have:
 
 $$
 \begin{align}
@@ -222,15 +222,16 @@ x_t &= \sqrt{\alpha_t} x_{t - 1} + \sqrt{1 - \alpha_t}\tilde{\epsilon}\_t
 \end{align}
 $$
 
-其中$\bar{\alpha}\_t = \prod_{i = 1}^{t}\alpha_i$。由于式(6)中存在着两个完全随机的标准高斯分布，因此可以对这二者进行重参数化技巧的逆运算得到式(7)，再通过`高斯分布的加法法则`得到式(8)，从而对多步的迭代进行化简，能够仅仅使用一步求出正向过程的任意时刻的状态：
+where $\bar{\alpha}\_t = \prod_{i = 1}^{t}\alpha_i$. Since there are two completely random standard Gaussian distributions in equation (6), we can perform the inverse operation of the reparameterization technique on these two to obtain equation (7), and then use the `Addition rule of Gaussian distribution` to obtain equation (8), thereby simplifying the multi-step iteration and enabling us to calculate the state at any time in the forward process in a single step:
 ```python
 def add_noise(x_0, t):
-    #式(10)的一步增噪过程
+    #The one-step noise addition process in equation (10).
     return sqrt_alpha_bar[t] * x_0 + sqrt_one_minus_alpha_bar[t] * torch.randn(size=x_0.shape).cuda()
 
-#对参数的预先缓存
+#Pre-caching of parameters.
 alpha = 1 - beta
-#在这里，对求得的α累乘的最前位置，额外加了一个1，这是为了编写程序时，时间戳与索引的一致
+#Here, an extra 1 is added to the front position of the obtained α product.
+#This is to ensure consistency between the timestamp and the index when writing the program.
 alpha_bar = torch.cat((torch.Tensor((1,)).cuda(), alpha.cumprod(dim=0)))
 sqrt_alpha_bar = alpha_bar.sqrt()
 sqrt_one_minus_alpha_bar = (1 - alpha_bar).sqrt()
@@ -240,22 +241,22 @@ x_t = add_noise(x_0, timestep)
 torchvision.io.write_png(transform_reverse(x_t).clip(0, 255).to(torch.uint8).cpu(), '%s.png' % timestep)
 ```
 
-## 逆向过程
-相较正向过程，逆向过程则会复杂很多。逆向过程的目标是对于给定的$x_T \sim p_\theta(x_T) = \mathcal{N}(0, I)$，需要一个概率模型，能够使得$x_T$由标准高斯分布，转变为原始数据集的似然估计，即：
+## Reverse Process
+Compared to the forward process, the reverse process is much more complex. The goal of the inverse process is to obtain a probabilistic model for a given $x_T \sim p_\theta(x_T) = \mathcal{N}(0, I)$, such that $x_T$ can be transformed from a standard Gaussian distribution into a likelihood estimate of the original data set, i.e.:
 
 $$
 p_\theta(x_0|x_T) = p_\theta(x_T)\prod^T_{t = 1}p_\theta(x_{t - 1}|x_t)
 \tag{11}
 $$
 
-若对其进行极大似然估计，其对数损失为：
+If we perform maximum likelihood estimation, the log loss is:
 
 $$
 L_\theta = -\log p_\theta(x_0) = -\log (p_\theta(x_T)\prod^T_{t = 1}p_\theta(x_{t - 1}|x_t))
 \tag{12}
 $$
 
-其中，$p_\theta(x_t|x_{t + 1})$是完全未知的，无法求解，因此考虑令该损失的`上界尽可能的小`。由于KL散度必然是非负的，所以：
+Among these, $p_\theta(x_t|x_{t + 1})$ is completely unknown and cannot be solved, so we consider making `The upper bound of this loss as small as possible`. Since the KL divergence is necessarily non-negative, we have:
 
 $$
 \begin{align}
@@ -267,14 +268,14 @@ L_\theta \leq L_{VLB} &= -\log p_\theta(x_0) + D_{KL}(q(x_{1:T}|x_0)||p_\theta(x
 \end{align}
 $$
 
-根据`贝叶斯定理`：
+According to `Bayes' theorem`:
 
 $$
 p_\theta(x_{1:T}|x_0) = \frac{p_\theta(x_0|x_{1:T})p_\theta(x_{1:T})}{p_\theta(x_0)} = \frac{p_\theta(x_0, x_{1:T})}{p_\theta(x_0)} = \frac{p_\theta(x_{0:T})}{p_\theta(x_0)}
 \tag{15}
 $$
 
-因此：
+Therefore:
 
 $$
 \begin{align}
@@ -328,7 +329,7 @@ L_{VLB} &= -\log p_\theta(x_0) + E_{q(x_{1:T}|x_0)}\log\frac{q(x_{1:T}|x_0)p_\th
 \end{align}
 $$
 
-又：
+Also:
 
 $$
 \begin{align}
@@ -340,7 +341,7 @@ $$
 \end{align}
 $$
 
-从而：
+Therefore:
 
 $$
 \begin{align}
@@ -358,9 +359,9 @@ L_{VLB} &= E_{q(x_T|x_0)}\log \frac{q(x_T|x_0)}{p_\theta(x_T)} - E_{q(x_1|x_0)}\
 \end{align}
 $$
 
-其中，对于$L_T$，由于$q(x_T) = \mathcal{N}(0, I)$，$p_\theta(x_T) = \mathcal{N}(0, I)$都和极大似然估计参数无关，视为常数；
+Among them, for $L_T$, since $q(x_T) = \mathcal{N}(0, I)$ and $p_\theta(x_T) = \mathcal{N}(0, I)$ are both independent of the maximum likelihood estimation parameters, they are regarded as constants.
 
-对于$L_0$，由于$1 = q(x_0|x_0) = \frac{q(x_1|x_0)q(x_0|x_0)}{q(x_1|x_0)} = q(x_0|x_1)$，因此有：
+For $L_0$, since $1 = q(x_0|x_0) = \frac{q(x_1|x_0)q(x_0|x_0)}{q(x_1|x_0)} = q(x_0|x_1)$, we have:
 
 $$
 \begin{align}
@@ -375,14 +376,14 @@ L_0 &= - E_{q(x_1|x_0)}\log p_\theta(x_{0}|x_1)
 \end{align}
 $$
 
-与$L_{t - 1}$形式相同，记$L_0 + L_{t - 1} = L_t$，对于式中的正向过程$q(x_t|x_{t - 1})$的后验分布$q(x_{t - 1}|x_t)$，由贝叶斯定理：
+For $L_0$, since $1 = q(x_0|x_0) = \frac{q(x_1|x_0)q(x_0|x_0)}{q(x_1|x_0)} = q(x_0|x_1)$, Therefore, we have: Similar to the form of $L_{t - 1}$, let $L_0 + L_{t - 1} = L_t$. For the posterior distribution $q(x_{t - 1}|x_t)$ of the forward process $q(x_t|x_{t - 1})$ in the equation, by Bayes' theorem:
 
 $$
 q(x_{t - 1}|x_t) = \frac{q(x_t|x_{t - 1})q(x_{t - 1})}{q(x_t)} = \frac{q(x_t|x_{t - 1})q(x_{t - 1}|x_0)}{q(x_t|x_0)}
 \tag{37}
 $$
 
-式(37)的三个概率都是已知的，必然可以求解，设后验分布$q(x_{t - 1}|x_t) = \mathcal{N}(\tilde{\mu}, \Sigma)$，考虑式(37)使用高斯分布密度函数展开后的指数部分，则有：
+The three probabilities in equation (37) are known and can be solved. Let the posterior distribution be $q(x_{t - 1}|x_t) = \mathcal{N}(\tilde{\mu}, \Sigma)$. Considering the exponential part of equation (37) expanded using the Gaussian distribution density function, we have:
 
 $$
 \begin{align}
@@ -394,7 +395,7 @@ $$
 \end{align}
 $$
 
-其中，$C(x_0, x_t)$为不含$x_{t - 1}$的项，通过左右比对，易得：
+where $C(x_0, x_t)$ is the term that does not contain $x_{t - 1}$. Through left-right comparison, it is easy to obtain:
 
 $$
 \begin{align}
@@ -412,7 +413,7 @@ $$
 \end{align}
 $$
 
-又由`式(10)`，可将$x_0$转换为$x_t$来进行表达，从而：
+Then, from `Equation (10)`, $x_0$ can be converted to $x_t$ for expression, thus:
 
 $$
 \begin{align}
@@ -424,7 +425,7 @@ x_{t - 1} &= \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1
 \end{align}
 $$
 
-其中，$\epsilon_t(x_t, t)$的含义为，对于给定的时刻$t$，从初始状态$x_0$，经过一步的正向过程成为该时刻状态$x_t$，所需要的噪声。若定义$p_\theta(x_{t - 1}|x_t) = \mathcal{N}(\mu_\theta, \sigma^2_\theta)$，由`高斯分布的KL散度公式`：
+where $\epsilon_t(x_t, t)$ denotes the noise required to transition from the initial state $x_0$ to the state $x_t$ at time $t$ through a single forward step. If we define $p_\theta(x_{t - 1}|x_t) = \mathcal{N}(\mu_\theta, \sigma^2_\theta)$, then by the `KL divergence formula for Gaussian distributions`:
 
 $$
 \begin{align}
@@ -436,49 +437,49 @@ L_t &= \sum^T_{t = 1} E_{q(x_t, x_0)}D_{KL}(q(x_{t - 1}|x_t, x_0)||p_\theta(x_{t
 \end{align}
 $$
 
-尽管$\sigma_\theta$是可学习的，但其对采样质量的提升并不显著，未得到推广。在DDPM中，取$\sigma^2_\theta = \frac{1 - \bar{\alpha}_{t - 1}}{1 - \bar{\alpha}_t}\beta_t$，因此有：
+Although $\sigma_\theta$ is learnable, its improvement in sampling quality is not significant and has not been widely adopted. In DDPM, we set $\sigma^2_\theta = \frac{1 - \bar{\alpha}_{t - 1}}{1 - \bar{\alpha}_t}\beta_t$, so we have:
 
 $$
 L_t = \sum^T_{t = 1} E_{q(x_t, x_0)}[\frac{1 - \bar{\alpha}\_t}{2(1 - \bar{\alpha}\_{t - 1})\beta_t}(\tilde{\mu} - \mu_\theta)^2]
 \tag{48}
 $$
 
-要使$L_t$尽可能小，即需要$\mu_\theta$尽可能接近$\tilde{\mu}$。若令$\mu_\theta = \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}\_t)}}\epsilon_\theta(x_t, t)$，那么只需要$\epsilon_\theta(x_t, t)$尽可能接近$\epsilon_t(x_t, t)$，即损失函数：
+To minimize $L_t$, it is necessary for $\mu_\theta$ to be as close as possible to $\tilde{\mu}$. If we set $\mu_\theta = \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}\_t)}}\ epsilon_\theta(x_t, t)$, then we only need $\epsilon_\theta(x_t, t)$ to be as close as possible to $\epsilon_t(x_t, t)$, i.e., the loss function:
 
 $$
 L = ||\epsilon_\theta(x_t, t) - \epsilon_t(x_t, t)||^2_2
 \tag{49}
 $$
 
-逆向过程的采样公式：
+Sampling formula for the reverse process:
 
 $$
 x_{t - 1} = \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}\_t)}}\epsilon_\theta(x_t, t) + \sqrt{\frac{1 - \bar{\alpha}\_{t - 1}}{1 - \bar{\alpha}\_t}\beta_t}\epsilon
 \tag{50}
 $$
 
-## 网络搭建
+## Network Setup
 
-经过逆向过程漫长的推导，获得了扩散模型的损失函数，接下来就是要对预测函数进行网络搭建，该预测函数的输入为某一时刻以及该时刻对应的带噪图片，输出为预测的，从初始状态，经过正向过程成为该时刻状态，所需要的噪声。DDPM采用了`UNet`来进行这个过程。
+After a lengthy process of reverse derivation, the loss function of the diffusion model was obtained. The next step is to build a network for the prediction function, whose input is a certain time point and the corresponding noisy image at that time point, and whose output is the predicted noise required to transform the initial state into the state at that time point through the forward process. DDPM uses `UNet` to perform this process.
 
-### 网络结构
+### Network Structure
 
-原文章中给出了一个UNet的结构图：
+The original article provides a structural diagram of UNet:
 
 `Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/u-net-illustration-correct-scale2.png"/></p>`
 
-在该案例中，方块的上方代表着数据的通道数，左下方代表着数据的分辨率。网络的输入为$572^2$分辨率、通道数为1的图片，输出为$388^2$分辨率、通道数为2的图片。在网络内，则包含了四个核心部分：普通卷积过程；下采样；上采样以及残差过程。
+In this case, the upper part of the square represents the number of data channels, and the lower left part represents the data resolution. The network inputs a $572^2$ resolution image with 1 channel and outputs a $388^2$ resolution image with 2 channels. The network contains four core components: ordinary convolution process, downsampling, upsampling, and residual process.
 
-- 向右的短箭头代表着普通卷积过程，在每一层中，第一次卷积过程总是会将数据的通道数变为预定的、该层的通道数；
-- 向下的箭头代表着下采样，在这个过程中，总是会将数据的分辨率变为原来的一半，并在接下来进行更深层的卷积；
-- 向上的箭头代表着上采样，在这个过程中，总是会将数据的分辨率变为原来的两倍，并在接下来进行更浅层的卷积；
-- 向右的长箭头代表着残差过程，该部分利用了`残差思想`，将下采样的数据与上采样的数据相结合再进行卷积，能够有效地去除一些由于下采样导致的信息丢失问题。
+- The short arrow pointing to the right represents the standard convolution process, where in each layer, the first convolution operation always reduces the number of channels in the data to the predefined number of channels for that layer;
+- The downward arrow represents downsampling, during which the resolution of the data is always reduced to half of its original value, followed by deeper convolution operations;
+- The upward arrow represents upsampling, where the resolution of the data is always doubled, followed by convolution at a shallower layer;
+- The long right arrow represents the residual process, which utilizes the “residual idea” to combine downsampled data with upsampled data before convolution, effectively mitigating information loss caused by downsampling.
 
-但是对于扩散模型而言，其输入还需要额外引入一个时间戳t，而非单单一个图片，因此还需要将图片和时间戳整合到一起，放入UNet中进行计算，这个操作又称时间嵌入。
+However, for diffusion models, the input requires an additional timestamp t in addition to a single image. Therefore, the image and timestamp must be integrated and fed into UNet for computation. This operation is also known as time embedding.
 
-### 时间嵌入
+### Time Embedding
 
-时间嵌入算法参考了`Attention is All You Need`中的位置嵌入算法，通过将时间戳这单个数字，展开为某个张量，再输入到网络中进行计算，最后再与普通卷积过程的只相加，进行接下来的计算。时间戳的展开服从下面的式子：
+The time embedding algorithm refers to the position embedding algorithm in `Attention is All You Need`. It expands the single number of the timestamp into a tensor, inputs it into the network for calculation, and then adds it to the ordinary convolution process for further calculation. The expansion of the timestamp obeys the following equation:
 
 $$
 \begin{align}
@@ -490,16 +491,16 @@ TE_{(t, j)} &= \cos\frac{t}{10000^{2j / d}}
 \end{align}
 $$
 
-其中，$d$表示所期望的展开维度，$i = \\{1, 2, \dots, \frac{d}{2}\\}$，$j = \\{\frac{d}{2} + 1, \frac{d}{2} + 2, \dots, d\\}$。若定义$d = 128$，则其可视化如下图所示：
+In this context, $d$ denotes the desired dimension of expansion, $i = \{1, 2, \dots, \frac{d}{2}\}$, and $j = \{\frac{d}{2} + 1, \frac{d}{2} + 2, \dots, d\}$. If $d = 128$ is defined, its visualization is shown in the figure below:
 
 `Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/time_embeddings.png"/></p>`
 
-若是以函数的形式表示，红色为$TE_{(t, i)}$，蓝色为$TE_{(t, j)}$：
+If represented as function graphs, the red $TE_{(t, i)}$ and blue $TE_{(t, j)}$ change with dimension as shown below:
 
 `Gmeek-html<p align="center"><iframe src="https://www.desmos.com/calculator/xkmphum0ou?embed" width="800" height="400" style="border: 1px solid #ccc" frameborder=0></iframe></p>`
 
-## 训练过程
-首先导入一些必要的库：
+## Training Process
+First, import some necessary libraries:
 ```python
 import os
 import time
@@ -517,7 +518,7 @@ from tqdm import tqdm
 
 import unet
 ```
-其次是一些训练配置、超参数的确定。对于$\beta_t$等超参数，`选择线性噪声时间表`：
+Next is the determination of training configurations and hyperparameters. For hyperparameters such as $\beta_t$, select the linear noise schedule:
 ```python
 def linear(time_steps):
     beta_start = 0.0001
@@ -525,46 +526,49 @@ def linear(time_steps):
     return torch.linspace(beta_start, beta_end, time_steps).cuda()
 
 
-#时间戳选定为从0到1000，若减少或增加该值，会改变噪声时间表相关参数
+#The timestamp is set from 0 to 1000.
+#Reducing or increasing this value will change the parameters related to the noise schedule.
 time_steps = 1000
-#噪声时间表相关参数的预先计算缓存
-#形状：[1000]
+#Pre-computed cache of noise schedule-related parameters.
+#Shape:[1000]
 betas = linear(time_steps)
-#形状：[1000]
+#Shape:[1000]
 alphas = 1. - betas
-#形状：[1001]
+#Shape:[1001]
 alphas_bar = torch.cat((torch.tensor((1,)).cuda(), torch.cumprod(input=alphas, dim=0)))
-# 形状：[1001]
+#Shape:[1001]
 sqrt_alphas_bar = torch.sqrt(alphas_bar)
-# 形状：[1001]
+#Shape:[1001]
 sqrt_one_minus_alphas_bar = torch.sqrt(1. - alphas_bar)
 ```
-配置与超参数：
+Configuration and hyperparameters:
 ```python
 """
-为简便演示，使用CIFAR1作为数据集，图片尺寸为32×32
-CIFAR1指仅仅选用CIFAR10中的一类作为数据集
-数据集的文件结构为
+For simplicity, CIFAR1 is used as the dataset, with image dimensions of 32×32.
+CIFAR1 refers to using only one category from CIFAR10 as the dataset.
+The file structure of the dataset is as follows:
 cifar1
-    train
-        horse
-            0001.png
-            0002.png
-            ...
-            5000.png
-    test
-        horse
-            0001.png
-            0002.png
-            ...
-            1000.png
+  | train
+      | horse
+          | 0001.png
+          | 0002.png
+          | ...
+          | 5000.png
+  | test
+      | horse
+          | 0001.png
+          | 0002.png
+          | ...
+          | 1000.png
 """
 image_size = 32
-#通道数为3，即RGB
+#The number of channels is 3, i.e., RGB.
 channels = 3
-#模型的基础通道数，即最上层的通道数
+#The number of base channels in the model, i.e., the number of channels in the top layer.
 base_channels = 128
-#模型的不同层的通道数，分辨率为32×32时，模型的深度选则4，对应的通道数为128，256，256，256
+#The number of channels in different layers of the model,
+#with a resolution of 32×32, the model depth is selected as 4,
+#corresponding to 128, 256, 256, 256 channels.
 ch_mults = {
     32: (1, 2, 2, 2),
     64: (1, 2, 3, 4),
@@ -572,30 +576,32 @@ ch_mults = {
     256: (1, 1, 2, 2, 4, 4),
     512: (0.5, 1, 1, 2, 2, 4, 4)
 }
-#学习率
+#Learning rate.
 learning_rate = 1e-4
-#训练轮数，选定迭代数据集500次（实际上该轮数是远远不够的）
+#Training rounds: Select the iterative dataset 500 times
+#(in reality, this number of rounds is far from sufficient).
 epochs = 500
-#每多少轮数进行以此采样以及模型的断点保存
+#Rounds used for sampling and model checkpoint saving.
 milestone_step = 10
-#断点保存的最大数量
+#Maximum number of checkpoints saved.
 cache_num = 10
-#一个批次训练图片的数量，在该案例下，128张适合拥有8G显存的显卡
+#The number of images trained in a batch.
+#In this case, 128 images are suitable for a graphics card with 8G of memory.
 batch_size = 128
-#checkpoints的拟定位置
+#Proposed locations for checkpoints.
 checkpoint_folder = 'cifar1/cp'
-#训练集的位置
+#Location of training set.
 datasets_folder = 'cifar1/train'
-#用以收集训练时损失值的文件
+#File used to collect loss values during training.
 csv_str = checkpoint_folder + '/loss.csv'
-#模型断点保存文件名的前缀
+#Prefix for model checkpoint save file names.
 prefix = "checkpoint_epoch"
-#模型断点保存文件名的后缀
+#suffix for model checkpoint save file names.
 suffix = ".pth"
-#为checkpoints新建文件夹
+#Create a new folder for checkpoints.
 Path(checkpoint_folder).mkdir(exist_ok=True)
 Path(checkpoint_folder + '/milestone').mkdir(exist_ok=True)
-#新建模型
+#Create a new model.
 model = unet.UNetModel(
     image_size=image_size,
     in_channels=channels,
@@ -608,7 +614,7 @@ model = unet.UNetModel(
     num_heads=4,
     num_head_channels=-1,
 )
-#若checkpoints文件夹内存在模型断点，则读取该断点
+#If there are checkpoints in the checkpoints folder, read the latest checkpoint.
 last_model = None
 last = 0
 for file in os.listdir(checkpoint_folder):
@@ -624,18 +630,19 @@ if last_model is not None:
 else:
     print("No Checkpoints Exist")
 model = model.cuda()
-#统计模型的参数数量
+#Parameter count in computational models.
 parameters = sum(p.numel() for p in model.parameters() if p.requires_grad)
 count_str = "Parameters Count: "
 print(count_str + "%.2fB" % (parameters / 1e9)) \
     if parameters > 1e9 else print(count_str + "%.2fM" % (parameters / 1e6))
-#优化器
+#Optimizer.
 optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=1e-4)
-#将图片转化为张量
+#Convert images to tensors.
 """
-ToTensor()                    :读取图片，并将其从[0, 255]的整数缩放为[0, 1]的浮点数
-Lambda(lambda t: (t * 2) - 1) :将[0, 1]的浮点数缩放为[-1, 1]的浮点数
-RandomHorizontalFlip()        :对数据进行随机的水平方向的翻转
+ToTensor()                    :
+    Reads an image and scales its integers from [0, 255] to floating-point numbers in the range [0, 1]
+Lambda(lambda t: (t * 2) - 1) : Scale floating-point numbers in the range [0, 1] to the range [-1, 1]
+RandomHorizontalFlip()        : Randomly flip the data horizontally
 """
 transform = Compose(
     [Grayscale(), ToTensor(), Lambda(lambda t: (t * 2) - 1), RandomHorizontalFlip()]
@@ -643,7 +650,7 @@ transform = Compose(
     [ToTensor(), Lambda(lambda t: (t * 2) - 1), RandomHorizontalFlip()]
 )
 ```
-训练的核心方法：
+Core training methods:
 ```python
 def train():
     train_loop(DataLoader(
@@ -1313,7 +1320,7 @@ $$
 
 `Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/time_embeddings.png"/></p>`
 
-若是以函数的形式表示，红色为$TE_{(t, i)}$，蓝色为$TE_{(t, j)}$：
+若是以函数图像的形式表示，红色的$TE_{(t, i)}$与蓝色的$TE_{(t, j)}$随着维度的变化如下所示：
 
 `Gmeek-html<p align="center"><iframe src="https://www.desmos.com/calculator/xkmphum0ou?embed" width="800" height="400" style="border: 1px solid #ccc" frameborder=0></iframe></p>`
 
@@ -1353,9 +1360,9 @@ betas = linear(time_steps)
 alphas = 1. - betas
 #形状：[1001]
 alphas_bar = torch.cat((torch.tensor((1,)).cuda(), torch.cumprod(input=alphas, dim=0)))
-# 形状：[1001]
+#形状：[1001]
 sqrt_alphas_bar = torch.sqrt(alphas_bar)
-# 形状：[1001]
+#形状：[1001]
 sqrt_one_minus_alphas_bar = torch.sqrt(1. - alphas_bar)
 ```
 配置与超参数：
@@ -1365,18 +1372,18 @@ sqrt_one_minus_alphas_bar = torch.sqrt(1. - alphas_bar)
 CIFAR1指仅仅选用CIFAR10中的一类作为数据集
 数据集的文件结构为
 cifar1
-    train
-        horse
-            0001.png
-            0002.png
-            ...
-            5000.png
-    test
-        horse
-            0001.png
-            0002.png
-            ...
-            1000.png
+  | train
+      | horse
+          | 0001.png
+          | 0002.png
+          | ...
+          | 5000.png
+  | test
+      | horse
+          | 0001.png
+          | 0002.png
+          | ...
+          | 1000.png
 """
 image_size = 32
 #通道数为3，即RGB
@@ -1395,9 +1402,9 @@ ch_mults = {
 learning_rate = 1e-4
 #训练轮数，选定迭代数据集500次（实际上该轮数是远远不够的）
 epochs = 500
-#每多少轮数进行以此采样以及模型的断点保存
+#每多少轮数进行以此采样以及模型的检查点保存
 milestone_step = 10
-#断点保存的最大数量
+#检查点保存的最大数量
 cache_num = 10
 #一个批次训练图片的数量，在该案例下，128张适合拥有8G显存的显卡
 batch_size = 128
@@ -1407,9 +1414,9 @@ checkpoint_folder = 'cifar1/cp'
 datasets_folder = 'cifar1/train'
 #用以收集训练时损失值的文件
 csv_str = checkpoint_folder + '/loss.csv'
-#模型断点保存文件名的前缀
+#模型检查点保存文件名的前缀
 prefix = "checkpoint_epoch"
-#模型断点保存文件名的后缀
+#模型检查点保存文件名的后缀
 suffix = ".pth"
 #为checkpoints新建文件夹
 Path(checkpoint_folder).mkdir(exist_ok=True)
@@ -1427,7 +1434,7 @@ model = unet.UNetModel(
     num_heads=4,
     num_head_channels=-1,
 )
-#若checkpoints文件夹内存在模型断点，则读取该断点
+#若checkpoints文件夹内存在模型检查点，则读取最新的检查点
 last_model = None
 last = 0
 for file in os.listdir(checkpoint_folder):
