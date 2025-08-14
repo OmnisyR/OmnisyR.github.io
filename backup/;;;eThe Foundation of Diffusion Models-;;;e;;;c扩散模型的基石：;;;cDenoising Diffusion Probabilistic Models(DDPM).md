@@ -4,7 +4,7 @@
 > [!CAUTION]
 > 复制功能损坏！
 
-<!-- ##{"script":"<script src='https://OmnisyR.github.io/assets/HyperTOOC.js'></script>"}## -->
+<!-- ##{"script":"<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>"}## -->
 \denotes
 ;;;;马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。因此，马尔科夫链存在着这样的特殊性质：
 

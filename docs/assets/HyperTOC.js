@@ -149,17 +149,17 @@ window.addEventListener('load', function() {
     if (denotes.get(key) === undefined){
       continue
     }
-    item.addEventListener(
-      "click",
-      () => {
-        const value = denotes.get(key)
-        document.getElementsByClassName("denote-title")[0].innerHTML = key
-        document.getElementsByClassName('denote-content')[0].innerHTML = value
-        if (value.includes('$')) {
-          MathJax.typeset()
-        }
-      },
-      false,
-    );
+    // item.addEventListener(
+    //   "click",
+    //   () => {
+    //     const value = denotes.get(key)
+    //     document.getElementsByClassName("denote-title")[0].innerHTML = key
+    //     document.getElementsByClassName('denote-content')[0].innerHTML = value
+    //     if (value.includes('$')) {
+    //       MathJax.typeset()
+    //     }
+    //   },
+    //   false,
+    // );
   }
 });
