@@ -16,7 +16,7 @@
 <!-- ##{'script':'<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>'}## -->
 
 ;;;d
-;;;;马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。">
+;;;;;;;eMarkov chain: The state at a given moment is only related to the state at the previous moment, i.e., $x_t = f(x_{t - 1})$, without the involvement of states at other moments. A chain formed by a number of such state relationships constitutes a Markov chain. Therefore, Markov chains have the following special properties:;;;e;;;c马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。">
 <meta property="og:title" content=";;;eThe Foundation of Diffusion Models:;;;e;;;c扩散模型的基石：;;;cDenoising Diffusion Probabilistic Models(DDPM)">
 <meta property="og:description" content="> [!NOTE]
 > This article currently only supports Chinese.
@@ -24,7 +24,7 @@
 <!-- ##{'script':'<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>'}## -->
 
 ;;;d
-;;;;马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。">
+;;;;;;;eMarkov chain: The state at a given moment is only related to the state at the previous moment, i.e., $x_t = f(x_{t - 1})$, without the involvement of states at other moments. A chain formed by a number of such state relationships constitutes a Markov chain. Therefore, Markov chains have the following special properties:;;;e;;;c马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://OmnisyR.github.io/post/%3B%3B%3BeThe%20Foundation%20of%20Diffusion%20Models-%3B%3B%3Be%3B%3B%3Bc-kuo-san-mo-xing-de-ji-shi-%EF%BC%9A%3B%3B%3BcDenoising%20Diffusion%20Probabilistic%20Models%28DDPM%29.html">
 <meta property="og:image" content="https://avatars.githubusercontent.com/u/68898477?s=400&u=262ae3b76f651c62a82042317aaae313706c859c&v=4">
@@ -99,7 +99,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </div>
 
 <p>;;;d<br>
-;;;;马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。因此，马尔科夫链存在着这样的特殊性质：</p>
+;;;;;;;eMarkov chain: The state at a given moment is only related to the state at the previous moment, i.e., $x_t = f(x_{t - 1})$, without the involvement of states at other moments. A chain formed by a number of such state relationships constitutes a Markov chain. Therefore, Markov chains have the following special properties:;;;e;;;c马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。因此，马尔科夫链存在着这样的特殊性质：;;;c</p>
 <p>$$
 \begin{align}
 &amp;P(X_n|X_0) = P(X_n)
@@ -176,6 +176,7 @@ $$</p>
 <span class="pl-k">from</span> <span class="pl-c1">PIL</span> <span class="pl-k">import</span> <span class="pl-v">Image</span>
 <span class="pl-k">from</span> <span class="pl-s1">torchvision</span>.<span class="pl-s1">transforms</span>.<span class="pl-s1">v2</span> <span class="pl-k">import</span> <span class="pl-v">Compose</span>, <span class="pl-v">ToTensor</span>, <span class="pl-v">Lambda</span>
 <span class="pl-k">from</span> <span class="pl-s1">tqdm</span> <span class="pl-k">import</span> <span class="pl-s1">tqdm</span>
+
 <span class="pl-c">#时间长度设置为较为常用的1000</span>
 <span class="pl-s1">timesteps</span> <span class="pl-c1">=</span> <span class="pl-c1">1000</span>
 <span class="pl-c">#将图片的色彩值转化为-1到1之间的张量</span>
@@ -762,7 +763,7 @@ DDPM的采样器，即<code class="notranslate">式(50)</code>：</p>
     <span class="pl-c">#获取采样时间戳，以目前的进度而言，该时间戳为[1, 2, ……, 1000]</span>
     <span class="pl-s1">times_s</span> <span class="pl-c1">=</span> <span class="pl-en">time_schedule</span>(<span class="pl-s1">steps</span>)
     <span class="pl-c">#获取偏移的时间戳，该时间戳为[0, 1, ……, 999]</span>
-    <span class="pl-s1">times_t</span> <span class="pl-c1">=</span> <span class="pl-s1">torch</span>.<span class="pl-c1">cat</span>((<span class="pl-s1">torch</span>.<span class="pl-c1">tensor</span>((<span class="pl-c1">0</span>,)), <span class="pl-s1">times_s</span>[:<span class="pl-c1">-</span><span class="pl-c1">1</span>]))
+    <span class="pl-s1">times_t</span> <span class="pl-c1">=</span> <span class="pl-s1">torch</span>.<span class="pl-c1">cat</span>((<span class="pl-s1">torch</span>.<span class="pl-c1">tensor</span>((<span class="pl-c1">0</span>,)).<span class="pl-c1">cuda</span>(), <span class="pl-s1">times_s</span>[:<span class="pl-c1">-</span><span class="pl-c1">1</span>]))
     <span class="pl-c">#进行迭代采样</span>
     <span class="pl-k">for</span> <span class="pl-s1">i</span> <span class="pl-c1">in</span> <span class="pl-en">tqdm</span>(
             <span class="pl-en">reversed</span>(<span class="pl-en">range</span>(<span class="pl-s1">steps</span>)),

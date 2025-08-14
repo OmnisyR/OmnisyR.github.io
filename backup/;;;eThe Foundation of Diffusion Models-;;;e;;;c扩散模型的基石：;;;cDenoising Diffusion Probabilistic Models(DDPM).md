@@ -4,7 +4,7 @@
 <!-- ##{"script":"<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>"}## -->
 
 ;;;d
-;;;;马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。因此，马尔科夫链存在着这样的特殊性质：
+;;;;;;;eMarkov chain: The state at a given moment is only related to the state at the previous moment, i.e., $x_t = f(x_{t - 1})$, without the involvement of states at other moments. A chain formed by a number of such state relationships constitutes a Markov chain. Therefore, Markov chains have the following special properties:;;;e;;;c马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。因此，马尔科夫链存在着这样的特殊性质：;;;c
 
 $$
 \begin{align}
@@ -105,6 +105,7 @@ import torchvision.io
 from PIL import Image
 from torchvision.transforms.v2 import Compose, ToTensor, Lambda
 from tqdm import tqdm
+
 #时间长度设置为较为常用的1000
 timesteps = 1000
 #将图片的色彩值转化为-1到1之间的张量
@@ -756,7 +757,7 @@ def sample_loop(noise, steps, solver, time_schedule, extra_desc=''):
     #获取采样时间戳，以目前的进度而言，该时间戳为[1, 2, ……, 1000]
     times_s = time_schedule(steps)
     #获取偏移的时间戳，该时间戳为[0, 1, ……, 999]
-    times_t = torch.cat((torch.tensor((0,)), times_s[:-1]))
+    times_t = torch.cat((torch.tensor((0,)).cuda(), times_s[:-1]))
     #进行迭代采样
     for i in tqdm(
             reversed(range(steps)),
