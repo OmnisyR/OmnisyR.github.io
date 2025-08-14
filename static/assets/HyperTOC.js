@@ -2,7 +2,7 @@ const denotes = new Map();
 
 document.addEventListener('DOMContentLoaded', function() {
   var container = document.getElementById('content')
-  container.innerHTML = container.innerHTML.replace(/\<!-- ;;([\s\S]*?)\;; -->/gm, (match, content) => {
+  container.innerHTML.replace(/<!-- ;;([\s\S]*?);; -->/gm, (match, content) => {
     content.replace(/\;;;;([\s\S]*?);;;;/g, (m, c) => {
       let arr = c.split('::')
       denotes.set(arr[0], arr[1])
