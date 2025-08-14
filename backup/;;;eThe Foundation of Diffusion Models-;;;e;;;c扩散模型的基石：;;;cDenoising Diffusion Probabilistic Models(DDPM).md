@@ -1,10 +1,7 @@
-> [!NOTE]
-> This article currently only supports Chinese.
-
 <!-- ##{"script":"<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>"}## -->
 
-;;;d
-;;;;;;;eMarkov chain: The state at a given moment is only related to the state at the previous moment, i.e., $x_t = f(x_{t - 1})$, without the involvement of states at other moments. A chain formed by a number of such state relationships constitutes a Markov chain. Therefore, Markov chains have the following special properties:;;;e;;;c马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。因此，马尔科夫链存在着这样的特殊性质：;;;c
+;;;a
+;;;;;;;eMarkov chain::The state at a given moment is only related to the state at the previous moment, i.e., $x_t = f(x_{t - 1})$, without the involvement of states at other moments. A chain formed by a number of such state relationships constitutes a Markov chain. Therefore, Markov chains have the following special properties:;;;e;;;c马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。因此，马尔科夫链存在着这样的特殊性质：;;;c
 
 $$
 \begin{align}
@@ -16,7 +13,7 @@ $$
 
 ;;;;
 ;;;;重参数化技巧::对于概率$p(x|y) = \mathcal{N}(x|ay, b)$，即$x$服从一个均值为$ay$，标准差为$\sqrt{b}$的高斯分布，那么则有$x = ay + \sqrt{b}\epsilon$，其中$\epsilon \sim \mathcal{N}(0, 1)$。;;;;
-;;;;下方的代码::默认使用GPU加速的pytorch代码，不使用GPU加速会很难跑得动扩散模型。;;;;
+;;;;下方的代码::默认使用GPU加速的pytorch代码，由于扩散模型需求算力巨大，不使用GPU加速几乎很难跑得了扩散模型。;;;;
 ;;;;高斯分布的加法法则::
 
 $$
@@ -72,7 +69,7 @@ x_{t - 1} &= \frac{1}{\sqrt{\alpha_t}}x_t
 $$
 
 ;;;;
-;;;d
+;;;a
 
 ## 介绍
 
