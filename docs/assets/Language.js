@@ -1,10 +1,10 @@
 function transStr(str, force_cn) {
   if (force_cn || navigator.language === 'zh-CN') {
-    var pa1 = /;;;c(.*?);;;c/g
-    var pa2 = /;;;e(.*?);;;e/g
+    var pa1 = /;;;c([\s\S]*?);;;c/gm
+    var pa2 = /;;;e([\s\S]*?);;;e/gm
   } else {
-    var pa1 = /;;;e(.*?);;;e/g
-    var pa2 = /;;;c(.*?);;;c/g
+    var pa1 = /;;;e([\s\S]*?);;;e/gm
+    var pa2 = /;;;c([\s\S]*?);;;c/gm
   }
   return str.replace(pa1, (match, content) => {
     return content
