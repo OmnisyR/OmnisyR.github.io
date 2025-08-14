@@ -1,8 +1,7 @@
 > [!NOTE]
 > This article currently only supports Chinese.
 
-> [!CAUTION]
-> 复制功能损坏！
+<!-- ##{"script":"<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>"}## -->
 
 ;;;d
 ;;;;马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。因此，马尔科夫链存在着这样的特殊性质：
@@ -75,7 +74,6 @@ $$
 ;;;;
 ;;;d
 
-<!-- ##{"script":"<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>"}## -->
 ## 介绍
 
 ## 正向过程
@@ -892,74 +890,3 @@ if __name__ == '__main__':
 训练的损失值变化：
 
 `Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_loss.png" width="400" height="300"/></p>`
-
-\denotes
-;;;;马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。因此，马尔科夫链存在着这样的特殊性质：
-
-$$
-\begin{align}
-&P(X_n|X_0) = P(X_n)
-\\
-&P(X_n|X_{n - 1}, X_{n - 2}, \dots, X_0) = P(X_n|X_{n - 1})
-\end{align}
-$$
-
-;;;;
-;;;;重参数化技巧::对于概率$p(x|y) = \mathcal{N}(x|ay, b)$，即$x$服从一个均值为$ay$，标准差为$\sqrt{b}$的高斯分布，那么则有$x = ay + \sqrt{b}\epsilon$，其中$\epsilon \sim \mathcal{N}(0, 1)$。;;;;
-;;;;下方的代码::默认使用GPU加速的pytorch代码，不使用GPU加速会很难跑得动扩散模型。;;;;
-;;;;高斯分布的加法法则::
-
-$$
-\mathcal{N}(\mu_1, \sigma^2_1) + \mathcal{N}(\mu_2, \sigma^2_2) = \mathcal{N}(\mu_1 + \mu_2, \sigma^2_1 + \sigma^2_2)
-$$
-
-;;;;
-;;;;上界尽可能的小::有些人会存在一个典型的认识错误，即认为式(13)等价于目标为右方的KL散度为0。这个想法错在KL散度为0时，虽然KL散度的梯度为0，但右方整体的梯度不一定为0，一个很简单的例子就能有效进行说明：
-
-$$
-x^2 \leq x^2 + (2 - x)^2
-$$
-
-显然，右式在$x = 1$时取最小值，而非令$(2 - x)^2$为0的$x = 2$时。
-
-;;;;
-;;;;贝叶斯定理::
-
-$$
-P(A|B) = \frac{P(B|A)P(A)}{P(B)}
-$$
-
-;;;;
-;;;;式(10)::
-
-$$
-x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1 - \bar{\alpha}_t}\epsilon_t
-$$
-
-;;;;
-;;;;高斯分布的KL散度公式::对于$p_1(x) = \mathcal{N}(\mu_1, \sigma^2_1)$以及$p_2(x) = \mathcal{N}(\mu_2, \sigma^2_2)$，有：
-
-$$
-D_{KL}(p_1||p_2) = \frac{1}{2}\log\frac{\sigma^2_2}{\sigma^2_1} + \frac{\sigma^2_1 + (\mu_1 - \mu_2)^2}{2\sigma^2_2} - \frac{1}{2}
-$$
-
-;;;;
-;;;;UNet::文章地址：https://arxiv.org/abs/1505.04597
-UNet较为复杂，可以在Github上下载由文章[Diffusion Models Beat GANs on Image Synthesis](https://arxiv.org/abs/2105.05233)提供的[unet.py](https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/unet.py)以及[nn.py](https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/nn.py)来运行扩散模型，fp16_util.py可以不用下载，运行前将unet.py中相关代码删去即可。;;;;
-;;;;残差思想::文章地址https://arxiv.org/abs/1512.03385;;;;
-;;;;Attention is All You Need::文章地址：https://arxiv.org/abs/1706.03762;;;;
-;;;;选择线性噪声时间表::噪声时间表有很多种，虽然网络上疑似很推崇余弦型噪声时间表，但实际操作中它会导致一种被我称为“色彩发散”的问题，还需要通过一系列手段来改善才能得到正确结果，所以刚刚接触扩散模型，可以先使用线性噪声时间表。;;;;
-;;;;式(50)::
-
-$$
-\begin{align}
-x_{t - 1} &= \frac{1}{\sqrt{\alpha_t}}x_t
-\\
-&\quad - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}\_t)}}\epsilon_\theta(x_t, t)
-\\
-&\quad + \sqrt{\frac{1 - \bar{\alpha}\_{t - 1}}{1 - \bar{\alpha}\_t}\beta_t}\epsilon
-\end{align}
-$$
-
-;;;;
-\denotes
