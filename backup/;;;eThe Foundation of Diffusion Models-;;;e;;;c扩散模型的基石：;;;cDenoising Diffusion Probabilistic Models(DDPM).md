@@ -51,10 +51,10 @@ D_{KL}(p_1||p_2) = \frac{1}{2}\log\frac{\sigma^2_2}{\sigma^2_1} + \frac{\sigma^2
 $$
 
 ;;;;
-;;;;UNet::;;;eArticle address: ;;;e;;;c文章地址：;;;chttps://arxiv.org/abs/1505.04597
+;;;;UNet::;;;e[Article address](https://arxiv.org/abs/1505.04597);;;e;;;c[文章地址](https://arxiv.org/abs/1505.04597);;;c
 ;;;eUNet is relatively complex. You can download [unet.py](https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/unet.py) and [nn.py](https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/nn.py) provided by the article [Diffusion Models Beat GANs on Image Synthesis](https://arxiv.org/abs/2105.05233) on GitHub to run the diffusion model. You do not need to download fp16_util.py. Simply delete the relevant code in unet.py before running it.;;;e;;;c;UNet较为复杂，可以在Github上下载由文章[Diffusion Models Beat GANs on Image Synthesis](https://arxiv.org/abs/2105.05233)提供的[unet.py](https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/unet.py)以及[nn.py](https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/nn.py)来运行扩散模型，fp16_util.py可以不用下载，运行前将unet.py中相关代码删去即可。;;;c;;;;
-;;;;;;;eResidual idea::Article address: ;;;e;;;c残差思想::文章地址：;;;chttps://arxiv.org/abs/1512.03385;;;;
-;;;;Attention is All You Need::;;;eArticle address: ;;;e;;;c文章地址：;;;chttps://arxiv.org/abs/1706.03762;;;;
+;;;;;;;eResidual idea::[Article address](https://arxiv.org/abs/1512.03385);;;e;;;c残差思想::[文章地址](https://arxiv.org/abs/1512.03385);;;c;;;;
+;;;;Attention is All You Need::;;;e[Article address](https://arxiv.org/abs/1706.03762);;;e;;;c[文章地址](https://arxiv.org/abs/1706.03762);;;c;;;;
 ;;;;;;;eSelect a linear noise schedule::There are many types of noise schedules. Although cosine noise schedule seem to be highly recommended online, in actual practice, they can cause a problem I call “color divergence.” A series of measures are required to improve the results and obtain the correct outcome. Therefore, when you are just starting to learn about diffusion models, it is best to use a linear noise schedule first.;;;e;;;c选择线性噪声时间表::噪声时间表有很多种，虽然网络上疑似很推崇余弦型噪声时间表，但实际操作中它会导致一种被我称为“色彩发散”的问题，还需要通过一系列手段来改善才能得到正确结果，所以刚刚接触扩散模型，可以先使用线性噪声时间表。;;;c;;;;
 ;;;;;;;eEquation ;;;e;;;c式;;;c(50)::
 
