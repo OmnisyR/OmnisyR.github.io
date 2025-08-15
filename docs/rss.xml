@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>OmnisyR's Blog</title><link>https://OmnisyR.github.io</link><description>;;;eRecording the bits and pieces of scientific research, development, and life.;;;e;;;c记录科研、开发以及生活的点点滴滴;;;c</description><copyright>OmnisyR's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/68898477?s=400&amp;u=262ae3b76f651c62a82042317aaae313706c859c&amp;v=4</url><title>avatar</title><link>https://OmnisyR.github.io</link></image><lastBuildDate>Fri, 15 Aug 2025 07:29:32 +0000</lastBuildDate><managingEditor>OmnisyR's Blog</managingEditor><ttl>60</ttl><webMaster>OmnisyR's Blog</webMaster><item><title>;;;eThe Foundation of Diffusion Models:;;;e;;;c扩散模型的基石：;;;cDDPM</title><link>https://OmnisyR.github.io/post/%3B%3B%3BeThe%20Foundation%20of%20Diffusion%20Models-%3B%3B%3Be%3B%3B%3Bc-kuo-san-mo-xing-de-ji-shi-%EF%BC%9A%3B%3B%3BcDDPM.html</link><description>&lt;!-- ##{'script':'&lt;script src='https://OmnisyR.github.io/assets/HyperTOC.js'&gt;&lt;/script&gt;'}## --&gt;
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>OmnisyR's Blog</title><link>https://OmnisyR.github.io</link><description>;;;eRecording the bits and pieces of scientific research, development, and life.;;;e;;;c记录科研、开发以及生活的点点滴滴;;;c</description><copyright>OmnisyR's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/68898477?s=400&amp;u=262ae3b76f651c62a82042317aaae313706c859c&amp;v=4</url><title>avatar</title><link>https://OmnisyR.github.io</link></image><lastBuildDate>Fri, 15 Aug 2025 07:30:11 +0000</lastBuildDate><managingEditor>OmnisyR's Blog</managingEditor><ttl>60</ttl><webMaster>OmnisyR's Blog</webMaster><item><title>;;;eThe Foundation of Diffusion Models:;;;e;;;c扩散模型的基石：;;;cDDPM</title><link>https://OmnisyR.github.io/post/%3B%3B%3BeThe%20Foundation%20of%20Diffusion%20Models-%3B%3B%3Be%3B%3B%3Bc-kuo-san-mo-xing-de-ji-shi-%EF%BC%9A%3B%3B%3BcDDPM.html</link><description>&lt;!-- ##{'script':'&lt;script src='https://OmnisyR.github.io/assets/HyperTOC.js'&gt;&lt;/script&gt;'}## --&gt;
 
 ;;;a
 ;;;;;;;eMarkov chain::The state at a given moment is only related to the state at the previous moment, i.e., $x_t = f(x_{t - 1})$, without the involvement of states at other moments. A chain formed by a number of such state relationships constitutes a Markov chain. Therefore, Markov chains have the following special properties:;;;e;;;c马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。</description><guid isPermaLink="true">https://OmnisyR.github.io/post/%3B%3B%3BeThe%20Foundation%20of%20Diffusion%20Models-%3B%3B%3Be%3B%3B%3Bc-kuo-san-mo-xing-de-ji-shi-%EF%BC%9A%3B%3B%3BcDDPM.html</guid><pubDate>Fri, 25 Jul 2025 07:02:25 +0000</pubDate></item><item><title>;;;eAn Overview of Diffusion Models;;;e;;;c扩散模型概述;;;c</title><link>https://OmnisyR.github.io/post/%3B%3B%3BeAn%20Overview%20of%20Diffusion%20Models%3B%3B%3Be%3B%3B%3Bc-kuo-san-mo-xing-gai-shu-%3B%3B%3Bc.html</link><description>&gt; [!NOTE]
@@ -9,7 +9,8 @@
 &gt; 施工中！
 
 &lt;!-- ##{'script':'&lt;script src='https://OmnisyR.github.io/assets/HyperTOC.js'&gt;&lt;/script&gt;'}## --&gt;
-\denotes
+
+;;;a
 ;;;;生成式模型::在实际运用中，依据用户的引导性输入或是不依靠输入，就可以生成出一系列数据的模型（这些数据往往在现实中不存在）;;;;
 ;;;;变分自编码器::简称VAE;;;;
 ;;;;生成式对抗模型::GANs;;;;
@@ -17,18 +18,7 @@
 ;;;;质量::看起来和真的一样;;;;
 ;;;;Deep Unsupervised Learning using Nonequilibrium Thermodynamics::文章地址：https://arxiv.org/abs/1503.03585;;;;
 ;;;;Denoising Diffusion Probabilistic Models(DDPM)::文章地址：https://arxiv.org/abs/2006.11239;;;;
-;;;;一定比例::又称噪声时间表;;;;
-;;;;预定的步数::在实践中，通常选择1000步;;;;
-;;;;重参数化技巧::一种数学计算技巧，在DDPM中将详细讨论;;;;
-;;;;随机梯度下降法::SDG;;;;
-;;;;时至今日::直到写到这里时的2025年07月
-
-`Gmeek-html&lt;img src='https://OmnisyR.github.io/figs/generative_models.png', width='200'&gt;`
-
-;;;;
-\denotes
-## 生成式模型
-扩散模型是一种`生成式模型`，它最初只运用在了图片生成上，但如今，它已经有了相当广阔的运用空间。</description><guid isPermaLink="true">https://OmnisyR.github.io/post/%3B%3B%3BeAn%20Overview%20of%20Diffusion%20Models%3B%3B%3Be%3B%3B%3Bc-kuo-san-mo-xing-gai-shu-%3B%3B%3Bc.html</guid><pubDate>Thu, 24 Jul 2025 03:02:32 +0000</pubDate></item><item><title>;;;eNavi;;;e;;;c导航;;;c</title><link>https://OmnisyR.github.io/post/%3B%3B%3BeNavi%3B%3B%3Be%3B%3B%3Bc-dao-hang-%3B%3B%3Bc.html</link><description>&lt;!-- ##{'script':'&lt;script src='https://OmnisyR.github.io/assets/GmeekTOC.js'&gt;&lt;/script&gt;'}## --&gt;
+;;;;一定比例::又称噪声时间表。</description><guid isPermaLink="true">https://OmnisyR.github.io/post/%3B%3B%3BeAn%20Overview%20of%20Diffusion%20Models%3B%3B%3Be%3B%3B%3Bc-kuo-san-mo-xing-gai-shu-%3B%3B%3Bc.html</guid><pubDate>Thu, 24 Jul 2025 03:02:32 +0000</pubDate></item><item><title>;;;eNavi;;;e;;;c导航;;;c</title><link>https://OmnisyR.github.io/post/%3B%3B%3BeNavi%3B%3B%3Be%3B%3B%3Bc-dao-hang-%3B%3B%3Bc.html</link><description>&lt;!-- ##{'script':'&lt;script src='https://OmnisyR.github.io/assets/GmeekTOC.js'&gt;&lt;/script&gt;'}## --&gt;
 
 ## ;;;eDiffusion Models;;;e;;;c扩散模型;;;c
 [;;;eAn overview of Diffusion Models;;;e;;;c扩散模型概述;;;c](https://omnisyr.github.io/post/%3B%3B%3BeAn%20Overview%20of%20Diffusion%20Models%3B%3B%3Be%3B%3B%3Bc-kuo-san-mo-xing-gai-shu-%3B%3B%3Bc.html)

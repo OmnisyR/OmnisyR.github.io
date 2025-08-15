@@ -5,7 +5,8 @@
 > 施工中！
 
 <!-- ##{"script":"<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>"}## -->
-\denotes
+
+;;;a
 ;;;;生成式模型::在实际运用中，依据用户的引导性输入或是不依靠输入，就可以生成出一系列数据的模型（这些数据往往在现实中不存在）;;;;
 ;;;;变分自编码器::简称VAE;;;;
 ;;;;生成式对抗模型::GANs;;;;
@@ -13,20 +14,16 @@
 ;;;;质量::看起来和真的一样;;;;
 ;;;;Deep Unsupervised Learning using Nonequilibrium Thermodynamics::文章地址：https://arxiv.org/abs/1503.03585;;;;
 ;;;;Denoising Diffusion Probabilistic Models(DDPM)::文章地址：https://arxiv.org/abs/2006.11239;;;;
-;;;;一定比例::又称噪声时间表;;;;
-;;;;预定的步数::在实践中，通常选择1000步;;;;
-;;;;重参数化技巧::一种数学计算技巧，在DDPM中将详细讨论;;;;
+;;;;一定比例::又称噪声时间表。;;;;
+;;;;预定的步数::在实践中，通常选择1000步。;;;;
+;;;;重参数化技巧::一种数学计算技巧，在[扩散模型的基石：Denoising Diffusion Probabilistic Models(DDPM)](https://omnisyr.github.io/post/%3B%3B%3BeThe%20Foundation%20of%20Diffusion%20Models-%3B%3B%3Be%3B%3B%3Bc-kuo-san-mo-xing-de-ji-shi-%EF%BC%9A%3B%3B%3BcDenoising%20Diffusion%20Probabilistic%20Models%28DDPM%29.html)中将详细讨论。;;;;
 ;;;;随机梯度下降法::SDG;;;;
-;;;;时至今日::直到写到这里时的2025年07月
-
-`Gmeek-html<img src="https://OmnisyR.github.io/figs/generative_models.png", width="200">`
-
-;;;;
-\denotes
+;;;;时至今日::直到写到这里时的2025年07月;;;;
+;;;a
 ## 生成式模型
 扩散模型是一种`生成式模型`，它最初只运用在了图片生成上，但如今，它已经有了相当广阔的运用空间。在扩散模型流行之前，主流的图片的生成式模型还有`变分自编码器`以及`生成式对抗模型`，与它们相比，扩散模型虽然牺牲了采样速度，提升了采样结果的`泛性`与`质量`。
 
-`Gmeek-html<img src="https://OmnisyR.github.io/figs/generative_models.png" alt=";;;eSource:;;;e;;;c图片来源：;;;c[Diffusion Models vs. GANs vs. VAEs: Comparison of Deep Generative Models](https://pub.towardsai.net/diffusion-models-vs-gans-vs-vaes-comparison-of-deep-generative-models-67ab93e0d9ae)">`
+`Gmeek-html<img src="https://OmnisyR.github.io/figs/generative_models.png">`
 ;;;eSource:;;;e;;;c图片来源：;;;c[Diffusion Models vs. GANs vs. VAEs: Comparison of Deep Generative Models](https://pub.towardsai.net/diffusion-models-vs-gans-vs-vaes-comparison-of-deep-generative-models-67ab93e0d9ae)
 
 ## 扩散模型
@@ -46,9 +43,18 @@
 ### 连续型扩散模型
 上述的思想中，很容易能够看出无论是正向过程，还是逆向过程，扩散模型的离散的。后续人们利用随机微分方程对扩散模型进行了连续性的数学建模，使得能够更好地从数学层面改进扩散模型，无论是正向过程还是逆向过程都能够使用函数进行连续性表达，只不过计算机无法处理连续数据，在实践中，仍然会将连续函数以离散的形式进行编程。
 
+## 常用数据集
+对于图片数据集，本人更加喜欢那些可见的数据集，而非二进制形式。因此在实践中将总是使用文件夹内图片的形式进行训练，这边也将给出一些常用的数据集。我个人更加倾向于在[Kaggle](https://www.kaggle.com/)上寻找数据集来使用，对于扩散模型而言，如果只是简单学习的话，不是很挑数据集，看个人喜好使用一些稀奇古怪的数据集也不是不行。
+
+### CIFAR10
+链接：https://www.kaggle.com/datasets/swaroopkml/cifar10-pngs-in-folders
+
+老牌的计算机视觉数据集。
+
+### CelebA HQ
+链接：https://www.kaggle.com/datasets/badasstechie/celebahq-resized-256x256
+
 ## 评估方法
 ### Inception Score
 
 ### FID
-
-## 常用数据集
