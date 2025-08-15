@@ -559,18 +559,18 @@ For simplicity, CIFAR1 is used as the dataset, with image dimensions of 32×32.
 CIFAR1 refers to using only one category from CIFAR10 as the dataset.
 The file structure of the dataset is as follows:
 cifar1
-  | train
-      | horse
-          | 0001.png
-          | 0002.png
-          | ...
-          | 5000.png
-  | test
-      | horse
-          | 0001.png
-          | 0002.png
-          | ...
-          | 1000.png
+├── test
+│   └── horse
+│       ├── 0001.png
+│       ├── 0002.png
+│       ├── ...
+│       └── 5000.png
+└── train
+    └── horse
+        ├── 0001.png
+        ├── 0002.png
+        ├── ...
+        └── 1000.png
 """
 image_size = 32
 #The number of channels is 3, i.e., RGB.
@@ -1030,18 +1030,18 @@ sqrt_one_minus_alphas_bar = torch.sqrt(1. - alphas_bar)
 CIFAR1指仅仅选用CIFAR10中的一类作为数据集
 数据集的文件结构为
 cifar1
-  | train
-      | horse
-          | 0001.png
-          | 0002.png
-          | ...
-          | 5000.png
-  | test
-      | horse
-          | 0001.png
-          | 0002.png
-          | ...
-          | 1000.png
+├── test
+│   └── horse
+│       ├── 0001.png
+│       ├── 0002.png
+│       ├── ...
+│       └── 5000.png
+└── train
+    └── horse
+        ├── 0001.png
+        ├── 0002.png
+        ├── ...
+        └── 1000.png
 """
 image_size = 32
 #通道数为3，即RGB
