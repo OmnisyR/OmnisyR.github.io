@@ -144,6 +144,7 @@ x_{t - 1} &amp;= \frac{1}{\sqrt{\alpha_t}}x_t
 \end{align}
 $$</p>
 <p>;;;;<br>
+;;;;;;;eThe limitations of the blog framework::The total number of characters in a single article is limited to 65,536.;;;e;;;c博客框架的限制::单篇文章的总字符数被限制在了65,536内。;;;c;;;;<br>
 ;;;a;;;e</p>
 <h2>Introduction</h2>
 <p>I'm not very good at describing subjective things, and most of the information about diffusion models has already been covered in <a href="https://omnisyr.github.io/post/%3B%3B%3BeAn%20Overview%20of%20Diffusion%20Models%3B%3B%3Be%3B%3B%3Bc-kuo-san-mo-xing-gai-shu-%3B%3B%3Bc.html" rel="nofollow">Diffusion Model Overview</a>, so I'll skip the formalities and get straight to the point!</p>
@@ -712,7 +713,7 @@ $$</p>
         <span class="pl-c">#Record the mean and variance of the loss value.</span>
         <span class="pl-s1">csv_cache</span> <span class="pl-c1">+=</span> <span class="pl-s">"%d,%s,%s<span class="pl-cce">\n</span>"</span> <span class="pl-c1">%</span> (<span class="pl-s1">global_epoch</span>, <span class="pl-s1">ave_loss</span>, <span class="pl-s1">var_loss</span>)
         <span class="pl-c">#Check whether there are checkpoints exceeding the maximum cache count.</span>
-        <span class="pl-s1">old_model</span> <span class="pl-c1">=</span> <span class="pl-s1">checkpoint_folder</span> <span class="pl-c1">+</span> <span class="pl-s">"/%s_%d.%s"</span> <span class="pl-c1">%</span> (
+        <span class="pl-s1">old_model</span> <span class="pl-c1">=</span> <span class="pl-s1">checkpoint_folder</span> <span class="pl-c1">+</span> <span class="pl-s">"/%s_%d%s"</span> <span class="pl-c1">%</span> (
             <span class="pl-s1">prefix</span>,
             <span class="pl-s1">global_epoch</span> <span class="pl-c1">-</span> <span class="pl-s1">cache_num</span> <span class="pl-c1">*</span> <span class="pl-s1">milestone_step</span>,
             <span class="pl-s1">suffix</span>
@@ -959,7 +960,10 @@ The DDPM sampler, i.e., <code class="notranslate">Equation (50)</code>:</p>
 <p>The 500 iterations of the training process:</p>
 <p><p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_50_500.png"/></p></p>
 <p>Changes in training loss values:</p>
-<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_loss.png" width="400" height="300"/></p>;;;e;;;c</p>
+<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_loss.png" width="400" height="300"/></p></p>
+<h2>Summary</h2>
+<p>At this point, we have completed the reproduction of the DDPM algorithm. If you have run the code yourself, you will undoubtedly have felt the significant computational power requirements of diffusion models, which has inspired subsequent research into fast sampling.</p>
+<p>Due to <code class="notranslate">The limitations of the blog framework</code>, there is still a lot of content that has not been fully explained. I will try to supplement and explain some of the more difficult concepts in future posts, or perhaps write a separate article to explain them in more detail.;;;e;;;c</p>
 <h2>训练过程</h2>
 <p>首先导入一些必要的库：</p>
 <div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">import</span> <span class="pl-s1">os</span>
@@ -1152,7 +1156,7 @@ The DDPM sampler, i.e., <code class="notranslate">Equation (50)</code>:</p>
         <span class="pl-c">#记录损失值的平均值及方差</span>
         <span class="pl-s1">csv_cache</span> <span class="pl-c1">+=</span> <span class="pl-s">"%d,%s,%s<span class="pl-cce">\n</span>"</span> <span class="pl-c1">%</span> (<span class="pl-s1">global_epoch</span>, <span class="pl-s1">ave_loss</span>, <span class="pl-s1">var_loss</span>)
         <span class="pl-c">#检查是否存在超出最大缓存数量的检查点</span>
-        <span class="pl-s1">old_model</span> <span class="pl-c1">=</span> <span class="pl-s1">checkpoint_folder</span> <span class="pl-c1">+</span> <span class="pl-s">"/%s_%d.%s"</span> <span class="pl-c1">%</span> (
+        <span class="pl-s1">old_model</span> <span class="pl-c1">=</span> <span class="pl-s1">checkpoint_folder</span> <span class="pl-c1">+</span> <span class="pl-s">"/%s_%d%s"</span> <span class="pl-c1">%</span> (
             <span class="pl-s1">prefix</span>,
             <span class="pl-s1">global_epoch</span> <span class="pl-c1">-</span> <span class="pl-s1">cache_num</span> <span class="pl-c1">*</span> <span class="pl-s1">milestone_step</span>,
             <span class="pl-s1">suffix</span>
@@ -1392,7 +1396,10 @@ DDPM的采样器，即<code class="notranslate">式(50)</code>：</p>
 <p>训练的500次迭代过程：</p>
 <p><p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_50_500.png"/></p></p>
 <p>训练的损失值变化：</p>
-<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_loss.png" width="400" height="300"/></p>;;;c</p></div>
+<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_loss.png" width="400" height="300"/></p></p>
+<h2>总结</h2>
+<p>至此，便完成了DDPM算法上的复现，若是亲自运行代码了，必然会感受到扩散模型对算力的需求之大，也才激发了人们后续关于快速采样的研究。</p>
+<p>由于<code class="notranslate">博客框架的限制</code>，还有很多内容没有能够讲明白，一些理解较为困难的地方后续我也会尽量补充解释，或是另开一篇文章进行讲解。;;;c</p></div>
 <div style="font-size:small;margin-top:8px;float:right;">转载文章请注明出处</div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>

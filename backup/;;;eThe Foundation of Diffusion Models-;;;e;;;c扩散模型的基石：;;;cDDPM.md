@@ -69,6 +69,7 @@ x_{t - 1} &= \frac{1}{\sqrt{\alpha_t}}x_t
 $$
 
 ;;;;
+;;;;;;;eThe limitations of the blog framework::The total number of characters in a single article is limited to 65,536.;;;e;;;c博客框架的限制::单篇文章的总字符数被限制在了65,536内。;;;c;;;;
 ;;;a;;;e
 ## Introduction
 I'm not very good at describing subjective things, and most of the information about diffusion models has already been covered in [Diffusion Model Overview](https://omnisyr.github.io/post/%3B%3B%3BeAn%20Overview%20of%20Diffusion%20Models%3B%3B%3Be%3B%3B%3Bc-kuo-san-mo-xing-gai-shu-%3B%3B%3Bc.html), so I'll skip the formalities and get straight to the point!
@@ -716,7 +717,7 @@ def train_loop(dataloader):
         #Record the mean and variance of the loss value.
         csv_cache += "%d,%s,%s\n" % (global_epoch, ave_loss, var_loss)
         #Check whether there are checkpoints exceeding the maximum cache count.
-        old_model = checkpoint_folder + "/%s_%d.%s" % (
+        old_model = checkpoint_folder + "/%s_%d%s" % (
             prefix,
             global_epoch - cache_num * milestone_step,
             suffix
@@ -981,7 +982,12 @@ The 500 iterations of the training process:
 
 Changes in training loss values:
 
-`Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_loss.png" width="400" height="300"/></p>`;;;e;;;c
+`Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_loss.png" width="400" height="300"/></p>`
+
+## Summary
+At this point, we have completed the reproduction of the DDPM algorithm. If you have run the code yourself, you will undoubtedly have felt the significant computational power requirements of diffusion models, which has inspired subsequent research into fast sampling.
+
+Due to `The limitations of the blog framework`, there is still a lot of content that has not been fully explained. I will try to supplement and explain some of the more difficult concepts in future posts, or perhaps write a separate article to explain them in more detail.;;;e;;;c
 ## 训练过程
 首先导入一些必要的库：
 ```python
@@ -1181,7 +1187,7 @@ def train_loop(dataloader):
         #记录损失值的平均值及方差
         csv_cache += "%d,%s,%s\n" % (global_epoch, ave_loss, var_loss)
         #检查是否存在超出最大缓存数量的检查点
-        old_model = checkpoint_folder + "/%s_%d.%s" % (
+        old_model = checkpoint_folder + "/%s_%d%s" % (
             prefix,
             global_epoch - cache_num * milestone_step,
             suffix
@@ -1439,4 +1445,9 @@ if __name__ == '__main__':
 
 训练的损失值变化：
 
-`Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_loss.png" width="400" height="300"/></p>`;;;c
+`Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_loss.png" width="400" height="300"/></p>`
+
+## 总结
+至此，便完成了DDPM算法上的复现，若是亲自运行代码了，必然会感受到扩散模型对算力的需求之大，也才激发了人们后续关于快速采样的研究。
+
+由于`博客框架的限制`，还有很多内容没有能够讲明白，一些理解较为困难的地方后续我也会尽量补充解释，或是另开一篇文章进行讲解。;;;c
