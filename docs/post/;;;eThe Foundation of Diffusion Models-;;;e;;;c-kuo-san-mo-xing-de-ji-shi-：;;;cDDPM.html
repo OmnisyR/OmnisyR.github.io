@@ -15,7 +15,8 @@
 > ;;;eTo read this article, readers should:
 > - Be proficient in Python
 > - Have a foundation in PyTorch
-> - Possess a basic understanding of neural networks;;;e;;;c阅读本文，需要读者：
+> - Possess a basic understanding of neural networks;;;e
+;;;c阅读本文，需要读者：
 > - 能够熟练使用Python语言
 > - 拥有Pytorch基础
 > - 拥有神经网络基础;;;c
@@ -28,7 +29,8 @@
 > ;;;eTo read this article, readers should:
 > - Be proficient in Python
 > - Have a foundation in PyTorch
-> - Possess a basic understanding of neural networks;;;e;;;c阅读本文，需要读者：
+> - Possess a basic understanding of neural networks;;;e
+;;;c阅读本文，需要读者：
 > - 能够熟练使用Python语言
 > - 拥有Pytorch基础
 > - 拥有神经网络基础;;;c
@@ -110,7 +112,8 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <ul>
 <li>Be proficient in Python</li>
 <li>Have a foundation in PyTorch</li>
-<li>Possess a basic understanding of neural networks;;;e;;;c阅读本文，需要读者：</li>
+<li>Possess a basic understanding of neural networks;;;e<br>
+;;;c阅读本文，需要读者：</li>
 <li>能够熟练使用Python语言</li>
 <li>拥有Pytorch基础</li>
 <li>拥有神经网络基础;;;c</li>
@@ -526,7 +529,7 @@ $$</p>
 </ul>
 <p>但是对于扩散模型而言，其输入还需要额外引入一个时间戳t，而非单单一个图片，因此还需要将图片和时间戳整合到一起，放入UNet中进行计算，这个操作又称时间嵌入。</p>
 <h3>时间嵌入</h3>
-<p>时间嵌入算法参考了<code class="notranslate">Attention is All You Need</code>中的位置嵌入算法，通过将时间戳这单个数字，展开为某个张量，再输入到网络中进行计算，最后再与普通卷积过程的只相加，进行接下来的计算。时间戳的展开服从下面的式子：;;;c</p>
+<p>时间嵌入算法参考了<code class="notranslate">Attention is All You Need</code>中的位置嵌入算法，通过将时间戳这单个数字，展开为某个张量，再输入到网络中进行计算，最后再与普通卷积过程的值相加，进行接下来的计算。时间戳的展开服从下面的式子：;;;c</p>
 <p>$$
 \begin{align}
 TE_{(t, i)} &amp;= \sin\frac{t}{10000^{2i / d}}

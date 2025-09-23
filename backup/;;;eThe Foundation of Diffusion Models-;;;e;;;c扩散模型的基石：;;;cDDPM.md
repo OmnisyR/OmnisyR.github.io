@@ -3,7 +3,8 @@
 > ;;;eTo read this article, readers should:
 > - Be proficient in Python
 > - Have a foundation in PyTorch
-> - Possess a basic understanding of neural networks;;;e;;;c阅读本文，需要读者：
+> - Possess a basic understanding of neural networks;;;e
+;;;c阅读本文，需要读者：
 > - 能够熟练使用Python语言
 > - 拥有Pytorch基础
 > - 拥有神经网络基础;;;c
@@ -500,7 +501,7 @@ The time embedding algorithm refers to the position embedding algorithm in `Atte
 
 ### 时间嵌入
 
-时间嵌入算法参考了`Attention is All You Need`中的位置嵌入算法，通过将时间戳这单个数字，展开为某个张量，再输入到网络中进行计算，最后再与普通卷积过程的只相加，进行接下来的计算。时间戳的展开服从下面的式子：;;;c
+时间嵌入算法参考了`Attention is All You Need`中的位置嵌入算法，通过将时间戳这单个数字，展开为某个张量，再输入到网络中进行计算，最后再与普通卷积过程的值相加，进行接下来的计算。时间戳的展开服从下面的式子：;;;c
 
 $$
 \begin{align}
