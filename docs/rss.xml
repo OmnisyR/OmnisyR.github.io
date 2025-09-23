@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>OmnisyR's Blog</title><link>https://OmnisyR.github.io</link><description>;;;eRecording the bits and pieces of scientific research, development, and life.;;;e;;;c记录科研、开发以及生活的点点滴滴;;;c</description><copyright>OmnisyR's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/68898477?s=400&amp;u=262ae3b76f651c62a82042317aaae313706c859c&amp;v=4</url><title>avatar</title><link>https://OmnisyR.github.io</link></image><lastBuildDate>Tue, 23 Sep 2025 08:58:52 +0000</lastBuildDate><managingEditor>OmnisyR's Blog</managingEditor><ttl>60</ttl><webMaster>OmnisyR's Blog</webMaster><item><title>;;;eModeling and Production of AC/43 in Guilty Gear;;;e;;;c罪恶装备中AC/43的建模与制作;;;c</title><link>https://OmnisyR.github.io/post/%3B%3B%3BeModeling%20and%20Production%20of%20AC-43%20in%20Guilty%20Gear%3B%3B%3Be%3B%3B%3Bc-zui-e-zhuang-bei-zhong-AC-43-de-jian-mo-yu-zhi-zuo-%3B%3B%3Bc.html</link><description>&gt; [!NOTE]
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>OmnisyR's Blog</title><link>https://OmnisyR.github.io</link><description>;;;eRecording the bits and pieces of scientific research, development, and life.;;;e;;;c记录科研、开发以及生活的点点滴滴;;;c</description><copyright>OmnisyR's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/68898477?s=400&amp;u=262ae3b76f651c62a82042317aaae313706c859c&amp;v=4</url><title>avatar</title><link>https://OmnisyR.github.io</link></image><lastBuildDate>Tue, 23 Sep 2025 09:00:54 +0000</lastBuildDate><managingEditor>OmnisyR's Blog</managingEditor><ttl>60</ttl><webMaster>OmnisyR's Blog</webMaster><item><title>;;;eModeling and Production of AC/43 in Guilty Gear;;;e;;;c罪恶装备中AC/43的建模与制作;;;c</title><link>https://OmnisyR.github.io/post/%3B%3B%3BeModeling%20and%20Production%20of%20AC-43%20in%20Guilty%20Gear%3B%3B%3Be%3B%3B%3Bc-zui-e-zhuang-bei-zhong-AC-43-de-jian-mo-yu-zhi-zuo-%3B%3B%3Bc.html</link><description>&gt; [!NOTE]
 &gt; This article currently only supports Chinese.
 
 &gt; [!CAUTION]
@@ -13,16 +13,16 @@
 ## 写在前面
 GGST中最吸引我的武器莫过于Unika的AC/43了。</description><guid isPermaLink="true">https://OmnisyR.github.io/post/%3B%3B%3BeModeling%20and%20Production%20of%20AC-43%20in%20Guilty%20Gear%3B%3B%3Be%3B%3B%3Bc-zui-e-zhuang-bei-zhong-AC-43-de-jian-mo-yu-zhi-zuo-%3B%3B%3Bc.html</guid><pubDate>Fri, 15 Aug 2025 08:07:17 +0000</pubDate></item><item><title>;;;eThe Foundation of Diffusion Models:;;;e;;;c扩散模型的基石：;;;cDDPM</title><link>https://OmnisyR.github.io/post/%3B%3B%3BeThe%20Foundation%20of%20Diffusion%20Models-%3B%3B%3Be%3B%3B%3Bc-kuo-san-mo-xing-de-ji-shi-%EF%BC%9A%3B%3B%3BcDDPM.html</link><description>&lt;!-- ##{'script':'&lt;script src='https://OmnisyR.github.io/assets/HyperTOC.js'&gt;&lt;/script&gt;'}## --&gt;
 &gt; [!IMPORTANT]
-&gt; To read this article, readers should:
+;;;e&gt; To read this article, readers should:
 &gt; - Be proficient in Python
 &gt; - Have a foundation in PyTorch
 &gt; - Possess a basic understanding of neural network
-
-&gt; [!IMPORTANT]
+;;;e;;;c
 &gt; 阅读本文，需要读者：
 &gt; - 能够熟练使用Python语言
 &gt; - 拥有Pytorch基础
 &gt; - 拥有神经网络基础;;;c
+;;;c
 
 ;;;a
 ;;;;;;;eCopy and paste the code directly::Or just click [me](https://github.com/OmnisyR/diffusion_demo/tree/main/ddpm/en) to go to the full version.;;;e;;;c直接复制粘贴::或是点[我](https://github.com/OmnisyR/diffusion_demo/tree/main/ddpm/cn)转到完全版。</description><guid isPermaLink="true">https://OmnisyR.github.io/post/%3B%3B%3BeThe%20Foundation%20of%20Diffusion%20Models-%3B%3B%3Be%3B%3B%3Bc-kuo-san-mo-xing-de-ji-shi-%EF%BC%9A%3B%3B%3BcDDPM.html</guid><pubDate>Fri, 25 Jul 2025 07:02:25 +0000</pubDate></item><item><title>;;;eAn Overview of Diffusion Models;;;e;;;c扩散模型概述;;;c</title><link>https://OmnisyR.github.io/post/%3B%3B%3BeAn%20Overview%20of%20Diffusion%20Models%3B%3B%3Be%3B%3B%3Bc-kuo-san-mo-xing-gai-shu-%3B%3B%3Bc.html</link><description>&gt; [!NOTE]

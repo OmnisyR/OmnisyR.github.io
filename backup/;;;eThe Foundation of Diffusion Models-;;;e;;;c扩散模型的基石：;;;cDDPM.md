@@ -1,15 +1,15 @@
 <!-- ##{"script":"<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>"}## -->
 > [!IMPORTANT]
-> To read this article, readers should:
+;;;e> To read this article, readers should:
 > - Be proficient in Python
 > - Have a foundation in PyTorch
 > - Possess a basic understanding of neural network
-
-> [!IMPORTANT]
+;;;e;;;c
 > 阅读本文，需要读者：
 > - 能够熟练使用Python语言
 > - 拥有Pytorch基础
 > - 拥有神经网络基础;;;c
+;;;c
 
 ;;;a
 ;;;;;;;eCopy and paste the code directly::Or just click [me](https://github.com/OmnisyR/diffusion_demo/tree/main/ddpm/en) to go to the full version.;;;e;;;c直接复制粘贴::或是点[我](https://github.com/OmnisyR/diffusion_demo/tree/main/ddpm/cn)转到完全版。;;;c;;;;
