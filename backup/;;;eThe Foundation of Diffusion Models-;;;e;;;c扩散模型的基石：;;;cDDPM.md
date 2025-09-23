@@ -1,10 +1,8 @@
 <!-- ##{"script":"<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>"}## -->
-> [!IMPORTANT]
-> ;;;eTo read this article, readers should:
+;;;e> [!IMPORTANT]To read this article, readers should:
 > - Be proficient in Python
 > - Have a foundation in PyTorch
-> - Possess a basic understanding of neural networks;;;e
-;;;c阅读本文，需要读者：
+> - Possess a basic understanding of neural networks;;;e;;;c> [!IMPORTANT]阅读本文，需要读者：
 > - 能够熟练使用Python语言
 > - 拥有Pytorch基础
 > - 拥有神经网络基础;;;c
