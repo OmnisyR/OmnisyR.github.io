@@ -1,18 +1,4 @@
 <!-- ##{"script":"<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>"}## -->
-;;;e
-> [!IMPORTANT]
-> To read this article, readers should:
-> - Be proficient in Python
-> - Have a foundation in PyTorch
-> - Possess a basic understanding of neural network;;;e
-
-;;;c
-> [!IMPORTANT]
-> 阅读本文，需要读者：
-> - 能够熟练使用Python语言
-> - 拥有Pytorch基础
-> - 拥有神经网络基础;;;c
-
 ;;;a
 ;;;;;;;eCopy and paste the code directly::Or just click [me](https://github.com/OmnisyR/diffusion_demo/tree/main/ddpm/en) to go to the full version.;;;e;;;c直接复制粘贴::或是点[我](https://github.com/OmnisyR/diffusion_demo/tree/main/ddpm/cn)转到完全版。;;;c;;;;
 ;;;;;;;eMarkov chain::The state at a given moment is only related to the state at the previous moment, i.e., $x_t = f(x_{t - 1})$, without the involvement of states at other moments. A chain formed by a number of such state relationships constitutes a Markov chain. Therefore, Markov chains have the following special properties:;;;e;;;c马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。因此，马尔科夫链存在着这样的特殊性质：;;;c
