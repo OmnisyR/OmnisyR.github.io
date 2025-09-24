@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark_colorblind" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://OmnisyR.github.io/assets/Primer.css' rel='stylesheet' />
+    <script src='https://OmnisyR.github.io/assets/GmeekVercount.js'></script><script src='https://OmnisyR.github.io/assets/Language.js'></script><meta name='google-site-verification' content='jL_vSMve-woq2yALbGnRHeP86_xTVwPvJYu6vfAQiWo' />
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/68898477?s=400&u=262ae3b76f651c62a82042317aaae313706c859c&v=4"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content=";;;a
+;;;;;;;eNote::note;;;e;;;c注释::注释;;;c;;;;
+;;;a
+;;;e
+## Introduction
+This article will explain how to use Matplotlib to plot non-solid curves with arrows, as shown in the figure below:
+
+`Gmeek-html<p align='center'><img srcset='https://OmnisyR.github.io/figs/arrow_example.png' width='400' height='400'/></p>`
+
+Matplotlib offers a rich set of built-in methods, yet it lacks a built-in function for drawing non-solid curves with arrows. While some online discussions exist on this topic, they haven't provided satisfactory solutions. Therefore, I conducted my own investigation into plotting such curves, aiming to create flawless, perfect non-solid curves with arrows.
+
+## Methods Provided by Matplotlib and Related Issues
+In Matplotlib, you can use FancyArrowPatch to create a curve with an arrowhead:
+```python
+import matplotlib.patches as patches
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(1, 1, figsize=(4, 4))
+ax.set_xlim(0, 2)
+ax.set_ylim(0, 2)
+ax.add_patch(patches.FancyArrowPatch(
+    posA=(0.1, 0.1), posB=(1.8, 1.8), arrowstyle='-|>, head_width=4, head_length=8',
+    connectionstyle='arc3,rad=0.3', color='#515151', shrinkA=0, shrinkB=0
+))
+plt.savefig('arrow_common.png', dpi=600)
+```
+`Gmeek-html<p align='center'><img srcset='https://OmnisyR.github.io/figs/arrow_common.png' width='400' height='400'/></p>`
+
+However, if you want to render this curve as a non-solid line by simply changing its style, problems will arise:
+```python
+# ...
+ax.add_patch(patches.FancyArrowPatch(
+  # ...
+  linestyle='--'
+)
+# ...
+```
+`Gmeek-html<p align='center'><img srcset='https://OmnisyR.github.io/figs/arrow_error.png' width='400' height='400'/></p>`
+
+As can be seen, the arrow points are also drawn using dashed lines. Moreover, when using this method for plotting, the curvature of the curve is interface-dependent rather than coordinate-dependent. This means that when altering the x-axis or y-axis range of the chart, the curvature of the curve will still maintain visual consistency. In certain situations, this cannot be considered a rigorous plotting method.
+
+## Method
+By emulating the drawing method for non-solid lines with arrows, it can be treated as two components: the non-solid curve and the solid arrowhead.
+
+### Non-Solid Curve
+Matplotlib implements curve drawing using quadratic Bézier curves. Examining the source code reveals that given points A and B, and an angle rad in radians, the coordinates of control point C can be determined using the following formula:
+
+$$
+x_C = \frac{x_A + x_B}{2} + rad · (y_B - y_A)
+$$
+$$
+y_C = \frac{y_A + y_B}{2} - rad · (x_B - x_A)
+$$
+
+`Gmeek-html<p align='center'><img srcset='https://OmnisyR.github.io/figs/arrow_arc3.png' width='400' height='400'/></p>`
+
+CA is tangent to the curve at point A, and CB is tangent to the curve at point B. This allows the non-solid curve to be drawn using the code below:
+```python
+import matplotlib.patches as patches
+import matplotlib.pyplot as plt
+import numpy as np
+
+def draw_arc3(from_, to_, rad, detail=False, color='#515151'):
+    x1, y1 = np.array(from_)
+    x2, y2 = np.array(to_)
+    dx, dy = x2 - x1, y2 - y1
+    x12, y12 = (x1 + x2) / 2., (y1 + y2) / 2.
+    cx, cy = x12 + rad * dy, y12 - rad * dx
+    control_ = (cx, cy)
+    vertices = [from_, control_, to_]
+    codes = [patches.Path.MOVETO, patches.Path.CURVE3, patches.Path.CURVE3]
+    path = patches.Path(vertices, codes)
+    patch = patches.PathPatch(path, facecolor='none', edgecolor=color, linestyle='--', linewidth=1)
+    ax.add_patch(patch)
+    if not detail:
+        return
+    ax.scatter(control_[0], control_[1], c=color, marker='x', s=12, linewidths=0.8)
+    ax.scatter(from_[0], from_[1], c=color, marker='x', s=12, linewidths=0.8)
+    ax.scatter(to_[0], to_[1], c=color, marker='x', s=12, linewidths=0.8)
+    ax.plot((control_[0], from_[0]), (control_[1], from_[1]), color=color, linewidth=.5, linestyle=':')
+    ax.plot((control_[0], to_[0]), (control_[1], to_[1]), color=color, linewidth=.5, linestyle=':')
+    ax.annotate(r'$A$', from_, ha='center', va='bottom')
+    ax.annotate(r'$B$', to_, ha='center', va='bottom')
+    ax.annotate(r'$C$', control_, ha='right', va='bottom')
+
+fig, ax = plt.subplots(1, 1, figsize=(4, 4))
+ax.set_xlim(0, 2)
+ax.set_ylim(0, 2)
+draw_arc3((0.1, 0.1), (1.8, 1.8), 0.3)
+plt.savefig('arrow_arc3_dot.png', dpi=600)
+```
+`Gmeek-html<p align='center'><img srcset='https://OmnisyR.github.io/figs/arrow_arc3_dot.png' width='400' height='400'/></p>`
+
+### Solid Line Arrow
+With control point C and target endpoint B already defined, drawing a solid line arrow is straightforward. The following code easily creates an arrow that meets the requirements:
+```python
+# ...
+ax.annotate('', to_, xytext=control_, arrowprops=dict(
+    linewidth=0, arrowstyle='-|>, head_width=0.3, head_length=0.6',
+    shrinkA=0, shrinkB=0, facecolor=color, linestyle='solid', mutation_scale=10
+))
+# ...
+```
+
+However, upon closer inspection, issues remain apparent: as shown in the figure below, the width at the very tip of the arrow is narrower than the curve's width, resulting in an aesthetically displeasing visual effect.
+`Gmeek-html<p align='center'><img srcset='https://OmnisyR.github.io/figs/arrow_arc3_arrow_error.png' width='400' height='400'/></p>`
+
+To address this, consider placing a mask between the curve and the arrow to conceal the excess curve portion:
+`Gmeek-html<p align='center'><img srcset='https://OmnisyR.github.io/figs/arrow_arc3_arrow_mask.png' width='400' height='400'/></p>`
+
+The placement of masks can be achieved through a simple algorithm:
+```python
+# ...
+# Place the non-solid curve on layer -2
+patch = patches.PathPatch(# ...
+      zorder=-2)
+# ...
+size = 0.08
+direction = -1 if control_[0] < to_[0] else 1
+mask = patches.FancyBboxPatch(
+     (to_[0], to_[1] - size / 2), direction * size, size, boxstyle='square, pad=0',
+     ec='red', fc='red', linewidth=1, zorder=-1
+)
+de = math.degrees(math.atan((control_[1] - to_[1]) / (control_[0] - to_[0])))
+tf = transforms.Affine2D().rotate_deg_around(to_[0], to_[1], de) + ax.transData
+cut.set_transform(tf)
+ax.add_patch(cut)
+# ...
+```
+
+`Gmeek-html<p align='center'><img srcset='https://OmnisyR.github.io/figs/arrow_direction.png' width='400' height='400'/></p>`
+This allows for precise placement of the mask. The center point in the image is point B, the target endpoint, with surrounding areas indicating the directions of potential control points.
+
+### Non-Solid Curves with Arrows
+Finally, by integrating these two components and specifying certain parameters for control, one can complete the drawing of non-solid curves with arrows.
+```python
+import math
+
+import matplotlib.patches as patches
+import matplotlib.pyplot as plt
+import matplotlib.transforms as transforms
+import numpy as np
+
+def add_arrow(from_, to_, rad=0.3, control_=None, color='#515151', line='--', head_length=0.6, size=0.04, detail=False):
+    '''
+    :param from_:Starting point
+    :param to_:Target endpoint
+    :param rad:Curve radius
+    :param control_:Control points; if None, calculated based on the curvature of the curve.
+    :param color:Drawing colors
+    :param line:Curve Style
+    :param head_length:Arrow size
+    :param size:Mask Size
+    :param detail:Select whether to draw details, and manually adjust the mask size by drawing details.
+    '''
+    if control_ is None:
+        x1, y1 = np.array(from_)
+        x2, y2 = np.array(to_)
+        dx, dy = x2 - x1, y2 - y1
+        x12, y12 = (x1 + x2) / 2., (y1 + y2) / 2.
+        cx, cy = x12 + rad * dy, y12 - rad * dx
+        control_ = (cx, cy)
+    vertices = [from_, control_, to_]
+    codes = [patches.Path.MOVETO, patches.Path.CURVE3, patches.Path.CURVE3]
+    path = patches.Path(vertices, codes)
+    patch = patches.PathPatch(path, facecolor='none', edgecolor=color, linestyle=line, linewidth=1, zorder=-2)
+    ax.add_patch(patch)
+    direction = -1 if control_[0] < to_[0] else 1
+    mask_c = 'red' if detail else 'white'
+    mask = patches.FancyBboxPatch(
+        (to_[0], to_[1] - size / 2), direction * size, size, boxstyle='square, pad=0',
+        ec=mask_c, fc=mask_c, zorder=-1, linewidth=1)
+    de = math.degrees(math.atan((control_[1] - to_[1]) / (control_[0] - to_[0])))
+    tf = transforms.Affine2D().rotate_deg_around(to_[0], to_[1], de) + ax.transData
+    mask.set_transform(tf)
+    ax.add_patch(mask)
+    ax.annotate('', to_, xytext=control_, arrowprops=dict(
+        linewidth=0,
+        arrowstyle='-|>, head_width=%f, head_length=%f' % (head_length / 2, head_length),
+        shrinkA=0, shrinkB=0, facecolor=color, linestyle='solid', mutation_scale=10
+    ))
+    if not detail:
+        return
+    ax.scatter(control_[0], control_[1], c=color, marker='x', s=12, linewidths=0.8)
+    ax.scatter(from_[0], from_[1], c=color, marker='x', s=12, linewidths=0.8)
+    ax.scatter(to_[0], to_[1], c=color, marker='x', s=12, linewidths=0.8)
+    ax.plot((control_[0], from_[0]), (control_[1], from_[1]), color=color, linewidth=.5, linestyle=':')
+    ax.plot((control_[0], to_[0]), (control_[1], to_[1]), color=color, linewidth=.5, linestyle=':')
+
+def draw_eg():
+    debug = False
+    add_arrow((0.1, 0.1), (1.5, 1.6), rad=0.1, color=colors[1], detail=debug)
+    add_arrow((0.4, 1.7), (1.4, 0.7), rad=0.8, color=colors[2], detail=debug)
+    add_arrow((1.9, 1.9), (1.2, 0.1), rad=-0.2, color=colors[3], detail=debug)
+    add_arrow((1.7, 0.7), (0.3, 1.8), rad=0.5, color=colors[4], detail=debug)
+    plt.savefig('arrow_example%s.png' % ('_detail' if debug else ''), dpi=600)
+
+fig, ax = plt.subplots(1, 1, figsize=(4, 4))
+ax.set_xlim(0, 2)
+ax.set_ylim(0, 2)
+colors = ['#515151', '#CC9900', '#B177DE', '#37AD6B', '#1A6FDF']
+draw_eg()
+```
+`Gmeek-html<p align='center'><img srcset='https://OmnisyR.github.io/figs/arrow_example_cat.png' width='800' height='400'/></p>`
+;;;e;;;c
+## 介绍
+本文将介绍如何使用Matplotlib来绘制带箭头的非实曲线，就像下图一样：
+
+`Gmeek-html<p align='center'><img srcset='https://OmnisyR.github.io/figs/arrow_example.png' width='400' height='400'/></p>`
+
+Matplotlib内置的方法很丰富，但它却并未内置带箭头的非实曲线的方法，网络上也有一些相关讨论，但并未给出很好的解答。">
+<meta property="og:title" content=";;;eNon-Solid Curves with Arrows in Matplotlib;;;e;;;cMatplotlib中带箭头的非实曲线;;;c">
+<meta property="og:description" content=";;;a
+;;;;;;;eNote::note;;;e;;;c注释::注释;;;c;;;;
+;;;a
+;;;e
+## Introduction
+This article will explain how to use Matplotlib to plot non-solid curves with arrows, as shown in the figure below:
+
+`Gmeek-html<p align='center'><img srcset='https://OmnisyR.github.io/figs/arrow_example.png' width='400' height='400'/></p>`
+
+Matplotlib offers a rich set of built-in methods, yet it lacks a built-in function for drawing non-solid curves with arrows. While some online discussions exist on this topic, they haven't provided satisfactory solutions. Therefore, I conducted my own investigation into plotting such curves, aiming to create flawless, perfect non-solid curves with arrows.
+
+## Methods Provided by Matplotlib and Related Issues
+In Matplotlib, you can use FancyArrowPatch to create a curve with an arrowhead:
+```python
+import matplotlib.patches as patches
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(1, 1, figsize=(4, 4))
+ax.set_xlim(0, 2)
+ax.set_ylim(0, 2)
+ax.add_patch(patches.FancyArrowPatch(
+    posA=(0.1, 0.1), posB=(1.8, 1.8), arrowstyle='-|>, head_width=4, head_length=8',
+    connectionstyle='arc3,rad=0.3', color='#515151', shrinkA=0, shrinkB=0
+))
+plt.savefig('arrow_common.png', dpi=600)
+```
+`Gmeek-html<p align='center'><img srcset='https://OmnisyR.github.io/figs/arrow_common.png' width='400' height='400'/></p>`
+
+However, if you want to render this curve as a non-solid line by simply changing its style, problems will arise:
+```python
+# ...
+ax.add_patch(patches.FancyArrowPatch(
+  # ...
+  linestyle='--'
+)
+# ...
+```
+`Gmeek-html<p align='center'><img srcset='https://OmnisyR.github.io/figs/arrow_error.png' width='400' height='400'/></p>`
+
+As can be seen, the arrow points are also drawn using dashed lines. Moreover, when using this method for plotting, the curvature of the curve is interface-dependent rather than coordinate-dependent. This means that when altering the x-axis or y-axis range of the chart, the curvature of the curve will still maintain visual consistency. In certain situations, this cannot be considered a rigorous plotting method.
+
+## Method
+By emulating the drawing method for non-solid lines with arrows, it can be treated as two components: the non-solid curve and the solid arrowhead.
+
+### Non-Solid Curve
+Matplotlib implements curve drawing using quadratic Bézier curves. Examining the source code reveals that given points A and B, and an angle rad in radians, the coordinates of control point C can be determined using the following formula:
+
+$$
+x_C = \frac{x_A + x_B}{2} + rad · (y_B - y_A)
+$$
+$$
+y_C = \frac{y_A + y_B}{2} - rad · (x_B - x_A)
+$$
+
+`Gmeek-html<p align='center'><img srcset='https://OmnisyR.github.io/figs/arrow_arc3.png' width='400' height='400'/></p>`
+
+CA is tangent to the curve at point A, and CB is tangent to the curve at point B. This allows the non-solid curve to be drawn using the code below:
+```python
+import matplotlib.patches as patches
+import matplotlib.pyplot as plt
+import numpy as np
+
+def draw_arc3(from_, to_, rad, detail=False, color='#515151'):
+    x1, y1 = np.array(from_)
+    x2, y2 = np.array(to_)
+    dx, dy = x2 - x1, y2 - y1
+    x12, y12 = (x1 + x2) / 2., (y1 + y2) / 2.
+    cx, cy = x12 + rad * dy, y12 - rad * dx
+    control_ = (cx, cy)
+    vertices = [from_, control_, to_]
+    codes = [patches.Path.MOVETO, patches.Path.CURVE3, patches.Path.CURVE3]
+    path = patches.Path(vertices, codes)
+    patch = patches.PathPatch(path, facecolor='none', edgecolor=color, linestyle='--', linewidth=1)
+    ax.add_patch(patch)
+    if not detail:
+        return
+    ax.scatter(control_[0], control_[1], c=color, marker='x', s=12, linewidths=0.8)
+    ax.scatter(from_[0], from_[1], c=color, marker='x', s=12, linewidths=0.8)
+    ax.scatter(to_[0], to_[1], c=color, marker='x', s=12, linewidths=0.8)
+    ax.plot((control_[0], from_[0]), (control_[1], from_[1]), color=color, linewidth=.5, linestyle=':')
+    ax.plot((control_[0], to_[0]), (control_[1], to_[1]), color=color, linewidth=.5, linestyle=':')
+    ax.annotate(r'$A$', from_, ha='center', va='bottom')
+    ax.annotate(r'$B$', to_, ha='center', va='bottom')
+    ax.annotate(r'$C$', control_, ha='right', va='bottom')
+
+fig, ax = plt.subplots(1, 1, figsize=(4, 4))
+ax.set_xlim(0, 2)
+ax.set_ylim(0, 2)
+draw_arc3((0.1, 0.1), (1.8, 1.8), 0.3)
+plt.savefig('arrow_arc3_dot.png', dpi=600)
+```
+`Gmeek-html<p align='center'><img srcset='https://OmnisyR.github.io/figs/arrow_arc3_dot.png' width='400' height='400'/></p>`
+
+### Solid Line Arrow
+With control point C and target endpoint B already defined, drawing a solid line arrow is straightforward. The following code easily creates an arrow that meets the requirements:
+```python
+# ...
+ax.annotate('', to_, xytext=control_, arrowprops=dict(
+    linewidth=0, arrowstyle='-|>, head_width=0.3, head_length=0.6',
+    shrinkA=0, shrinkB=0, facecolor=color, linestyle='solid', mutation_scale=10
+))
+# ...
+```
+
+However, upon closer inspection, issues remain apparent: as shown in the figure below, the width at the very tip of the arrow is narrower than the curve's width, resulting in an aesthetically displeasing visual effect.
+`Gmeek-html<p align='center'><img srcset='https://OmnisyR.github.io/figs/arrow_arc3_arrow_error.png' width='400' height='400'/></p>`
+
+To address this, consider placing a mask between the curve and the arrow to conceal the excess curve portion:
+`Gmeek-html<p align='center'><img srcset='https://OmnisyR.github.io/figs/arrow_arc3_arrow_mask.png' width='400' height='400'/></p>`
+
+The placement of masks can be achieved through a simple algorithm:
+```python
+# ...
+# Place the non-solid curve on layer -2
+patch = patches.PathPatch(# ...
+      zorder=-2)
+# ...
+size = 0.08
+direction = -1 if control_[0] < to_[0] else 1
+mask = patches.FancyBboxPatch(
+     (to_[0], to_[1] - size / 2), direction * size, size, boxstyle='square, pad=0',
+     ec='red', fc='red', linewidth=1, zorder=-1
+)
+de = math.degrees(math.atan((control_[1] - to_[1]) / (control_[0] - to_[0])))
+tf = transforms.Affine2D().rotate_deg_around(to_[0], to_[1], de) + ax.transData
+cut.set_transform(tf)
+ax.add_patch(cut)
+# ...
+```
+
+`Gmeek-html<p align='center'><img srcset='https://OmnisyR.github.io/figs/arrow_direction.png' width='400' height='400'/></p>`
+This allows for precise placement of the mask. The center point in the image is point B, the target endpoint, with surrounding areas indicating the directions of potential control points.
+
+### Non-Solid Curves with Arrows
+Finally, by integrating these two components and specifying certain parameters for control, one can complete the drawing of non-solid curves with arrows.
+```python
+import math
+
+import matplotlib.patches as patches
+import matplotlib.pyplot as plt
+import matplotlib.transforms as transforms
+import numpy as np
+
+def add_arrow(from_, to_, rad=0.3, control_=None, color='#515151', line='--', head_length=0.6, size=0.04, detail=False):
+    '''
+    :param from_:Starting point
+    :param to_:Target endpoint
+    :param rad:Curve radius
+    :param control_:Control points; if None, calculated based on the curvature of the curve.
+    :param color:Drawing colors
+    :param line:Curve Style
+    :param head_length:Arrow size
+    :param size:Mask Size
+    :param detail:Select whether to draw details, and manually adjust the mask size by drawing details.
+    '''
+    if control_ is None:
+        x1, y1 = np.array(from_)
+        x2, y2 = np.array(to_)
+        dx, dy = x2 - x1, y2 - y1
+        x12, y12 = (x1 + x2) / 2., (y1 + y2) / 2.
+        cx, cy = x12 + rad * dy, y12 - rad * dx
+        control_ = (cx, cy)
+    vertices = [from_, control_, to_]
+    codes = [patches.Path.MOVETO, patches.Path.CURVE3, patches.Path.CURVE3]
+    path = patches.Path(vertices, codes)
+    patch = patches.PathPatch(path, facecolor='none', edgecolor=color, linestyle=line, linewidth=1, zorder=-2)
+    ax.add_patch(patch)
+    direction = -1 if control_[0] < to_[0] else 1
+    mask_c = 'red' if detail else 'white'
+    mask = patches.FancyBboxPatch(
+        (to_[0], to_[1] - size / 2), direction * size, size, boxstyle='square, pad=0',
+        ec=mask_c, fc=mask_c, zorder=-1, linewidth=1)
+    de = math.degrees(math.atan((control_[1] - to_[1]) / (control_[0] - to_[0])))
+    tf = transforms.Affine2D().rotate_deg_around(to_[0], to_[1], de) + ax.transData
+    mask.set_transform(tf)
+    ax.add_patch(mask)
+    ax.annotate('', to_, xytext=control_, arrowprops=dict(
+        linewidth=0,
+        arrowstyle='-|>, head_width=%f, head_length=%f' % (head_length / 2, head_length),
+        shrinkA=0, shrinkB=0, facecolor=color, linestyle='solid', mutation_scale=10
+    ))
+    if not detail:
+        return
+    ax.scatter(control_[0], control_[1], c=color, marker='x', s=12, linewidths=0.8)
+    ax.scatter(from_[0], from_[1], c=color, marker='x', s=12, linewidths=0.8)
+    ax.scatter(to_[0], to_[1], c=color, marker='x', s=12, linewidths=0.8)
+    ax.plot((control_[0], from_[0]), (control_[1], from_[1]), color=color, linewidth=.5, linestyle=':')
+    ax.plot((control_[0], to_[0]), (control_[1], to_[1]), color=color, linewidth=.5, linestyle=':')
+
+def draw_eg():
+    debug = False
+    add_arrow((0.1, 0.1), (1.5, 1.6), rad=0.1, color=colors[1], detail=debug)
+    add_arrow((0.4, 1.7), (1.4, 0.7), rad=0.8, color=colors[2], detail=debug)
+    add_arrow((1.9, 1.9), (1.2, 0.1), rad=-0.2, color=colors[3], detail=debug)
+    add_arrow((1.7, 0.7), (0.3, 1.8), rad=0.5, color=colors[4], detail=debug)
+    plt.savefig('arrow_example%s.png' % ('_detail' if debug else ''), dpi=600)
+
+fig, ax = plt.subplots(1, 1, figsize=(4, 4))
+ax.set_xlim(0, 2)
+ax.set_ylim(0, 2)
+colors = ['#515151', '#CC9900', '#B177DE', '#37AD6B', '#1A6FDF']
+draw_eg()
+```
+`Gmeek-html<p align='center'><img srcset='https://OmnisyR.github.io/figs/arrow_example_cat.png' width='800' height='400'/></p>`
+;;;e;;;c
+## 介绍
+本文将介绍如何使用Matplotlib来绘制带箭头的非实曲线，就像下图一样：
+
+`Gmeek-html<p align='center'><img srcset='https://OmnisyR.github.io/figs/arrow_example.png' width='400' height='400'/></p>`
+
+Matplotlib内置的方法很丰富，但它却并未内置带箭头的非实曲线的方法，网络上也有一些相关讨论，但并未给出很好的解答。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://OmnisyR.github.io/post/%3B%3B%3BeNon-Solid%20Curves%20with%20Arrows%20in%20Matplotlib%3B%3B%3Be%3B%3B%3BcMatplotlib-zhong-dai-jian-tou-de-fei-shi-qu-xian-%3B%3B%3Bc.html">
+<meta property="og:image" content="https://avatars.githubusercontent.com/u/68898477?s=400&u=262ae3b76f651c62a82042317aaae313706c859c&v=4">
+<title>;;;eNon-Solid Curves with Arrows in Matplotlib;;;e;;;cMatplotlib中带箭头的非实曲线;;;c</title>
+<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+.copy-feedback {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    color: var(--color-fg-on-emphasis);
+    background-color: var(--color-fg-muted);
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-size: 12px;
+}
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">;;;eNon-Solid Curves with Arrows in Matplotlib;;;e;;;cMatplotlib中带箭头的非实曲线;;;c</h1>
+<div class="title-right">
+    <a href="https://OmnisyR.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/OmnisyR/OmnisyR.github.io/issues/9" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><p>;;;a<br>
+;;;;;;;eNote::note;;;e;;;c注释::注释;;;c;;;;<br>
+;;;a<br>
+;;;e</p>
+<h2>Introduction</h2>
+<p>This article will explain how to use Matplotlib to plot non-solid curves with arrows, as shown in the figure below:</p>
+<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/arrow_example.png" width="400" height="400"/></p></p>
+<p>Matplotlib offers a rich set of built-in methods, yet it lacks a built-in function for drawing non-solid curves with arrows. While some online discussions exist on this topic, they haven't provided satisfactory solutions. Therefore, I conducted my own investigation into plotting such curves, aiming to create flawless, perfect non-solid curves with arrows.</p>
+<h2>Methods Provided by Matplotlib and Related Issues</h2>
+<p>In Matplotlib, you can use FancyArrowPatch to create a curve with an arrowhead:</p>
+<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">import</span> <span class="pl-s1">matplotlib</span>.<span class="pl-s1">patches</span> <span class="pl-k">as</span> <span class="pl-s1">patches</span>
+<span class="pl-k">import</span> <span class="pl-s1">matplotlib</span>.<span class="pl-s1">pyplot</span> <span class="pl-k">as</span> <span class="pl-s1">plt</span>
+
+<span class="pl-s1">fig</span>, <span class="pl-s1">ax</span> <span class="pl-c1">=</span> <span class="pl-s1">plt</span>.<span class="pl-c1">subplots</span>(<span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-s1">figsize</span><span class="pl-c1">=</span>(<span class="pl-c1">4</span>, <span class="pl-c1">4</span>))
+<span class="pl-s1">ax</span>.<span class="pl-c1">set_xlim</span>(<span class="pl-c1">0</span>, <span class="pl-c1">2</span>)
+<span class="pl-s1">ax</span>.<span class="pl-c1">set_ylim</span>(<span class="pl-c1">0</span>, <span class="pl-c1">2</span>)
+<span class="pl-s1">ax</span>.<span class="pl-c1">add_patch</span>(<span class="pl-s1">patches</span>.<span class="pl-c1">FancyArrowPatch</span>(
+    <span class="pl-s1">posA</span><span class="pl-c1">=</span>(<span class="pl-c1">0.1</span>, <span class="pl-c1">0.1</span>), <span class="pl-s1">posB</span><span class="pl-c1">=</span>(<span class="pl-c1">1.8</span>, <span class="pl-c1">1.8</span>), <span class="pl-s1">arrowstyle</span><span class="pl-c1">=</span><span class="pl-s">'-|&gt;, head_width=4, head_length=8'</span>,
+    <span class="pl-s1">connectionstyle</span><span class="pl-c1">=</span><span class="pl-s">'arc3,rad=0.3'</span>, <span class="pl-s1">color</span><span class="pl-c1">=</span><span class="pl-s">'#515151'</span>, <span class="pl-s1">shrinkA</span><span class="pl-c1">=</span><span class="pl-c1">0</span>, <span class="pl-s1">shrinkB</span><span class="pl-c1">=</span><span class="pl-c1">0</span>
+))
+<span class="pl-s1">plt</span>.<span class="pl-c1">savefig</span>(<span class="pl-s">'arrow_common.png'</span>, <span class="pl-s1">dpi</span><span class="pl-c1">=</span><span class="pl-c1">600</span>)</pre></div>
+<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/arrow_common.png" width="400" height="400"/></p></p>
+<p>However, if you want to render this curve as a non-solid line by simply changing its style, problems will arise:</p>
+<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-c"># ...</span>
+<span class="pl-s1">ax</span>.<span class="pl-c1">add_patch</span>(<span class="pl-s1">patches</span>.<span class="pl-c1">FancyArrowPatch</span>(
+  <span class="pl-c"># ...</span>
+  <span class="pl-s1">linestyle</span><span class="pl-c1">=</span><span class="pl-s">'--'</span>
+)
+<span class="pl-c"># ...</span></pre></div>
+<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/arrow_error.png" width="400" height="400"/></p></p>
+<p>As can be seen, the arrow points are also drawn using dashed lines. Moreover, when using this method for plotting, the curvature of the curve is interface-dependent rather than coordinate-dependent. This means that when altering the x-axis or y-axis range of the chart, the curvature of the curve will still maintain visual consistency. In certain situations, this cannot be considered a rigorous plotting method.</p>
+<h2>Method</h2>
+<p>By emulating the drawing method for non-solid lines with arrows, it can be treated as two components: the non-solid curve and the solid arrowhead.</p>
+<h3>Non-Solid Curve</h3>
+<p>Matplotlib implements curve drawing using quadratic Bézier curves. Examining the source code reveals that given points A and B, and an angle rad in radians, the coordinates of control point C can be determined using the following formula:</p>
+<p>$$
+x_C = \frac{x_A + x_B}{2} + rad · (y_B - y_A)
+$$
+$$
+y_C = \frac{y_A + y_B}{2} - rad · (x_B - x_A)
+$$</p>
+<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/arrow_arc3.png" width="400" height="400"/></p></p>
+<p>CA is tangent to the curve at point A, and CB is tangent to the curve at point B. This allows the non-solid curve to be drawn using the code below:</p>
+<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">import</span> <span class="pl-s1">matplotlib</span>.<span class="pl-s1">patches</span> <span class="pl-k">as</span> <span class="pl-s1">patches</span>
+<span class="pl-k">import</span> <span class="pl-s1">matplotlib</span>.<span class="pl-s1">pyplot</span> <span class="pl-k">as</span> <span class="pl-s1">plt</span>
+<span class="pl-k">import</span> <span class="pl-s1">numpy</span> <span class="pl-k">as</span> <span class="pl-s1">np</span>
+
+<span class="pl-k">def</span> <span class="pl-en">draw_arc3</span>(<span class="pl-s1">from_</span>, <span class="pl-s1">to_</span>, <span class="pl-s1">rad</span>, <span class="pl-s1">detail</span><span class="pl-c1">=</span><span class="pl-c1">False</span>, <span class="pl-s1">color</span><span class="pl-c1">=</span><span class="pl-s">'#515151'</span>):
+    <span class="pl-s1">x1</span>, <span class="pl-s1">y1</span> <span class="pl-c1">=</span> <span class="pl-s1">np</span>.<span class="pl-c1">array</span>(<span class="pl-s1">from_</span>)
+    <span class="pl-s1">x2</span>, <span class="pl-s1">y2</span> <span class="pl-c1">=</span> <span class="pl-s1">np</span>.<span class="pl-c1">array</span>(<span class="pl-s1">to_</span>)
+    <span class="pl-s1">dx</span>, <span class="pl-s1">dy</span> <span class="pl-c1">=</span> <span class="pl-s1">x2</span> <span class="pl-c1">-</span> <span class="pl-s1">x1</span>, <span class="pl-s1">y2</span> <span class="pl-c1">-</span> <span class="pl-s1">y1</span>
+    <span class="pl-s1">x12</span>, <span class="pl-s1">y12</span> <span class="pl-c1">=</span> (<span class="pl-s1">x1</span> <span class="pl-c1">+</span> <span class="pl-s1">x2</span>) <span class="pl-c1">/</span> <span class="pl-c1">2.</span>, (<span class="pl-s1">y1</span> <span class="pl-c1">+</span> <span class="pl-s1">y2</span>) <span class="pl-c1">/</span> <span class="pl-c1">2.</span>
+    <span class="pl-s1">cx</span>, <span class="pl-s1">cy</span> <span class="pl-c1">=</span> <span class="pl-s1">x12</span> <span class="pl-c1">+</span> <span class="pl-s1">rad</span> <span class="pl-c1">*</span> <span class="pl-s1">dy</span>, <span class="pl-s1">y12</span> <span class="pl-c1">-</span> <span class="pl-s1">rad</span> <span class="pl-c1">*</span> <span class="pl-s1">dx</span>
+    <span class="pl-s1">control_</span> <span class="pl-c1">=</span> (<span class="pl-s1">cx</span>, <span class="pl-s1">cy</span>)
+    <span class="pl-s1">vertices</span> <span class="pl-c1">=</span> [<span class="pl-s1">from_</span>, <span class="pl-s1">control_</span>, <span class="pl-s1">to_</span>]
+    <span class="pl-s1">codes</span> <span class="pl-c1">=</span> [<span class="pl-s1">patches</span>.<span class="pl-c1">Path</span>.<span class="pl-c1">MOVETO</span>, <span class="pl-s1">patches</span>.<span class="pl-c1">Path</span>.<span class="pl-c1">CURVE3</span>, <span class="pl-s1">patches</span>.<span class="pl-c1">Path</span>.<span class="pl-c1">CURVE3</span>]
+    <span class="pl-s1">path</span> <span class="pl-c1">=</span> <span class="pl-s1">patches</span>.<span class="pl-c1">Path</span>(<span class="pl-s1">vertices</span>, <span class="pl-s1">codes</span>)
+    <span class="pl-s1">patch</span> <span class="pl-c1">=</span> <span class="pl-s1">patches</span>.<span class="pl-c1">PathPatch</span>(<span class="pl-s1">path</span>, <span class="pl-s1">facecolor</span><span class="pl-c1">=</span><span class="pl-s">'none'</span>, <span class="pl-s1">edgecolor</span><span class="pl-c1">=</span><span class="pl-s1">color</span>, <span class="pl-s1">linestyle</span><span class="pl-c1">=</span><span class="pl-s">'--'</span>, <span class="pl-s1">linewidth</span><span class="pl-c1">=</span><span class="pl-c1">1</span>)
+    <span class="pl-s1">ax</span>.<span class="pl-c1">add_patch</span>(<span class="pl-s1">patch</span>)
+    <span class="pl-k">if</span> <span class="pl-c1">not</span> <span class="pl-s1">detail</span>:
+        <span class="pl-k">return</span>
+    <span class="pl-s1">ax</span>.<span class="pl-c1">scatter</span>(<span class="pl-s1">control_</span>[<span class="pl-c1">0</span>], <span class="pl-s1">control_</span>[<span class="pl-c1">1</span>], <span class="pl-s1">c</span><span class="pl-c1">=</span><span class="pl-s1">color</span>, <span class="pl-s1">marker</span><span class="pl-c1">=</span><span class="pl-s">'x'</span>, <span class="pl-s1">s</span><span class="pl-c1">=</span><span class="pl-c1">12</span>, <span class="pl-s1">linewidths</span><span class="pl-c1">=</span><span class="pl-c1">0.8</span>)
+    <span class="pl-s1">ax</span>.<span class="pl-c1">scatter</span>(<span class="pl-s1">from_</span>[<span class="pl-c1">0</span>], <span class="pl-s1">from_</span>[<span class="pl-c1">1</span>], <span class="pl-s1">c</span><span class="pl-c1">=</span><span class="pl-s1">color</span>, <span class="pl-s1">marker</span><span class="pl-c1">=</span><span class="pl-s">'x'</span>, <span class="pl-s1">s</span><span class="pl-c1">=</span><span class="pl-c1">12</span>, <span class="pl-s1">linewidths</span><span class="pl-c1">=</span><span class="pl-c1">0.8</span>)
+    <span class="pl-s1">ax</span>.<span class="pl-c1">scatter</span>(<span class="pl-s1">to_</span>[<span class="pl-c1">0</span>], <span class="pl-s1">to_</span>[<span class="pl-c1">1</span>], <span class="pl-s1">c</span><span class="pl-c1">=</span><span class="pl-s1">color</span>, <span class="pl-s1">marker</span><span class="pl-c1">=</span><span class="pl-s">'x'</span>, <span class="pl-s1">s</span><span class="pl-c1">=</span><span class="pl-c1">12</span>, <span class="pl-s1">linewidths</span><span class="pl-c1">=</span><span class="pl-c1">0.8</span>)
+    <span class="pl-s1">ax</span>.<span class="pl-c1">plot</span>((<span class="pl-s1">control_</span>[<span class="pl-c1">0</span>], <span class="pl-s1">from_</span>[<span class="pl-c1">0</span>]), (<span class="pl-s1">control_</span>[<span class="pl-c1">1</span>], <span class="pl-s1">from_</span>[<span class="pl-c1">1</span>]), <span class="pl-s1">color</span><span class="pl-c1">=</span><span class="pl-s1">color</span>, <span class="pl-s1">linewidth</span><span class="pl-c1">=</span><span class="pl-c1">.5</span>, <span class="pl-s1">linestyle</span><span class="pl-c1">=</span><span class="pl-s">':'</span>)
+    <span class="pl-s1">ax</span>.<span class="pl-c1">plot</span>((<span class="pl-s1">control_</span>[<span class="pl-c1">0</span>], <span class="pl-s1">to_</span>[<span class="pl-c1">0</span>]), (<span class="pl-s1">control_</span>[<span class="pl-c1">1</span>], <span class="pl-s1">to_</span>[<span class="pl-c1">1</span>]), <span class="pl-s1">color</span><span class="pl-c1">=</span><span class="pl-s1">color</span>, <span class="pl-s1">linewidth</span><span class="pl-c1">=</span><span class="pl-c1">.5</span>, <span class="pl-s1">linestyle</span><span class="pl-c1">=</span><span class="pl-s">':'</span>)
+    <span class="pl-s1">ax</span>.<span class="pl-c1">annotate</span>(<span class="pl-s">r'$A$'</span>, <span class="pl-s1">from_</span>, <span class="pl-s1">ha</span><span class="pl-c1">=</span><span class="pl-s">'center'</span>, <span class="pl-s1">va</span><span class="pl-c1">=</span><span class="pl-s">'bottom'</span>)
+    <span class="pl-s1">ax</span>.<span class="pl-c1">annotate</span>(<span class="pl-s">r'$B$'</span>, <span class="pl-s1">to_</span>, <span class="pl-s1">ha</span><span class="pl-c1">=</span><span class="pl-s">'center'</span>, <span class="pl-s1">va</span><span class="pl-c1">=</span><span class="pl-s">'bottom'</span>)
+    <span class="pl-s1">ax</span>.<span class="pl-c1">annotate</span>(<span class="pl-s">r'$C$'</span>, <span class="pl-s1">control_</span>, <span class="pl-s1">ha</span><span class="pl-c1">=</span><span class="pl-s">'right'</span>, <span class="pl-s1">va</span><span class="pl-c1">=</span><span class="pl-s">'bottom'</span>)
+
+<span class="pl-s1">fig</span>, <span class="pl-s1">ax</span> <span class="pl-c1">=</span> <span class="pl-s1">plt</span>.<span class="pl-c1">subplots</span>(<span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-s1">figsize</span><span class="pl-c1">=</span>(<span class="pl-c1">4</span>, <span class="pl-c1">4</span>))
+<span class="pl-s1">ax</span>.<span class="pl-c1">set_xlim</span>(<span class="pl-c1">0</span>, <span class="pl-c1">2</span>)
+<span class="pl-s1">ax</span>.<span class="pl-c1">set_ylim</span>(<span class="pl-c1">0</span>, <span class="pl-c1">2</span>)
+<span class="pl-en">draw_arc3</span>((<span class="pl-c1">0.1</span>, <span class="pl-c1">0.1</span>), (<span class="pl-c1">1.8</span>, <span class="pl-c1">1.8</span>), <span class="pl-c1">0.3</span>)
+<span class="pl-s1">plt</span>.<span class="pl-c1">savefig</span>(<span class="pl-s">'arrow_arc3_dot.png'</span>, <span class="pl-s1">dpi</span><span class="pl-c1">=</span><span class="pl-c1">600</span>)</pre></div>
+<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/arrow_arc3_dot.png" width="400" height="400"/></p></p>
+<h3>Solid Line Arrow</h3>
+<p>With control point C and target endpoint B already defined, drawing a solid line arrow is straightforward. The following code easily creates an arrow that meets the requirements:</p>
+<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-c"># ...</span>
+<span class="pl-s1">ax</span>.<span class="pl-c1">annotate</span>(<span class="pl-s">""</span>, <span class="pl-s1">to_</span>, <span class="pl-s1">xytext</span><span class="pl-c1">=</span><span class="pl-s1">control_</span>, <span class="pl-s1">arrowprops</span><span class="pl-c1">=</span><span class="pl-en">dict</span>(
+    <span class="pl-s1">linewidth</span><span class="pl-c1">=</span><span class="pl-c1">0</span>, <span class="pl-s1">arrowstyle</span><span class="pl-c1">=</span><span class="pl-s">"-|&gt;, head_width=0.3, head_length=0.6"</span>,
+    <span class="pl-s1">shrinkA</span><span class="pl-c1">=</span><span class="pl-c1">0</span>, <span class="pl-s1">shrinkB</span><span class="pl-c1">=</span><span class="pl-c1">0</span>, <span class="pl-s1">facecolor</span><span class="pl-c1">=</span><span class="pl-s1">color</span>, <span class="pl-s1">linestyle</span><span class="pl-c1">=</span><span class="pl-s">"solid"</span>, <span class="pl-s1">mutation_scale</span><span class="pl-c1">=</span><span class="pl-c1">10</span>
+))
+<span class="pl-c"># ...</span></pre></div>
+<p>However, upon closer inspection, issues remain apparent: as shown in the figure below, the width at the very tip of the arrow is narrower than the curve's width, resulting in an aesthetically displeasing visual effect.<br>
+<p align="center"><img srcset="https://OmnisyR.github.io/figs/arrow_arc3_arrow_error.png" width="400" height="400"/></p></p>
+<p>To address this, consider placing a mask between the curve and the arrow to conceal the excess curve portion:<br>
+<p align="center"><img srcset="https://OmnisyR.github.io/figs/arrow_arc3_arrow_mask.png" width="400" height="400"/></p></p>
+<p>The placement of masks can be achieved through a simple algorithm:</p>
+<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-c"># ...</span>
+<span class="pl-c"># Place the non-solid curve on layer -2</span>
+<span class="pl-s1">patch</span> <span class="pl-c1">=</span> <span class="pl-s1">patches</span>.<span class="pl-c1">PathPatch</span>(<span class="pl-c"># ...</span>
+      <span class="pl-s1">zorder</span><span class="pl-c1">=</span><span class="pl-c1">-</span><span class="pl-c1">2</span>)
+<span class="pl-c"># ...</span>
+<span class="pl-s1">size</span> <span class="pl-c1">=</span> <span class="pl-c1">0.08</span>
+<span class="pl-s1">direction</span> <span class="pl-c1">=</span> <span class="pl-c1">-</span><span class="pl-c1">1</span> <span class="pl-k">if</span> <span class="pl-s1">control_</span>[<span class="pl-c1">0</span>] <span class="pl-c1">&lt;</span> <span class="pl-s1">to_</span>[<span class="pl-c1">0</span>] <span class="pl-k">else</span> <span class="pl-c1">1</span>
+<span class="pl-s1">mask</span> <span class="pl-c1">=</span> <span class="pl-s1">patches</span>.<span class="pl-c1">FancyBboxPatch</span>(
+     (<span class="pl-s1">to_</span>[<span class="pl-c1">0</span>], <span class="pl-s1">to_</span>[<span class="pl-c1">1</span>] <span class="pl-c1">-</span> <span class="pl-s1">size</span> <span class="pl-c1">/</span> <span class="pl-c1">2</span>), <span class="pl-s1">direction</span> <span class="pl-c1">*</span> <span class="pl-s1">size</span>, <span class="pl-s1">size</span>, <span class="pl-s1">boxstyle</span><span class="pl-c1">=</span><span class="pl-s">"square, pad=0"</span>,
+     <span class="pl-s1">ec</span><span class="pl-c1">=</span><span class="pl-s">'red'</span>, <span class="pl-s1">fc</span><span class="pl-c1">=</span><span class="pl-s">'red'</span>, <span class="pl-s1">linewidth</span><span class="pl-c1">=</span><span class="pl-c1">1</span>, <span class="pl-s1">zorder</span><span class="pl-c1">=</span><span class="pl-c1">-</span><span class="pl-c1">1</span>
+)
+<span class="pl-s1">de</span> <span class="pl-c1">=</span> <span class="pl-s1">math</span>.<span class="pl-c1">degrees</span>(<span class="pl-s1">math</span>.<span class="pl-c1">atan</span>((<span class="pl-s1">control_</span>[<span class="pl-c1">1</span>] <span class="pl-c1">-</span> <span class="pl-s1">to_</span>[<span class="pl-c1">1</span>]) <span class="pl-c1">/</span> (<span class="pl-s1">control_</span>[<span class="pl-c1">0</span>] <span class="pl-c1">-</span> <span class="pl-s1">to_</span>[<span class="pl-c1">0</span>])))
+<span class="pl-s1">tf</span> <span class="pl-c1">=</span> <span class="pl-s1">transforms</span>.<span class="pl-c1">Affine2D</span>().<span class="pl-c1">rotate_deg_around</span>(<span class="pl-s1">to_</span>[<span class="pl-c1">0</span>], <span class="pl-s1">to_</span>[<span class="pl-c1">1</span>], <span class="pl-s1">de</span>) <span class="pl-c1">+</span> <span class="pl-s1">ax</span>.<span class="pl-c1">transData</span>
+<span class="pl-s1">cut</span>.<span class="pl-c1">set_transform</span>(<span class="pl-s1">tf</span>)
+<span class="pl-s1">ax</span>.<span class="pl-c1">add_patch</span>(<span class="pl-s1">cut</span>)
+<span class="pl-c"># ...</span></pre></div>
+<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/arrow_direction.png" width="400" height="400"/></p><br>
+This allows for precise placement of the mask. The center point in the image is point B, the target endpoint, with surrounding areas indicating the directions of potential control points.</p>
+<h3>Non-Solid Curves with Arrows</h3>
+<p>Finally, by integrating these two components and specifying certain parameters for control, one can complete the drawing of non-solid curves with arrows.</p>
+<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">import</span> <span class="pl-s1">math</span>
+
+<span class="pl-k">import</span> <span class="pl-s1">matplotlib</span>.<span class="pl-s1">patches</span> <span class="pl-k">as</span> <span class="pl-s1">patches</span>
+<span class="pl-k">import</span> <span class="pl-s1">matplotlib</span>.<span class="pl-s1">pyplot</span> <span class="pl-k">as</span> <span class="pl-s1">plt</span>
+<span class="pl-k">import</span> <span class="pl-s1">matplotlib</span>.<span class="pl-s1">transforms</span> <span class="pl-k">as</span> <span class="pl-s1">transforms</span>
+<span class="pl-k">import</span> <span class="pl-s1">numpy</span> <span class="pl-k">as</span> <span class="pl-s1">np</span>
+
+<span class="pl-k">def</span> <span class="pl-en">add_arrow</span>(<span class="pl-s1">from_</span>, <span class="pl-s1">to_</span>, <span class="pl-s1">rad</span><span class="pl-c1">=</span><span class="pl-c1">0.3</span>, <span class="pl-s1">control_</span><span class="pl-c1">=</span><span class="pl-c1">None</span>, <span class="pl-s1">color</span><span class="pl-c1">=</span><span class="pl-s">'#515151'</span>, <span class="pl-s1">line</span><span class="pl-c1">=</span><span class="pl-s">'--'</span>, <span class="pl-s1">head_length</span><span class="pl-c1">=</span><span class="pl-c1">0.6</span>, <span class="pl-s1">size</span><span class="pl-c1">=</span><span class="pl-c1">0.04</span>, <span class="pl-s1">detail</span><span class="pl-c1">=</span><span class="pl-c1">False</span>):
+    <span class="pl-s">"""</span>
+<span class="pl-s">    :param from_:Starting point</span>
+<span class="pl-s">    :param to_:Target endpoint</span>
+<span class="pl-s">    :param rad:Curve radius</span>
+<span class="pl-s">    :param control_:Control points; if None, calculated based on the curvature of the curve.</span>
+<span class="pl-s">    :param color:Drawing colors</span>
+<span class="pl-s">    :param line:Curve Style</span>
+<span class="pl-s">    :param head_length:Arrow size</span>
+<span class="pl-s">    :param size:Mask Size</span>
+<span class="pl-s">    :param detail:Select whether to draw details, and manually adjust the mask size by drawing details.</span>
+<span class="pl-s">    """</span>
+    <span class="pl-k">if</span> <span class="pl-s1">control_</span> <span class="pl-c1">is</span> <span class="pl-c1">None</span>:
+        <span class="pl-s1">x1</span>, <span class="pl-s1">y1</span> <span class="pl-c1">=</span> <span class="pl-s1">np</span>.<span class="pl-c1">array</span>(<span class="pl-s1">from_</span>)
+        <span class="pl-s1">x2</span>, <span class="pl-s1">y2</span> <span class="pl-c1">=</span> <span class="pl-s1">np</span>.<span class="pl-c1">array</span>(<span class="pl-s1">to_</span>)
+        <span class="pl-s1">dx</span>, <span class="pl-s1">dy</span> <span class="pl-c1">=</span> <span class="pl-s1">x2</span> <span class="pl-c1">-</span> <span class="pl-s1">x1</span>, <span class="pl-s1">y2</span> <span class="pl-c1">-</span> <span class="pl-s1">y1</span>
+        <span class="pl-s1">x12</span>, <span class="pl-s1">y12</span> <span class="pl-c1">=</span> (<span class="pl-s1">x1</span> <span class="pl-c1">+</span> <span class="pl-s1">x2</span>) <span class="pl-c1">/</span> <span class="pl-c1">2.</span>, (<span class="pl-s1">y1</span> <span class="pl-c1">+</span> <span class="pl-s1">y2</span>) <span class="pl-c1">/</span> <span class="pl-c1">2.</span>
+        <span class="pl-s1">cx</span>, <span class="pl-s1">cy</span> <span class="pl-c1">=</span> <span class="pl-s1">x12</span> <span class="pl-c1">+</span> <span class="pl-s1">rad</span> <span class="pl-c1">*</span> <span class="pl-s1">dy</span>, <span class="pl-s1">y12</span> <span class="pl-c1">-</span> <span class="pl-s1">rad</span> <span class="pl-c1">*</span> <span class="pl-s1">dx</span>
+        <span class="pl-s1">control_</span> <span class="pl-c1">=</span> (<span class="pl-s1">cx</span>, <span class="pl-s1">cy</span>)
+    <span class="pl-s1">vertices</span> <span class="pl-c1">=</span> [<span class="pl-s1">from_</span>, <span class="pl-s1">control_</span>, <span class="pl-s1">to_</span>]
+    <span class="pl-s1">codes</span> <span class="pl-c1">=</span> [<span class="pl-s1">patches</span>.<span class="pl-c1">Path</span>.<span class="pl-c1">MOVETO</span>, <span class="pl-s1">patches</span>.<span class="pl-c1">Path</span>.<span class="pl-c1">CURVE3</span>, <span class="pl-s1">patches</span>.<span class="pl-c1">Path</span>.<span class="pl-c1">CURVE3</span>]
+    <span class="pl-s1">path</span> <span class="pl-c1">=</span> <span class="pl-s1">patches</span>.<span class="pl-c1">Path</span>(<span class="pl-s1">vertices</span>, <span class="pl-s1">codes</span>)
+    <span class="pl-s1">patch</span> <span class="pl-c1">=</span> <span class="pl-s1">patches</span>.<span class="pl-c1">PathPatch</span>(<span class="pl-s1">path</span>, <span class="pl-s1">facecolor</span><span class="pl-c1">=</span><span class="pl-s">'none'</span>, <span class="pl-s1">edgecolor</span><span class="pl-c1">=</span><span class="pl-s1">color</span>, <span class="pl-s1">linestyle</span><span class="pl-c1">=</span><span class="pl-s1">line</span>, <span class="pl-s1">linewidth</span><span class="pl-c1">=</span><span class="pl-c1">1</span>, <span class="pl-s1">zorder</span><span class="pl-c1">=</span><span class="pl-c1">-</span><span class="pl-c1">2</span>)
+    <span class="pl-s1">ax</span>.<span class="pl-c1">add_patch</span>(<span class="pl-s1">patch</span>)
+    <span class="pl-s1">direction</span> <span class="pl-c1">=</span> <span class="pl-c1">-</span><span class="pl-c1">1</span> <span class="pl-k">if</span> <span class="pl-s1">control_</span>[<span class="pl-c1">0</span>] <span class="pl-c1">&lt;</span> <span class="pl-s1">to_</span>[<span class="pl-c1">0</span>] <span class="pl-k">else</span> <span class="pl-c1">1</span>
+    <span class="pl-s1">mask_c</span> <span class="pl-c1">=</span> <span class="pl-s">'red'</span> <span class="pl-k">if</span> <span class="pl-s1">detail</span> <span class="pl-k">else</span> <span class="pl-s">'white'</span>
+    <span class="pl-s1">mask</span> <span class="pl-c1">=</span> <span class="pl-s1">patches</span>.<span class="pl-c1">FancyBboxPatch</span>(
+        (<span class="pl-s1">to_</span>[<span class="pl-c1">0</span>], <span class="pl-s1">to_</span>[<span class="pl-c1">1</span>] <span class="pl-c1">-</span> <span class="pl-s1">size</span> <span class="pl-c1">/</span> <span class="pl-c1">2</span>), <span class="pl-s1">direction</span> <span class="pl-c1">*</span> <span class="pl-s1">size</span>, <span class="pl-s1">size</span>, <span class="pl-s1">boxstyle</span><span class="pl-c1">=</span><span class="pl-s">"square, pad=0"</span>,
+        <span class="pl-s1">ec</span><span class="pl-c1">=</span><span class="pl-s1">mask_c</span>, <span class="pl-s1">fc</span><span class="pl-c1">=</span><span class="pl-s1">mask_c</span>, <span class="pl-s1">zorder</span><span class="pl-c1">=</span><span class="pl-c1">-</span><span class="pl-c1">1</span>, <span class="pl-s1">linewidth</span><span class="pl-c1">=</span><span class="pl-c1">1</span>)
+    <span class="pl-s1">de</span> <span class="pl-c1">=</span> <span class="pl-s1">math</span>.<span class="pl-c1">degrees</span>(<span class="pl-s1">math</span>.<span class="pl-c1">atan</span>((<span class="pl-s1">control_</span>[<span class="pl-c1">1</span>] <span class="pl-c1">-</span> <span class="pl-s1">to_</span>[<span class="pl-c1">1</span>]) <span class="pl-c1">/</span> (<span class="pl-s1">control_</span>[<span class="pl-c1">0</span>] <span class="pl-c1">-</span> <span class="pl-s1">to_</span>[<span class="pl-c1">0</span>])))
+    <span class="pl-s1">tf</span> <span class="pl-c1">=</span> <span class="pl-s1">transforms</span>.<span class="pl-c1">Affine2D</span>().<span class="pl-c1">rotate_deg_around</span>(<span class="pl-s1">to_</span>[<span class="pl-c1">0</span>], <span class="pl-s1">to_</span>[<span class="pl-c1">1</span>], <span class="pl-s1">de</span>) <span class="pl-c1">+</span> <span class="pl-s1">ax</span>.<span class="pl-c1">transData</span>
+    <span class="pl-s1">mask</span>.<span class="pl-c1">set_transform</span>(<span class="pl-s1">tf</span>)
+    <span class="pl-s1">ax</span>.<span class="pl-c1">add_patch</span>(<span class="pl-s1">mask</span>)
+    <span class="pl-s1">ax</span>.<span class="pl-c1">annotate</span>(<span class="pl-s">""</span>, <span class="pl-s1">to_</span>, <span class="pl-s1">xytext</span><span class="pl-c1">=</span><span class="pl-s1">control_</span>, <span class="pl-s1">arrowprops</span><span class="pl-c1">=</span><span class="pl-en">dict</span>(
+        <span class="pl-s1">linewidth</span><span class="pl-c1">=</span><span class="pl-c1">0</span>,
+        <span class="pl-s1">arrowstyle</span><span class="pl-c1">=</span><span class="pl-s">"-|&gt;, head_width=%f, head_length=%f"</span> <span class="pl-c1">%</span> (<span class="pl-s1">head_length</span> <span class="pl-c1">/</span> <span class="pl-c1">2</span>, <span class="pl-s1">head_length</span>),
+        <span class="pl-s1">shrinkA</span><span class="pl-c1">=</span><span class="pl-c1">0</span>, <span class="pl-s1">shrinkB</span><span class="pl-c1">=</span><span class="pl-c1">0</span>, <span class="pl-s1">facecolor</span><span class="pl-c1">=</span><span class="pl-s1">color</span>, <span class="pl-s1">linestyle</span><span class="pl-c1">=</span><span class="pl-s">"solid"</span>, <span class="pl-s1">mutation_scale</span><span class="pl-c1">=</span><span class="pl-c1">10</span>
+    ))
+    <span class="pl-k">if</span> <span class="pl-c1">not</span> <span class="pl-s1">detail</span>:
+        <span class="pl-k">return</span>
+    <span class="pl-s1">ax</span>.<span class="pl-c1">scatter</span>(<span class="pl-s1">control_</span>[<span class="pl-c1">0</span>], <span class="pl-s1">control_</span>[<span class="pl-c1">1</span>], <span class="pl-s1">c</span><span class="pl-c1">=</span><span class="pl-s1">color</span>, <span class="pl-s1">marker</span><span class="pl-c1">=</span><span class="pl-s">'x'</span>, <span class="pl-s1">s</span><span class="pl-c1">=</span><span class="pl-c1">12</span>, <span class="pl-s1">linewidths</span><span class="pl-c1">=</span><span class="pl-c1">0.8</span>)
+    <span class="pl-s1">ax</span>.<span class="pl-c1">scatter</span>(<span class="pl-s1">from_</span>[<span class="pl-c1">0</span>], <span class="pl-s1">from_</span>[<span class="pl-c1">1</span>], <span class="pl-s1">c</span><span class="pl-c1">=</span><span class="pl-s1">color</span>, <span class="pl-s1">marker</span><span class="pl-c1">=</span><span class="pl-s">'x'</span>, <span class="pl-s1">s</span><span class="pl-c1">=</span><span class="pl-c1">12</span>, <span class="pl-s1">linewidths</span><span class="pl-c1">=</span><span class="pl-c1">0.8</span>)
+    <span class="pl-s1">ax</span>.<span class="pl-c1">scatter</span>(<span class="pl-s1">to_</span>[<span class="pl-c1">0</span>], <span class="pl-s1">to_</span>[<span class="pl-c1">1</span>], <span class="pl-s1">c</span><span class="pl-c1">=</span><span class="pl-s1">color</span>, <span class="pl-s1">marker</span><span class="pl-c1">=</span><span class="pl-s">'x'</span>, <span class="pl-s1">s</span><span class="pl-c1">=</span><span class="pl-c1">12</span>, <span class="pl-s1">linewidths</span><span class="pl-c1">=</span><span class="pl-c1">0.8</span>)
+    <span class="pl-s1">ax</span>.<span class="pl-c1">plot</span>((<span class="pl-s1">control_</span>[<span class="pl-c1">0</span>], <span class="pl-s1">from_</span>[<span class="pl-c1">0</span>]), (<span class="pl-s1">control_</span>[<span class="pl-c1">1</span>], <span class="pl-s1">from_</span>[<span class="pl-c1">1</span>]), <span class="pl-s1">color</span><span class="pl-c1">=</span><span class="pl-s1">color</span>, <span class="pl-s1">linewidth</span><span class="pl-c1">=</span><span class="pl-c1">.5</span>, <span class="pl-s1">linestyle</span><span class="pl-c1">=</span><span class="pl-s">':'</span>)
+    <span class="pl-s1">ax</span>.<span class="pl-c1">plot</span>((<span class="pl-s1">control_</span>[<span class="pl-c1">0</span>], <span class="pl-s1">to_</span>[<span class="pl-c1">0</span>]), (<span class="pl-s1">control_</span>[<span class="pl-c1">1</span>], <span class="pl-s1">to_</span>[<span class="pl-c1">1</span>]), <span class="pl-s1">color</span><span class="pl-c1">=</span><span class="pl-s1">color</span>, <span class="pl-s1">linewidth</span><span class="pl-c1">=</span><span class="pl-c1">.5</span>, <span class="pl-s1">linestyle</span><span class="pl-c1">=</span><span class="pl-s">':'</span>)
+
+<span class="pl-k">def</span> <span class="pl-en">draw_eg</span>():
+    <span class="pl-s1">debug</span> <span class="pl-c1">=</span> <span class="pl-c1">False</span>
+    <span class="pl-en">add_arrow</span>((<span class="pl-c1">0.1</span>, <span class="pl-c1">0.1</span>), (<span class="pl-c1">1.5</span>, <span class="pl-c1">1.6</span>), <span class="pl-s1">rad</span><span class="pl-c1">=</span><span class="pl-c1">0.1</span>, <span class="pl-s1">color</span><span class="pl-c1">=</span><span class="pl-s1">colors</span>[<span class="pl-c1">1</span>], <span class="pl-s1">detail</span><span class="pl-c1">=</span><span class="pl-s1">debug</span>)
+    <span class="pl-en">add_arrow</span>((<span class="pl-c1">0.4</span>, <span class="pl-c1">1.7</span>), (<span class="pl-c1">1.4</span>, <span class="pl-c1">0.7</span>), <span class="pl-s1">rad</span><span class="pl-c1">=</span><span class="pl-c1">0.8</span>, <span class="pl-s1">color</span><span class="pl-c1">=</span><span class="pl-s1">colors</span>[<span class="pl-c1">2</span>], <span class="pl-s1">detail</span><span class="pl-c1">=</span><span class="pl-s1">debug</span>)
+    <span class="pl-en">add_arrow</span>((<span class="pl-c1">1.9</span>, <span class="pl-c1">1.9</span>), (<span class="pl-c1">1.2</span>, <span class="pl-c1">0.1</span>), <span class="pl-s1">rad</span><span class="pl-c1">=</span><span class="pl-c1">-</span><span class="pl-c1">0.2</span>, <span class="pl-s1">color</span><span class="pl-c1">=</span><span class="pl-s1">colors</span>[<span class="pl-c1">3</span>], <span class="pl-s1">detail</span><span class="pl-c1">=</span><span class="pl-s1">debug</span>)
+    <span class="pl-en">add_arrow</span>((<span class="pl-c1">1.7</span>, <span class="pl-c1">0.7</span>), (<span class="pl-c1">0.3</span>, <span class="pl-c1">1.8</span>), <span class="pl-s1">rad</span><span class="pl-c1">=</span><span class="pl-c1">0.5</span>, <span class="pl-s1">color</span><span class="pl-c1">=</span><span class="pl-s1">colors</span>[<span class="pl-c1">4</span>], <span class="pl-s1">detail</span><span class="pl-c1">=</span><span class="pl-s1">debug</span>)
+    <span class="pl-s1">plt</span>.<span class="pl-c1">savefig</span>(<span class="pl-s">'arrow_example%s.png'</span> <span class="pl-c1">%</span> (<span class="pl-s">'_detail'</span> <span class="pl-k">if</span> <span class="pl-s1">debug</span> <span class="pl-k">else</span> <span class="pl-s">''</span>), <span class="pl-s1">dpi</span><span class="pl-c1">=</span><span class="pl-c1">600</span>)
+
+<span class="pl-s1">fig</span>, <span class="pl-s1">ax</span> <span class="pl-c1">=</span> <span class="pl-s1">plt</span>.<span class="pl-c1">subplots</span>(<span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-s1">figsize</span><span class="pl-c1">=</span>(<span class="pl-c1">4</span>, <span class="pl-c1">4</span>))
+<span class="pl-s1">ax</span>.<span class="pl-c1">set_xlim</span>(<span class="pl-c1">0</span>, <span class="pl-c1">2</span>)
+<span class="pl-s1">ax</span>.<span class="pl-c1">set_ylim</span>(<span class="pl-c1">0</span>, <span class="pl-c1">2</span>)
+<span class="pl-s1">colors</span> <span class="pl-c1">=</span> [<span class="pl-s">'#515151'</span>, <span class="pl-s">'#CC9900'</span>, <span class="pl-s">'#B177DE'</span>, <span class="pl-s">'#37AD6B'</span>, <span class="pl-s">'#1A6FDF'</span>]
+<span class="pl-en">draw_eg</span>()</pre></div>
+<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/arrow_example_cat.png" width="800" height="400"/></p><br>
+;;;e;;;c</p>
+<h2>介绍</h2>
+<p>本文将介绍如何使用Matplotlib来绘制带箭头的非实曲线，就像下图一样：</p>
+<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/arrow_example.png" width="400" height="400"/></p></p>
+<p>Matplotlib内置的方法很丰富，但它却并未内置带箭头的非实曲线的方法，网络上也有一些相关讨论，但并未给出很好的解答。因此，我便对这种曲线的绘制方法进行了一番探究，试图画出没有缺陷的、完美的带箭头的非实曲线。</p>
+<h2>Matplotlib中提供的方法以及问题</h2>
+<p>在Matplotlib中，可以使用FancyArrowPatch来创建一个带箭头的曲线：</p>
+<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">import</span> <span class="pl-s1">matplotlib</span>.<span class="pl-s1">patches</span> <span class="pl-k">as</span> <span class="pl-s1">patches</span>
+<span class="pl-k">import</span> <span class="pl-s1">matplotlib</span>.<span class="pl-s1">pyplot</span> <span class="pl-k">as</span> <span class="pl-s1">plt</span>
+
+<span class="pl-s1">fig</span>, <span class="pl-s1">ax</span> <span class="pl-c1">=</span> <span class="pl-s1">plt</span>.<span class="pl-c1">subplots</span>(<span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-s1">figsize</span><span class="pl-c1">=</span>(<span class="pl-c1">4</span>, <span class="pl-c1">4</span>))
+<span class="pl-s1">ax</span>.<span class="pl-c1">set_xlim</span>(<span class="pl-c1">0</span>, <span class="pl-c1">2</span>)
+<span class="pl-s1">ax</span>.<span class="pl-c1">set_ylim</span>(<span class="pl-c1">0</span>, <span class="pl-c1">2</span>)
+<span class="pl-s1">ax</span>.<span class="pl-c1">add_patch</span>(<span class="pl-s1">patches</span>.<span class="pl-c1">FancyArrowPatch</span>(
+    <span class="pl-s1">posA</span><span class="pl-c1">=</span>(<span class="pl-c1">0.1</span>, <span class="pl-c1">0.1</span>), <span class="pl-s1">posB</span><span class="pl-c1">=</span>(<span class="pl-c1">1.8</span>, <span class="pl-c1">1.8</span>), <span class="pl-s1">arrowstyle</span><span class="pl-c1">=</span><span class="pl-s">'-|&gt;, head_width=4, head_length=8'</span>,
+    <span class="pl-s1">connectionstyle</span><span class="pl-c1">=</span><span class="pl-s">'arc3,rad=0.3'</span>, <span class="pl-s1">color</span><span class="pl-c1">=</span><span class="pl-s">'#515151'</span>, <span class="pl-s1">shrinkA</span><span class="pl-c1">=</span><span class="pl-c1">0</span>, <span class="pl-s1">shrinkB</span><span class="pl-c1">=</span><span class="pl-c1">0</span>
+))
+<span class="pl-s1">plt</span>.<span class="pl-c1">savefig</span>(<span class="pl-s">'arrow_common.png'</span>, <span class="pl-s1">dpi</span><span class="pl-c1">=</span><span class="pl-c1">600</span>)</pre></div>
+<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/arrow_common.png" width="400" height="400"/></p></p>
+<p>但是，若是想要让该曲线渲染为非实线，选择简单地改变该曲线的样式，则会出现问题：</p>
+<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-c"># ...</span>
+<span class="pl-s1">ax</span>.<span class="pl-c1">add_patch</span>(<span class="pl-s1">patches</span>.<span class="pl-c1">FancyArrowPatch</span>(
+  <span class="pl-c"># ...</span>
+  <span class="pl-s1">linestyle</span><span class="pl-c1">=</span><span class="pl-s">'--'</span>
+)
+<span class="pl-c"># ...</span></pre></div>
+<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/arrow_error.png" width="400" height="400"/></p></p>
+<p>可以看到，箭头处也被使用虚线进行了绘图。并且，通过这种方法来进行绘图，曲线弯曲的形状是界面相关而非坐标相关的，也就是说，当改变图表的x轴或y轴取值范围时，该曲线的弯曲，仍然会保持曲率在视觉上的一致性，这在某些情况下并不称得上是一个严谨的绘图方式。</p>
+<h2>方法</h2>
+<p>通过模仿带箭头的非实直线的绘制方法，可以将其视为两个部分：非实曲线以及实线箭头。</p>
+<h3>非实曲线</h3>
+<p>Matplotlib是使用了二次贝塞尔曲线实现的曲线绘制。通过查看源码，可以知道，通过给定的点A和B，对于弧度rad，通过下式能够确定控制点点C的坐标：</p>
+<p>$$
+x_C = \frac{x_A + x_B}{2} + rad · (y_B - y_A)
+$$
+$$
+y_C = \frac{y_A + y_B}{2} - rad · (x_B - x_A)
+$$</p>
+<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/arrow_arc3.png" width="400" height="400"/></p></p>
+<p>CA与曲线相切于点A，CB与曲线相切于点B。这样一来，便可以通过下方代码画出非实曲线：</p>
+<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">import</span> <span class="pl-s1">matplotlib</span>.<span class="pl-s1">patches</span> <span class="pl-k">as</span> <span class="pl-s1">patches</span>
+<span class="pl-k">import</span> <span class="pl-s1">matplotlib</span>.<span class="pl-s1">pyplot</span> <span class="pl-k">as</span> <span class="pl-s1">plt</span>
+<span class="pl-k">import</span> <span class="pl-s1">numpy</span> <span class="pl-k">as</span> <span class="pl-s1">np</span>
+
+<span class="pl-k">def</span> <span class="pl-en">draw_arc3</span>(<span class="pl-s1">from_</span>, <span class="pl-s1">to_</span>, <span class="pl-s1">rad</span>, <span class="pl-s1">detail</span><span class="pl-c1">=</span><span class="pl-c1">False</span>, <span class="pl-s1">color</span><span class="pl-c1">=</span><span class="pl-s">'#515151'</span>):
+    <span class="pl-s1">x1</span>, <span class="pl-s1">y1</span> <span class="pl-c1">=</span> <span class="pl-s1">np</span>.<span class="pl-c1">array</span>(<span class="pl-s1">from_</span>)
+    <span class="pl-s1">x2</span>, <span class="pl-s1">y2</span> <span class="pl-c1">=</span> <span class="pl-s1">np</span>.<span class="pl-c1">array</span>(<span class="pl-s1">to_</span>)
+    <span class="pl-s1">dx</span>, <span class="pl-s1">dy</span> <span class="pl-c1">=</span> <span class="pl-s1">x2</span> <span class="pl-c1">-</span> <span class="pl-s1">x1</span>, <span class="pl-s1">y2</span> <span class="pl-c1">-</span> <span class="pl-s1">y1</span>
+    <span class="pl-s1">x12</span>, <span class="pl-s1">y12</span> <span class="pl-c1">=</span> (<span class="pl-s1">x1</span> <span class="pl-c1">+</span> <span class="pl-s1">x2</span>) <span class="pl-c1">/</span> <span class="pl-c1">2.</span>, (<span class="pl-s1">y1</span> <span class="pl-c1">+</span> <span class="pl-s1">y2</span>) <span class="pl-c1">/</span> <span class="pl-c1">2.</span>
+    <span class="pl-s1">cx</span>, <span class="pl-s1">cy</span> <span class="pl-c1">=</span> <span class="pl-s1">x12</span> <span class="pl-c1">+</span> <span class="pl-s1">rad</span> <span class="pl-c1">*</span> <span class="pl-s1">dy</span>, <span class="pl-s1">y12</span> <span class="pl-c1">-</span> <span class="pl-s1">rad</span> <span class="pl-c1">*</span> <span class="pl-s1">dx</span>
+    <span class="pl-s1">control_</span> <span class="pl-c1">=</span> (<span class="pl-s1">cx</span>, <span class="pl-s1">cy</span>)
+    <span class="pl-s1">vertices</span> <span class="pl-c1">=</span> [<span class="pl-s1">from_</span>, <span class="pl-s1">control_</span>, <span class="pl-s1">to_</span>]
+    <span class="pl-s1">codes</span> <span class="pl-c1">=</span> [<span class="pl-s1">patches</span>.<span class="pl-c1">Path</span>.<span class="pl-c1">MOVETO</span>, <span class="pl-s1">patches</span>.<span class="pl-c1">Path</span>.<span class="pl-c1">CURVE3</span>, <span class="pl-s1">patches</span>.<span class="pl-c1">Path</span>.<span class="pl-c1">CURVE3</span>]
+    <span class="pl-s1">path</span> <span class="pl-c1">=</span> <span class="pl-s1">patches</span>.<span class="pl-c1">Path</span>(<span class="pl-s1">vertices</span>, <span class="pl-s1">codes</span>)
+    <span class="pl-s1">patch</span> <span class="pl-c1">=</span> <span class="pl-s1">patches</span>.<span class="pl-c1">PathPatch</span>(<span class="pl-s1">path</span>, <span class="pl-s1">facecolor</span><span class="pl-c1">=</span><span class="pl-s">'none'</span>, <span class="pl-s1">edgecolor</span><span class="pl-c1">=</span><span class="pl-s1">color</span>, <span class="pl-s1">linestyle</span><span class="pl-c1">=</span><span class="pl-s">'--'</span>, <span class="pl-s1">linewidth</span><span class="pl-c1">=</span><span class="pl-c1">1</span>)
+    <span class="pl-s1">ax</span>.<span class="pl-c1">add_patch</span>(<span class="pl-s1">patch</span>)
+    <span class="pl-k">if</span> <span class="pl-c1">not</span> <span class="pl-s1">detail</span>:
+        <span class="pl-k">return</span>
+    <span class="pl-s1">ax</span>.<span class="pl-c1">scatter</span>(<span class="pl-s1">control_</span>[<span class="pl-c1">0</span>], <span class="pl-s1">control_</span>[<span class="pl-c1">1</span>], <span class="pl-s1">c</span><span class="pl-c1">=</span><span class="pl-s1">color</span>, <span class="pl-s1">marker</span><span class="pl-c1">=</span><span class="pl-s">'x'</span>, <span class="pl-s1">s</span><span class="pl-c1">=</span><span class="pl-c1">12</span>, <span class="pl-s1">linewidths</span><span class="pl-c1">=</span><span class="pl-c1">0.8</span>)
+    <span class="pl-s1">ax</span>.<span class="pl-c1">scatter</span>(<span class="pl-s1">from_</span>[<span class="pl-c1">0</span>], <span class="pl-s1">from_</span>[<span class="pl-c1">1</span>], <span class="pl-s1">c</span><span class="pl-c1">=</span><span class="pl-s1">color</span>, <span class="pl-s1">marker</span><span class="pl-c1">=</span><span class="pl-s">'x'</span>, <span class="pl-s1">s</span><span class="pl-c1">=</span><span class="pl-c1">12</span>, <span class="pl-s1">linewidths</span><span class="pl-c1">=</span><span class="pl-c1">0.8</span>)
+    <span class="pl-s1">ax</span>.<span class="pl-c1">scatter</span>(<span class="pl-s1">to_</span>[<span class="pl-c1">0</span>], <span class="pl-s1">to_</span>[<span class="pl-c1">1</span>], <span class="pl-s1">c</span><span class="pl-c1">=</span><span class="pl-s1">color</span>, <span class="pl-s1">marker</span><span class="pl-c1">=</span><span class="pl-s">'x'</span>, <span class="pl-s1">s</span><span class="pl-c1">=</span><span class="pl-c1">12</span>, <span class="pl-s1">linewidths</span><span class="pl-c1">=</span><span class="pl-c1">0.8</span>)
+    <span class="pl-s1">ax</span>.<span class="pl-c1">plot</span>((<span class="pl-s1">control_</span>[<span class="pl-c1">0</span>], <span class="pl-s1">from_</span>[<span class="pl-c1">0</span>]), (<span class="pl-s1">control_</span>[<span class="pl-c1">1</span>], <span class="pl-s1">from_</span>[<span class="pl-c1">1</span>]), <span class="pl-s1">color</span><span class="pl-c1">=</span><span class="pl-s1">color</span>, <span class="pl-s1">linewidth</span><span class="pl-c1">=</span><span class="pl-c1">.5</span>, <span class="pl-s1">linestyle</span><span class="pl-c1">=</span><span class="pl-s">':'</span>)
+    <span class="pl-s1">ax</span>.<span class="pl-c1">plot</span>((<span class="pl-s1">control_</span>[<span class="pl-c1">0</span>], <span class="pl-s1">to_</span>[<span class="pl-c1">0</span>]), (<span class="pl-s1">control_</span>[<span class="pl-c1">1</span>], <span class="pl-s1">to_</span>[<span class="pl-c1">1</span>]), <span class="pl-s1">color</span><span class="pl-c1">=</span><span class="pl-s1">color</span>, <span class="pl-s1">linewidth</span><span class="pl-c1">=</span><span class="pl-c1">.5</span>, <span class="pl-s1">linestyle</span><span class="pl-c1">=</span><span class="pl-s">':'</span>)
+    <span class="pl-s1">ax</span>.<span class="pl-c1">annotate</span>(<span class="pl-s">r'$A$'</span>, <span class="pl-s1">from_</span>, <span class="pl-s1">ha</span><span class="pl-c1">=</span><span class="pl-s">'center'</span>, <span class="pl-s1">va</span><span class="pl-c1">=</span><span class="pl-s">'bottom'</span>)
+    <span class="pl-s1">ax</span>.<span class="pl-c1">annotate</span>(<span class="pl-s">r'$B$'</span>, <span class="pl-s1">to_</span>, <span class="pl-s1">ha</span><span class="pl-c1">=</span><span class="pl-s">'center'</span>, <span class="pl-s1">va</span><span class="pl-c1">=</span><span class="pl-s">'bottom'</span>)
+    <span class="pl-s1">ax</span>.<span class="pl-c1">annotate</span>(<span class="pl-s">r'$C$'</span>, <span class="pl-s1">control_</span>, <span class="pl-s1">ha</span><span class="pl-c1">=</span><span class="pl-s">'right'</span>, <span class="pl-s1">va</span><span class="pl-c1">=</span><span class="pl-s">'bottom'</span>)
+
+<span class="pl-s1">fig</span>, <span class="pl-s1">ax</span> <span class="pl-c1">=</span> <span class="pl-s1">plt</span>.<span class="pl-c1">subplots</span>(<span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-s1">figsize</span><span class="pl-c1">=</span>(<span class="pl-c1">4</span>, <span class="pl-c1">4</span>))
+<span class="pl-s1">ax</span>.<span class="pl-c1">set_xlim</span>(<span class="pl-c1">0</span>, <span class="pl-c1">2</span>)
+<span class="pl-s1">ax</span>.<span class="pl-c1">set_ylim</span>(<span class="pl-c1">0</span>, <span class="pl-c1">2</span>)
+<span class="pl-en">draw_arc3</span>((<span class="pl-c1">0.1</span>, <span class="pl-c1">0.1</span>), (<span class="pl-c1">1.8</span>, <span class="pl-c1">1.8</span>), <span class="pl-c1">0.3</span>)
+<span class="pl-s1">plt</span>.<span class="pl-c1">savefig</span>(<span class="pl-s">'arrow_arc3_dot.png'</span>, <span class="pl-s1">dpi</span><span class="pl-c1">=</span><span class="pl-c1">600</span>)</pre></div>
+<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/arrow_arc3_dot.png" width="400" height="400"/></p></p>
+<h3>实线箭头</h3>
+<p>已经有了控制点点C和目标终点点B，画出一个实线箭头并不是一个难事，通过下面的代码很容易便可画出一个满足需求的箭头：</p>
+<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-c"># ...</span>
+<span class="pl-s1">ax</span>.<span class="pl-c1">annotate</span>(<span class="pl-s">""</span>, <span class="pl-s1">to_</span>, <span class="pl-s1">xytext</span><span class="pl-c1">=</span><span class="pl-s1">control_</span>, <span class="pl-s1">arrowprops</span><span class="pl-c1">=</span><span class="pl-en">dict</span>(
+    <span class="pl-s1">linewidth</span><span class="pl-c1">=</span><span class="pl-c1">0</span>, <span class="pl-s1">arrowstyle</span><span class="pl-c1">=</span><span class="pl-s">"-|&gt;, head_width=0.3, head_length=0.6"</span>,
+    <span class="pl-s1">shrinkA</span><span class="pl-c1">=</span><span class="pl-c1">0</span>, <span class="pl-s1">shrinkB</span><span class="pl-c1">=</span><span class="pl-c1">0</span>, <span class="pl-s1">facecolor</span><span class="pl-c1">=</span><span class="pl-s1">color</span>, <span class="pl-s1">linestyle</span><span class="pl-c1">=</span><span class="pl-s">"solid"</span>, <span class="pl-s1">mutation_scale</span><span class="pl-c1">=</span><span class="pl-c1">10</span>
+))
+<span class="pl-c"># ...</span></pre></div>
+<p>但是，通过细看，仍然发现这存在着问题：如下图所示，箭头最前端的宽度小于曲线的宽度，会导致视觉上的不美观。<br>
+<p align="center"><img srcset="https://OmnisyR.github.io/figs/arrow_arc3_arrow_error.png" width="400" height="400"/></p></p>
+<p>对此，可以考虑在曲线和箭头中间，放置一个蒙版来遮住多余的曲线部分：<br>
+<p align="center"><img srcset="https://OmnisyR.github.io/figs/arrow_arc3_arrow_mask.png" width="400" height="400"/></p></p>
+<p>对于蒙版摆放的位置，可通过一个简单的算法来实现：</p>
+<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-c"># ...</span>
+<span class="pl-c"># 将非实曲线置于-2图层</span>
+<span class="pl-s1">patch</span> <span class="pl-c1">=</span> <span class="pl-s1">patches</span>.<span class="pl-c1">PathPatch</span>(<span class="pl-c"># ...</span>
+      <span class="pl-s1">zorder</span><span class="pl-c1">=</span><span class="pl-c1">-</span><span class="pl-c1">2</span>)
+<span class="pl-c"># ...</span>
+<span class="pl-s1">size</span> <span class="pl-c1">=</span> <span class="pl-c1">0.08</span>
+<span class="pl-s1">direction</span> <span class="pl-c1">=</span> <span class="pl-c1">-</span><span class="pl-c1">1</span> <span class="pl-k">if</span> <span class="pl-s1">control_</span>[<span class="pl-c1">0</span>] <span class="pl-c1">&lt;</span> <span class="pl-s1">to_</span>[<span class="pl-c1">0</span>] <span class="pl-k">else</span> <span class="pl-c1">1</span>
+<span class="pl-s1">mask</span> <span class="pl-c1">=</span> <span class="pl-s1">patches</span>.<span class="pl-c1">FancyBboxPatch</span>(
+     (<span class="pl-s1">to_</span>[<span class="pl-c1">0</span>], <span class="pl-s1">to_</span>[<span class="pl-c1">1</span>] <span class="pl-c1">-</span> <span class="pl-s1">size</span> <span class="pl-c1">/</span> <span class="pl-c1">2</span>), <span class="pl-s1">direction</span> <span class="pl-c1">*</span> <span class="pl-s1">size</span>, <span class="pl-s1">size</span>, <span class="pl-s1">boxstyle</span><span class="pl-c1">=</span><span class="pl-s">"square, pad=0"</span>,
+     <span class="pl-s1">ec</span><span class="pl-c1">=</span><span class="pl-s">'red'</span>, <span class="pl-s1">fc</span><span class="pl-c1">=</span><span class="pl-s">'red'</span>, <span class="pl-s1">linewidth</span><span class="pl-c1">=</span><span class="pl-c1">1</span>, <span class="pl-s1">zorder</span><span class="pl-c1">=</span><span class="pl-c1">-</span><span class="pl-c1">1</span>
+)
+<span class="pl-s1">de</span> <span class="pl-c1">=</span> <span class="pl-s1">math</span>.<span class="pl-c1">degrees</span>(<span class="pl-s1">math</span>.<span class="pl-c1">atan</span>((<span class="pl-s1">control_</span>[<span class="pl-c1">1</span>] <span class="pl-c1">-</span> <span class="pl-s1">to_</span>[<span class="pl-c1">1</span>]) <span class="pl-c1">/</span> (<span class="pl-s1">control_</span>[<span class="pl-c1">0</span>] <span class="pl-c1">-</span> <span class="pl-s1">to_</span>[<span class="pl-c1">0</span>])))
+<span class="pl-s1">tf</span> <span class="pl-c1">=</span> <span class="pl-s1">transforms</span>.<span class="pl-c1">Affine2D</span>().<span class="pl-c1">rotate_deg_around</span>(<span class="pl-s1">to_</span>[<span class="pl-c1">0</span>], <span class="pl-s1">to_</span>[<span class="pl-c1">1</span>], <span class="pl-s1">de</span>) <span class="pl-c1">+</span> <span class="pl-s1">ax</span>.<span class="pl-c1">transData</span>
+<span class="pl-s1">cut</span>.<span class="pl-c1">set_transform</span>(<span class="pl-s1">tf</span>)
+<span class="pl-s1">ax</span>.<span class="pl-c1">add_patch</span>(<span class="pl-s1">cut</span>)
+<span class="pl-c"># ...</span></pre></div>
+<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/arrow_direction.png" width="400" height="400"/></p><br>
+这样一来，便可准确无误地放置蒙版，图中中间位置为点B，即目标终点，四周为各个可能的控制点方向。</p>
+<h3>带箭头的非实曲线</h3>
+<p>最终，将这两个部分进行整合，并且给定一些参数以进行控制，便可完成带箭头的非实曲线的绘制。</p>
+<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">import</span> <span class="pl-s1">math</span>
+
+<span class="pl-k">import</span> <span class="pl-s1">matplotlib</span>.<span class="pl-s1">patches</span> <span class="pl-k">as</span> <span class="pl-s1">patches</span>
+<span class="pl-k">import</span> <span class="pl-s1">matplotlib</span>.<span class="pl-s1">pyplot</span> <span class="pl-k">as</span> <span class="pl-s1">plt</span>
+<span class="pl-k">import</span> <span class="pl-s1">matplotlib</span>.<span class="pl-s1">transforms</span> <span class="pl-k">as</span> <span class="pl-s1">transforms</span>
+<span class="pl-k">import</span> <span class="pl-s1">numpy</span> <span class="pl-k">as</span> <span class="pl-s1">np</span>
+
+<span class="pl-k">def</span> <span class="pl-en">add_arrow</span>(<span class="pl-s1">from_</span>, <span class="pl-s1">to_</span>, <span class="pl-s1">rad</span><span class="pl-c1">=</span><span class="pl-c1">0.3</span>, <span class="pl-s1">control_</span><span class="pl-c1">=</span><span class="pl-c1">None</span>, <span class="pl-s1">color</span><span class="pl-c1">=</span><span class="pl-s">'#515151'</span>, <span class="pl-s1">line</span><span class="pl-c1">=</span><span class="pl-s">'--'</span>, <span class="pl-s1">head_length</span><span class="pl-c1">=</span><span class="pl-c1">0.6</span>, <span class="pl-s1">size</span><span class="pl-c1">=</span><span class="pl-c1">0.04</span>, <span class="pl-s1">detail</span><span class="pl-c1">=</span><span class="pl-c1">False</span>):
+    <span class="pl-s">"""</span>
+<span class="pl-s">    :param from_:起始点</span>
+<span class="pl-s">    :param to_:目标终点</span>
+<span class="pl-s">    :param rad:曲线弧度</span>
+<span class="pl-s">    :param control_:控制点，若为None，则由曲线弧度来进行计算</span>
+<span class="pl-s">    :param color:绘制颜色</span>
+<span class="pl-s">    :param line:曲线样式</span>
+<span class="pl-s">    :param head_length:箭头大小</span>
+<span class="pl-s">    :param size:蒙版大小</span>
+<span class="pl-s">    :param detail:选择是否绘制详细，通过绘制详细来手动调整蒙版大小</span>
+<span class="pl-s">    """</span>
+    <span class="pl-k">if</span> <span class="pl-s1">control_</span> <span class="pl-c1">is</span> <span class="pl-c1">None</span>:
+        <span class="pl-s1">x1</span>, <span class="pl-s1">y1</span> <span class="pl-c1">=</span> <span class="pl-s1">np</span>.<span class="pl-c1">array</span>(<span class="pl-s1">from_</span>)
+        <span class="pl-s1">x2</span>, <span class="pl-s1">y2</span> <span class="pl-c1">=</span> <span class="pl-s1">np</span>.<span class="pl-c1">array</span>(<span class="pl-s1">to_</span>)
+        <span class="pl-s1">dx</span>, <span class="pl-s1">dy</span> <span class="pl-c1">=</span> <span class="pl-s1">x2</span> <span class="pl-c1">-</span> <span class="pl-s1">x1</span>, <span class="pl-s1">y2</span> <span class="pl-c1">-</span> <span class="pl-s1">y1</span>
+        <span class="pl-s1">x12</span>, <span class="pl-s1">y12</span> <span class="pl-c1">=</span> (<span class="pl-s1">x1</span> <span class="pl-c1">+</span> <span class="pl-s1">x2</span>) <span class="pl-c1">/</span> <span class="pl-c1">2.</span>, (<span class="pl-s1">y1</span> <span class="pl-c1">+</span> <span class="pl-s1">y2</span>) <span class="pl-c1">/</span> <span class="pl-c1">2.</span>
+        <span class="pl-s1">cx</span>, <span class="pl-s1">cy</span> <span class="pl-c1">=</span> <span class="pl-s1">x12</span> <span class="pl-c1">+</span> <span class="pl-s1">rad</span> <span class="pl-c1">*</span> <span class="pl-s1">dy</span>, <span class="pl-s1">y12</span> <span class="pl-c1">-</span> <span class="pl-s1">rad</span> <span class="pl-c1">*</span> <span class="pl-s1">dx</span>
+        <span class="pl-s1">control_</span> <span class="pl-c1">=</span> (<span class="pl-s1">cx</span>, <span class="pl-s1">cy</span>)
+    <span class="pl-s1">vertices</span> <span class="pl-c1">=</span> [<span class="pl-s1">from_</span>, <span class="pl-s1">control_</span>, <span class="pl-s1">to_</span>]
+    <span class="pl-s1">codes</span> <span class="pl-c1">=</span> [<span class="pl-s1">patches</span>.<span class="pl-c1">Path</span>.<span class="pl-c1">MOVETO</span>, <span class="pl-s1">patches</span>.<span class="pl-c1">Path</span>.<span class="pl-c1">CURVE3</span>, <span class="pl-s1">patches</span>.<span class="pl-c1">Path</span>.<span class="pl-c1">CURVE3</span>]
+    <span class="pl-s1">path</span> <span class="pl-c1">=</span> <span class="pl-s1">patches</span>.<span class="pl-c1">Path</span>(<span class="pl-s1">vertices</span>, <span class="pl-s1">codes</span>)
+    <span class="pl-s1">patch</span> <span class="pl-c1">=</span> <span class="pl-s1">patches</span>.<span class="pl-c1">PathPatch</span>(<span class="pl-s1">path</span>, <span class="pl-s1">facecolor</span><span class="pl-c1">=</span><span class="pl-s">'none'</span>, <span class="pl-s1">edgecolor</span><span class="pl-c1">=</span><span class="pl-s1">color</span>, <span class="pl-s1">linestyle</span><span class="pl-c1">=</span><span class="pl-s1">line</span>, <span class="pl-s1">linewidth</span><span class="pl-c1">=</span><span class="pl-c1">1</span>, <span class="pl-s1">zorder</span><span class="pl-c1">=</span><span class="pl-c1">-</span><span class="pl-c1">2</span>)
+    <span class="pl-s1">ax</span>.<span class="pl-c1">add_patch</span>(<span class="pl-s1">patch</span>)
+    <span class="pl-s1">direction</span> <span class="pl-c1">=</span> <span class="pl-c1">-</span><span class="pl-c1">1</span> <span class="pl-k">if</span> <span class="pl-s1">control_</span>[<span class="pl-c1">0</span>] <span class="pl-c1">&lt;</span> <span class="pl-s1">to_</span>[<span class="pl-c1">0</span>] <span class="pl-k">else</span> <span class="pl-c1">1</span>
+    <span class="pl-s1">mask_c</span> <span class="pl-c1">=</span> <span class="pl-s">'red'</span> <span class="pl-k">if</span> <span class="pl-s1">detail</span> <span class="pl-k">else</span> <span class="pl-s">'white'</span>
+    <span class="pl-s1">mask</span> <span class="pl-c1">=</span> <span class="pl-s1">patches</span>.<span class="pl-c1">FancyBboxPatch</span>(
+        (<span class="pl-s1">to_</span>[<span class="pl-c1">0</span>], <span class="pl-s1">to_</span>[<span class="pl-c1">1</span>] <span class="pl-c1">-</span> <span class="pl-s1">size</span> <span class="pl-c1">/</span> <span class="pl-c1">2</span>), <span class="pl-s1">direction</span> <span class="pl-c1">*</span> <span class="pl-s1">size</span>, <span class="pl-s1">size</span>, <span class="pl-s1">boxstyle</span><span class="pl-c1">=</span><span class="pl-s">"square, pad=0"</span>,
+        <span class="pl-s1">ec</span><span class="pl-c1">=</span><span class="pl-s1">mask_c</span>, <span class="pl-s1">fc</span><span class="pl-c1">=</span><span class="pl-s1">mask_c</span>, <span class="pl-s1">zorder</span><span class="pl-c1">=</span><span class="pl-c1">-</span><span class="pl-c1">1</span>, <span class="pl-s1">linewidth</span><span class="pl-c1">=</span><span class="pl-c1">1</span>)
+    <span class="pl-s1">de</span> <span class="pl-c1">=</span> <span class="pl-s1">math</span>.<span class="pl-c1">degrees</span>(<span class="pl-s1">math</span>.<span class="pl-c1">atan</span>((<span class="pl-s1">control_</span>[<span class="pl-c1">1</span>] <span class="pl-c1">-</span> <span class="pl-s1">to_</span>[<span class="pl-c1">1</span>]) <span class="pl-c1">/</span> (<span class="pl-s1">control_</span>[<span class="pl-c1">0</span>] <span class="pl-c1">-</span> <span class="pl-s1">to_</span>[<span class="pl-c1">0</span>])))
+    <span class="pl-s1">tf</span> <span class="pl-c1">=</span> <span class="pl-s1">transforms</span>.<span class="pl-c1">Affine2D</span>().<span class="pl-c1">rotate_deg_around</span>(<span class="pl-s1">to_</span>[<span class="pl-c1">0</span>], <span class="pl-s1">to_</span>[<span class="pl-c1">1</span>], <span class="pl-s1">de</span>) <span class="pl-c1">+</span> <span class="pl-s1">ax</span>.<span class="pl-c1">transData</span>
+    <span class="pl-s1">mask</span>.<span class="pl-c1">set_transform</span>(<span class="pl-s1">tf</span>)
+    <span class="pl-s1">ax</span>.<span class="pl-c1">add_patch</span>(<span class="pl-s1">mask</span>)
+    <span class="pl-s1">ax</span>.<span class="pl-c1">annotate</span>(<span class="pl-s">""</span>, <span class="pl-s1">to_</span>, <span class="pl-s1">xytext</span><span class="pl-c1">=</span><span class="pl-s1">control_</span>, <span class="pl-s1">arrowprops</span><span class="pl-c1">=</span><span class="pl-en">dict</span>(
+        <span class="pl-s1">linewidth</span><span class="pl-c1">=</span><span class="pl-c1">0</span>,
+        <span class="pl-s1">arrowstyle</span><span class="pl-c1">=</span><span class="pl-s">"-|&gt;, head_width=%f, head_length=%f"</span> <span class="pl-c1">%</span> (<span class="pl-s1">head_length</span> <span class="pl-c1">/</span> <span class="pl-c1">2</span>, <span class="pl-s1">head_length</span>),
+        <span class="pl-s1">shrinkA</span><span class="pl-c1">=</span><span class="pl-c1">0</span>, <span class="pl-s1">shrinkB</span><span class="pl-c1">=</span><span class="pl-c1">0</span>, <span class="pl-s1">facecolor</span><span class="pl-c1">=</span><span class="pl-s1">color</span>, <span class="pl-s1">linestyle</span><span class="pl-c1">=</span><span class="pl-s">"solid"</span>, <span class="pl-s1">mutation_scale</span><span class="pl-c1">=</span><span class="pl-c1">10</span>
+    ))
+    <span class="pl-k">if</span> <span class="pl-c1">not</span> <span class="pl-s1">detail</span>:
+        <span class="pl-k">return</span>
+    <span class="pl-s1">ax</span>.<span class="pl-c1">scatter</span>(<span class="pl-s1">control_</span>[<span class="pl-c1">0</span>], <span class="pl-s1">control_</span>[<span class="pl-c1">1</span>], <span class="pl-s1">c</span><span class="pl-c1">=</span><span class="pl-s1">color</span>, <span class="pl-s1">marker</span><span class="pl-c1">=</span><span class="pl-s">'x'</span>, <span class="pl-s1">s</span><span class="pl-c1">=</span><span class="pl-c1">12</span>, <span class="pl-s1">linewidths</span><span class="pl-c1">=</span><span class="pl-c1">0.8</span>)
+    <span class="pl-s1">ax</span>.<span class="pl-c1">scatter</span>(<span class="pl-s1">from_</span>[<span class="pl-c1">0</span>], <span class="pl-s1">from_</span>[<span class="pl-c1">1</span>], <span class="pl-s1">c</span><span class="pl-c1">=</span><span class="pl-s1">color</span>, <span class="pl-s1">marker</span><span class="pl-c1">=</span><span class="pl-s">'x'</span>, <span class="pl-s1">s</span><span class="pl-c1">=</span><span class="pl-c1">12</span>, <span class="pl-s1">linewidths</span><span class="pl-c1">=</span><span class="pl-c1">0.8</span>)
+    <span class="pl-s1">ax</span>.<span class="pl-c1">scatter</span>(<span class="pl-s1">to_</span>[<span class="pl-c1">0</span>], <span class="pl-s1">to_</span>[<span class="pl-c1">1</span>], <span class="pl-s1">c</span><span class="pl-c1">=</span><span class="pl-s1">color</span>, <span class="pl-s1">marker</span><span class="pl-c1">=</span><span class="pl-s">'x'</span>, <span class="pl-s1">s</span><span class="pl-c1">=</span><span class="pl-c1">12</span>, <span class="pl-s1">linewidths</span><span class="pl-c1">=</span><span class="pl-c1">0.8</span>)
+    <span class="pl-s1">ax</span>.<span class="pl-c1">plot</span>((<span class="pl-s1">control_</span>[<span class="pl-c1">0</span>], <span class="pl-s1">from_</span>[<span class="pl-c1">0</span>]), (<span class="pl-s1">control_</span>[<span class="pl-c1">1</span>], <span class="pl-s1">from_</span>[<span class="pl-c1">1</span>]), <span class="pl-s1">color</span><span class="pl-c1">=</span><span class="pl-s1">color</span>, <span class="pl-s1">linewidth</span><span class="pl-c1">=</span><span class="pl-c1">.5</span>, <span class="pl-s1">linestyle</span><span class="pl-c1">=</span><span class="pl-s">':'</span>)
+    <span class="pl-s1">ax</span>.<span class="pl-c1">plot</span>((<span class="pl-s1">control_</span>[<span class="pl-c1">0</span>], <span class="pl-s1">to_</span>[<span class="pl-c1">0</span>]), (<span class="pl-s1">control_</span>[<span class="pl-c1">1</span>], <span class="pl-s1">to_</span>[<span class="pl-c1">1</span>]), <span class="pl-s1">color</span><span class="pl-c1">=</span><span class="pl-s1">color</span>, <span class="pl-s1">linewidth</span><span class="pl-c1">=</span><span class="pl-c1">.5</span>, <span class="pl-s1">linestyle</span><span class="pl-c1">=</span><span class="pl-s">':'</span>)
+
+<span class="pl-k">def</span> <span class="pl-en">draw_eg</span>():
+    <span class="pl-s1">debug</span> <span class="pl-c1">=</span> <span class="pl-c1">False</span>
+    <span class="pl-en">add_arrow</span>((<span class="pl-c1">0.1</span>, <span class="pl-c1">0.1</span>), (<span class="pl-c1">1.5</span>, <span class="pl-c1">1.6</span>), <span class="pl-s1">rad</span><span class="pl-c1">=</span><span class="pl-c1">0.1</span>, <span class="pl-s1">color</span><span class="pl-c1">=</span><span class="pl-s1">colors</span>[<span class="pl-c1">1</span>], <span class="pl-s1">detail</span><span class="pl-c1">=</span><span class="pl-s1">debug</span>)
+    <span class="pl-en">add_arrow</span>((<span class="pl-c1">0.4</span>, <span class="pl-c1">1.7</span>), (<span class="pl-c1">1.4</span>, <span class="pl-c1">0.7</span>), <span class="pl-s1">rad</span><span class="pl-c1">=</span><span class="pl-c1">0.8</span>, <span class="pl-s1">color</span><span class="pl-c1">=</span><span class="pl-s1">colors</span>[<span class="pl-c1">2</span>], <span class="pl-s1">detail</span><span class="pl-c1">=</span><span class="pl-s1">debug</span>)
+    <span class="pl-en">add_arrow</span>((<span class="pl-c1">1.9</span>, <span class="pl-c1">1.9</span>), (<span class="pl-c1">1.2</span>, <span class="pl-c1">0.1</span>), <span class="pl-s1">rad</span><span class="pl-c1">=</span><span class="pl-c1">-</span><span class="pl-c1">0.2</span>, <span class="pl-s1">color</span><span class="pl-c1">=</span><span class="pl-s1">colors</span>[<span class="pl-c1">3</span>], <span class="pl-s1">detail</span><span class="pl-c1">=</span><span class="pl-s1">debug</span>)
+    <span class="pl-en">add_arrow</span>((<span class="pl-c1">1.7</span>, <span class="pl-c1">0.7</span>), (<span class="pl-c1">0.3</span>, <span class="pl-c1">1.8</span>), <span class="pl-s1">rad</span><span class="pl-c1">=</span><span class="pl-c1">0.5</span>, <span class="pl-s1">color</span><span class="pl-c1">=</span><span class="pl-s1">colors</span>[<span class="pl-c1">4</span>], <span class="pl-s1">detail</span><span class="pl-c1">=</span><span class="pl-s1">debug</span>)
+    <span class="pl-s1">plt</span>.<span class="pl-c1">savefig</span>(<span class="pl-s">'arrow_example%s.png'</span> <span class="pl-c1">%</span> (<span class="pl-s">'_detail'</span> <span class="pl-k">if</span> <span class="pl-s1">debug</span> <span class="pl-k">else</span> <span class="pl-s">''</span>), <span class="pl-s1">dpi</span><span class="pl-c1">=</span><span class="pl-c1">600</span>)
+
+<span class="pl-s1">fig</span>, <span class="pl-s1">ax</span> <span class="pl-c1">=</span> <span class="pl-s1">plt</span>.<span class="pl-c1">subplots</span>(<span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-s1">figsize</span><span class="pl-c1">=</span>(<span class="pl-c1">4</span>, <span class="pl-c1">4</span>))
+<span class="pl-s1">ax</span>.<span class="pl-c1">set_xlim</span>(<span class="pl-c1">0</span>, <span class="pl-c1">2</span>)
+<span class="pl-s1">ax</span>.<span class="pl-c1">set_ylim</span>(<span class="pl-c1">0</span>, <span class="pl-c1">2</span>)
+<span class="pl-s1">colors</span> <span class="pl-c1">=</span> [<span class="pl-s">'#515151'</span>, <span class="pl-s">'#CC9900'</span>, <span class="pl-s">'#B177DE'</span>, <span class="pl-s">'#37AD6B'</span>, <span class="pl-s">'#1A6FDF'</span>]
+<span class="pl-en">draw_eg</span>()</pre></div>
+<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/arrow_example_cat.png" width="800" height="400"/></p>;;;c</p></div>
+<div style="font-size:small;margin-top:8px;float:right;">转载文章请注明出处</div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://OmnisyR.github.io">OmnisyR's Blog</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if("07/23/2025"!=""){
+    var startSite=new Date("07/23/2025");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行"+diffDay+"天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek main https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.disabled=true;
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","OmnisyR/OmnisyR.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const createClipboardHTML = (codeContent, additionalClasses = '') => `
+        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
+        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
+            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
+                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
+                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
+            </clipboard-copy>
+            <div class="copy-feedback">Copied!</div>
+        </div>
+    `;
+
+    const handleCodeElements = (selector = '') => {
+        document.querySelectorAll(selector).forEach(codeElement => {
+            const codeContent = codeElement.innerHTML;
+            const newStructure = document.createElement('div');
+            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
+            newStructure.innerHTML = createClipboardHTML(codeContent);
+
+            const parentElement = codeElement.parentElement;
+            if (selector.includes('highlight')) {
+                parentElement.insertBefore(newStructure, codeElement.nextSibling);
+                parentElement.removeChild(codeElement);
+            } else {
+                parentElement.parentElement.replaceChild(newStructure, parentElement);
+            }
+        });
+    };
+
+    handleCodeElements('pre.notranslate > code.notranslate');
+    handleCodeElements('div.highlight > pre.notranslate');
+
+    let currentFeedback = null;
+    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
+        copyButton.addEventListener('click', () => {
+            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = codeContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const copyIcon = copyButton.querySelector('.octicon-copy');
+            const checkIcon = copyButton.querySelector('.octicon-check');
+            const copyFeedback = copyButton.nextElementSibling;
+
+            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
+            currentFeedback = copyFeedback;
+
+            copyIcon.classList.add('d-none');
+            checkIcon.classList.remove('d-none');
+            copyFeedback.style.display = 'block';
+            copyButton.style.borderColor = 'var(--color-success-fg)';
+
+            setTimeout(() => {
+                copyIcon.classList.remove('d-none');
+                checkIcon.classList.add('d-none');
+                copyFeedback.style.display = 'none';
+                copyButton.style.borderColor = '';
+            }, 2000);
+        });
+    });
+});
+
+</script>
+<script>MathJax = {tex: {inlineMath: [["$", "$"]]}};</script><script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</html>
