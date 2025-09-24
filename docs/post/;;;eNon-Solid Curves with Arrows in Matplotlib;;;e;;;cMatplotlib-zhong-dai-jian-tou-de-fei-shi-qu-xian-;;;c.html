@@ -10,10 +10,10 @@
         let theme = localStorage.getItem("meek_theme") || "light";
         document.documentElement.setAttribute("data-color-mode", theme);
     </script>
-<meta name="description" content=";;;a
-;;;;;;;eNote::note;;;e;;;c注释::注释;;;c;;;;
+<meta name="description" content="<!-- ##{'script':'<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>'}## -->
 ;;;a
-;;;e
+;;;;;;;eNote::note;;;e;;;c注释::注释;;;c;;;;
+;;;a;;;e
 ## Introduction
 This article will explain how to use Matplotlib to plot non-solid curves with arrows, as shown in the figure below:
 
@@ -153,17 +153,20 @@ import matplotlib.pyplot as plt
 import matplotlib.transforms as transforms
 import numpy as np
 
-def add_arrow(from_, to_, rad=0.3, control_=None, color='#515151', line='--', head_length=0.6, size=0.04, detail=False):
+def add_arrow(from_, to_, rad=0.3, control_=None, color='#515151',
+              line='--', head_length=0.6, size=0.04, detail=False):
     '''
     :param from_:Starting point
     :param to_:Target endpoint
     :param rad:Curve radius
-    :param control_:Control points; if None, calculated based on the curvature of the curve.
+    :param control_:Control points;
+                    if None, calculated based on the curvature of the curve.
     :param color:Drawing colors
     :param line:Curve Style
     :param head_length:Arrow size
     :param size:Mask Size
-    :param detail:Select whether to draw details, and manually adjust the mask size by drawing details.
+    :param detail:Select whether to draw details,
+                  and manually adjust the mask size by drawing details.
     '''
     if control_ is None:
         x1, y1 = np.array(from_)
@@ -175,7 +178,8 @@ def add_arrow(from_, to_, rad=0.3, control_=None, color='#515151', line='--', he
     vertices = [from_, control_, to_]
     codes = [patches.Path.MOVETO, patches.Path.CURVE3, patches.Path.CURVE3]
     path = patches.Path(vertices, codes)
-    patch = patches.PathPatch(path, facecolor='none', edgecolor=color, linestyle=line, linewidth=1, zorder=-2)
+    patch = patches.PathPatch(path, facecolor='none', edgecolor=color,
+                              linestyle=line, linewidth=1, zorder=-2)
     ax.add_patch(patch)
     direction = -1 if control_[0] < to_[0] else 1
     mask_c = 'red' if detail else 'white'
@@ -222,10 +226,10 @@ draw_eg()
 
 Matplotlib内置的方法很丰富，但它却并未内置带箭头的非实曲线的方法，网络上也有一些相关讨论，但并未给出很好的解答。">
 <meta property="og:title" content=";;;eNon-Solid Curves with Arrows in Matplotlib;;;e;;;cMatplotlib中带箭头的非实曲线;;;c">
-<meta property="og:description" content=";;;a
-;;;;;;;eNote::note;;;e;;;c注释::注释;;;c;;;;
+<meta property="og:description" content="<!-- ##{'script':'<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>'}## -->
 ;;;a
-;;;e
+;;;;;;;eNote::note;;;e;;;c注释::注释;;;c;;;;
+;;;a;;;e
 ## Introduction
 This article will explain how to use Matplotlib to plot non-solid curves with arrows, as shown in the figure below:
 
@@ -365,17 +369,20 @@ import matplotlib.pyplot as plt
 import matplotlib.transforms as transforms
 import numpy as np
 
-def add_arrow(from_, to_, rad=0.3, control_=None, color='#515151', line='--', head_length=0.6, size=0.04, detail=False):
+def add_arrow(from_, to_, rad=0.3, control_=None, color='#515151',
+              line='--', head_length=0.6, size=0.04, detail=False):
     '''
     :param from_:Starting point
     :param to_:Target endpoint
     :param rad:Curve radius
-    :param control_:Control points; if None, calculated based on the curvature of the curve.
+    :param control_:Control points;
+                    if None, calculated based on the curvature of the curve.
     :param color:Drawing colors
     :param line:Curve Style
     :param head_length:Arrow size
     :param size:Mask Size
-    :param detail:Select whether to draw details, and manually adjust the mask size by drawing details.
+    :param detail:Select whether to draw details,
+                  and manually adjust the mask size by drawing details.
     '''
     if control_ is None:
         x1, y1 = np.array(from_)
@@ -387,7 +394,8 @@ def add_arrow(from_, to_, rad=0.3, control_=None, color='#515151', line='--', he
     vertices = [from_, control_, to_]
     codes = [patches.Path.MOVETO, patches.Path.CURVE3, patches.Path.CURVE3]
     path = patches.Path(vertices, codes)
-    patch = patches.PathPatch(path, facecolor='none', edgecolor=color, linestyle=line, linewidth=1, zorder=-2)
+    patch = patches.PathPatch(path, facecolor='none', edgecolor=color,
+                              linestyle=line, linewidth=1, zorder=-2)
     ax.add_patch(patch)
     direction = -1 if control_[0] < to_[0] else 1
     mask_c = 'red' if detail else 'white'
@@ -503,10 +511,10 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </div>
 </div>
     <div id="content">
-<div class="markdown-body" id="postBody"><p>;;;a<br>
+<div class="markdown-body" id="postBody">
+<p>;;;a<br>
 ;;;;;;;eNote::note;;;e;;;c注释::注释;;;c;;;;<br>
-;;;a<br>
-;;;e</p>
+;;;a;;;e</p>
 <h2>Introduction</h2>
 <p>This article will explain how to use Matplotlib to plot non-solid curves with arrows, as shown in the figure below:</p>
 <p><p align="center"><img srcset="https://OmnisyR.github.io/figs/arrow_example.png" width="400" height="400"/></p></p>
@@ -619,17 +627,20 @@ This allows for precise placement of the mask. The center point in the image is 
 <span class="pl-k">import</span> <span class="pl-s1">matplotlib</span>.<span class="pl-s1">transforms</span> <span class="pl-k">as</span> <span class="pl-s1">transforms</span>
 <span class="pl-k">import</span> <span class="pl-s1">numpy</span> <span class="pl-k">as</span> <span class="pl-s1">np</span>
 
-<span class="pl-k">def</span> <span class="pl-en">add_arrow</span>(<span class="pl-s1">from_</span>, <span class="pl-s1">to_</span>, <span class="pl-s1">rad</span><span class="pl-c1">=</span><span class="pl-c1">0.3</span>, <span class="pl-s1">control_</span><span class="pl-c1">=</span><span class="pl-c1">None</span>, <span class="pl-s1">color</span><span class="pl-c1">=</span><span class="pl-s">'#515151'</span>, <span class="pl-s1">line</span><span class="pl-c1">=</span><span class="pl-s">'--'</span>, <span class="pl-s1">head_length</span><span class="pl-c1">=</span><span class="pl-c1">0.6</span>, <span class="pl-s1">size</span><span class="pl-c1">=</span><span class="pl-c1">0.04</span>, <span class="pl-s1">detail</span><span class="pl-c1">=</span><span class="pl-c1">False</span>):
+<span class="pl-k">def</span> <span class="pl-en">add_arrow</span>(<span class="pl-s1">from_</span>, <span class="pl-s1">to_</span>, <span class="pl-s1">rad</span><span class="pl-c1">=</span><span class="pl-c1">0.3</span>, <span class="pl-s1">control_</span><span class="pl-c1">=</span><span class="pl-c1">None</span>, <span class="pl-s1">color</span><span class="pl-c1">=</span><span class="pl-s">'#515151'</span>,
+              <span class="pl-s1">line</span><span class="pl-c1">=</span><span class="pl-s">'--'</span>, <span class="pl-s1">head_length</span><span class="pl-c1">=</span><span class="pl-c1">0.6</span>, <span class="pl-s1">size</span><span class="pl-c1">=</span><span class="pl-c1">0.04</span>, <span class="pl-s1">detail</span><span class="pl-c1">=</span><span class="pl-c1">False</span>):
     <span class="pl-s">"""</span>
 <span class="pl-s">    :param from_:Starting point</span>
 <span class="pl-s">    :param to_:Target endpoint</span>
 <span class="pl-s">    :param rad:Curve radius</span>
-<span class="pl-s">    :param control_:Control points; if None, calculated based on the curvature of the curve.</span>
+<span class="pl-s">    :param control_:Control points;</span>
+<span class="pl-s">                    if None, calculated based on the curvature of the curve.</span>
 <span class="pl-s">    :param color:Drawing colors</span>
 <span class="pl-s">    :param line:Curve Style</span>
 <span class="pl-s">    :param head_length:Arrow size</span>
 <span class="pl-s">    :param size:Mask Size</span>
-<span class="pl-s">    :param detail:Select whether to draw details, and manually adjust the mask size by drawing details.</span>
+<span class="pl-s">    :param detail:Select whether to draw details,</span>
+<span class="pl-s">                  and manually adjust the mask size by drawing details.</span>
 <span class="pl-s">    """</span>
     <span class="pl-k">if</span> <span class="pl-s1">control_</span> <span class="pl-c1">is</span> <span class="pl-c1">None</span>:
         <span class="pl-s1">x1</span>, <span class="pl-s1">y1</span> <span class="pl-c1">=</span> <span class="pl-s1">np</span>.<span class="pl-c1">array</span>(<span class="pl-s1">from_</span>)
@@ -641,7 +652,8 @@ This allows for precise placement of the mask. The center point in the image is 
     <span class="pl-s1">vertices</span> <span class="pl-c1">=</span> [<span class="pl-s1">from_</span>, <span class="pl-s1">control_</span>, <span class="pl-s1">to_</span>]
     <span class="pl-s1">codes</span> <span class="pl-c1">=</span> [<span class="pl-s1">patches</span>.<span class="pl-c1">Path</span>.<span class="pl-c1">MOVETO</span>, <span class="pl-s1">patches</span>.<span class="pl-c1">Path</span>.<span class="pl-c1">CURVE3</span>, <span class="pl-s1">patches</span>.<span class="pl-c1">Path</span>.<span class="pl-c1">CURVE3</span>]
     <span class="pl-s1">path</span> <span class="pl-c1">=</span> <span class="pl-s1">patches</span>.<span class="pl-c1">Path</span>(<span class="pl-s1">vertices</span>, <span class="pl-s1">codes</span>)
-    <span class="pl-s1">patch</span> <span class="pl-c1">=</span> <span class="pl-s1">patches</span>.<span class="pl-c1">PathPatch</span>(<span class="pl-s1">path</span>, <span class="pl-s1">facecolor</span><span class="pl-c1">=</span><span class="pl-s">'none'</span>, <span class="pl-s1">edgecolor</span><span class="pl-c1">=</span><span class="pl-s1">color</span>, <span class="pl-s1">linestyle</span><span class="pl-c1">=</span><span class="pl-s1">line</span>, <span class="pl-s1">linewidth</span><span class="pl-c1">=</span><span class="pl-c1">1</span>, <span class="pl-s1">zorder</span><span class="pl-c1">=</span><span class="pl-c1">-</span><span class="pl-c1">2</span>)
+    <span class="pl-s1">patch</span> <span class="pl-c1">=</span> <span class="pl-s1">patches</span>.<span class="pl-c1">PathPatch</span>(<span class="pl-s1">path</span>, <span class="pl-s1">facecolor</span><span class="pl-c1">=</span><span class="pl-s">'none'</span>, <span class="pl-s1">edgecolor</span><span class="pl-c1">=</span><span class="pl-s1">color</span>,
+                              <span class="pl-s1">linestyle</span><span class="pl-c1">=</span><span class="pl-s1">line</span>, <span class="pl-s1">linewidth</span><span class="pl-c1">=</span><span class="pl-c1">1</span>, <span class="pl-s1">zorder</span><span class="pl-c1">=</span><span class="pl-c1">-</span><span class="pl-c1">2</span>)
     <span class="pl-s1">ax</span>.<span class="pl-c1">add_patch</span>(<span class="pl-s1">patch</span>)
     <span class="pl-s1">direction</span> <span class="pl-c1">=</span> <span class="pl-c1">-</span><span class="pl-c1">1</span> <span class="pl-k">if</span> <span class="pl-s1">control_</span>[<span class="pl-c1">0</span>] <span class="pl-c1">&lt;</span> <span class="pl-s1">to_</span>[<span class="pl-c1">0</span>] <span class="pl-k">else</span> <span class="pl-c1">1</span>
     <span class="pl-s1">mask_c</span> <span class="pl-c1">=</span> <span class="pl-s">'red'</span> <span class="pl-k">if</span> <span class="pl-s1">detail</span> <span class="pl-k">else</span> <span class="pl-s">'white'</span>
@@ -792,7 +804,8 @@ $$</p>
 <span class="pl-k">import</span> <span class="pl-s1">matplotlib</span>.<span class="pl-s1">transforms</span> <span class="pl-k">as</span> <span class="pl-s1">transforms</span>
 <span class="pl-k">import</span> <span class="pl-s1">numpy</span> <span class="pl-k">as</span> <span class="pl-s1">np</span>
 
-<span class="pl-k">def</span> <span class="pl-en">add_arrow</span>(<span class="pl-s1">from_</span>, <span class="pl-s1">to_</span>, <span class="pl-s1">rad</span><span class="pl-c1">=</span><span class="pl-c1">0.3</span>, <span class="pl-s1">control_</span><span class="pl-c1">=</span><span class="pl-c1">None</span>, <span class="pl-s1">color</span><span class="pl-c1">=</span><span class="pl-s">'#515151'</span>, <span class="pl-s1">line</span><span class="pl-c1">=</span><span class="pl-s">'--'</span>, <span class="pl-s1">head_length</span><span class="pl-c1">=</span><span class="pl-c1">0.6</span>, <span class="pl-s1">size</span><span class="pl-c1">=</span><span class="pl-c1">0.04</span>, <span class="pl-s1">detail</span><span class="pl-c1">=</span><span class="pl-c1">False</span>):
+<span class="pl-k">def</span> <span class="pl-en">add_arrow</span>(<span class="pl-s1">from_</span>, <span class="pl-s1">to_</span>, <span class="pl-s1">rad</span><span class="pl-c1">=</span><span class="pl-c1">0.3</span>, <span class="pl-s1">control_</span><span class="pl-c1">=</span><span class="pl-c1">None</span>, <span class="pl-s1">color</span><span class="pl-c1">=</span><span class="pl-s">'#515151'</span>,
+              <span class="pl-s1">line</span><span class="pl-c1">=</span><span class="pl-s">'--'</span>, <span class="pl-s1">head_length</span><span class="pl-c1">=</span><span class="pl-c1">0.6</span>, <span class="pl-s1">size</span><span class="pl-c1">=</span><span class="pl-c1">0.04</span>, <span class="pl-s1">detail</span><span class="pl-c1">=</span><span class="pl-c1">False</span>):
     <span class="pl-s">"""</span>
 <span class="pl-s">    :param from_:起始点</span>
 <span class="pl-s">    :param to_:目标终点</span>
@@ -814,7 +827,8 @@ $$</p>
     <span class="pl-s1">vertices</span> <span class="pl-c1">=</span> [<span class="pl-s1">from_</span>, <span class="pl-s1">control_</span>, <span class="pl-s1">to_</span>]
     <span class="pl-s1">codes</span> <span class="pl-c1">=</span> [<span class="pl-s1">patches</span>.<span class="pl-c1">Path</span>.<span class="pl-c1">MOVETO</span>, <span class="pl-s1">patches</span>.<span class="pl-c1">Path</span>.<span class="pl-c1">CURVE3</span>, <span class="pl-s1">patches</span>.<span class="pl-c1">Path</span>.<span class="pl-c1">CURVE3</span>]
     <span class="pl-s1">path</span> <span class="pl-c1">=</span> <span class="pl-s1">patches</span>.<span class="pl-c1">Path</span>(<span class="pl-s1">vertices</span>, <span class="pl-s1">codes</span>)
-    <span class="pl-s1">patch</span> <span class="pl-c1">=</span> <span class="pl-s1">patches</span>.<span class="pl-c1">PathPatch</span>(<span class="pl-s1">path</span>, <span class="pl-s1">facecolor</span><span class="pl-c1">=</span><span class="pl-s">'none'</span>, <span class="pl-s1">edgecolor</span><span class="pl-c1">=</span><span class="pl-s1">color</span>, <span class="pl-s1">linestyle</span><span class="pl-c1">=</span><span class="pl-s1">line</span>, <span class="pl-s1">linewidth</span><span class="pl-c1">=</span><span class="pl-c1">1</span>, <span class="pl-s1">zorder</span><span class="pl-c1">=</span><span class="pl-c1">-</span><span class="pl-c1">2</span>)
+    <span class="pl-s1">patch</span> <span class="pl-c1">=</span> <span class="pl-s1">patches</span>.<span class="pl-c1">PathPatch</span>(<span class="pl-s1">path</span>, <span class="pl-s1">facecolor</span><span class="pl-c1">=</span><span class="pl-s">'none'</span>, <span class="pl-s1">edgecolor</span><span class="pl-c1">=</span><span class="pl-s1">color</span>,
+                              <span class="pl-s1">linestyle</span><span class="pl-c1">=</span><span class="pl-s1">line</span>, <span class="pl-s1">linewidth</span><span class="pl-c1">=</span><span class="pl-c1">1</span>, <span class="pl-s1">zorder</span><span class="pl-c1">=</span><span class="pl-c1">-</span><span class="pl-c1">2</span>)
     <span class="pl-s1">ax</span>.<span class="pl-c1">add_patch</span>(<span class="pl-s1">patch</span>)
     <span class="pl-s1">direction</span> <span class="pl-c1">=</span> <span class="pl-c1">-</span><span class="pl-c1">1</span> <span class="pl-k">if</span> <span class="pl-s1">control_</span>[<span class="pl-c1">0</span>] <span class="pl-c1">&lt;</span> <span class="pl-s1">to_</span>[<span class="pl-c1">0</span>] <span class="pl-k">else</span> <span class="pl-c1">1</span>
     <span class="pl-s1">mask_c</span> <span class="pl-c1">=</span> <span class="pl-s">'red'</span> <span class="pl-k">if</span> <span class="pl-s1">detail</span> <span class="pl-k">else</span> <span class="pl-s">'white'</span>
@@ -1016,6 +1030,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 </script>
-<script>MathJax = {tex: {inlineMath: [["$", "$"]]}};</script><script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script><script>MathJax = {tex: {inlineMath: [["$", "$"]]}};</script><script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
 </html>

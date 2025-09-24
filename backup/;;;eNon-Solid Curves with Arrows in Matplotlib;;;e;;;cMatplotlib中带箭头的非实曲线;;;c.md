@@ -1,7 +1,7 @@
+<!-- ##{"script":"<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>"}## -->
 ;;;a
 ;;;;;;;eNote::note;;;e;;;c注释::注释;;;c;;;;
-;;;a
-;;;e
+;;;a;;;e
 ## Introduction
 This article will explain how to use Matplotlib to plot non-solid curves with arrows, as shown in the figure below:
 
@@ -141,17 +141,20 @@ import matplotlib.pyplot as plt
 import matplotlib.transforms as transforms
 import numpy as np
 
-def add_arrow(from_, to_, rad=0.3, control_=None, color='#515151', line='--', head_length=0.6, size=0.04, detail=False):
+def add_arrow(from_, to_, rad=0.3, control_=None, color='#515151',
+              line='--', head_length=0.6, size=0.04, detail=False):
     """
     :param from_:Starting point
     :param to_:Target endpoint
     :param rad:Curve radius
-    :param control_:Control points; if None, calculated based on the curvature of the curve.
+    :param control_:Control points;
+                    if None, calculated based on the curvature of the curve.
     :param color:Drawing colors
     :param line:Curve Style
     :param head_length:Arrow size
     :param size:Mask Size
-    :param detail:Select whether to draw details, and manually adjust the mask size by drawing details.
+    :param detail:Select whether to draw details,
+                  and manually adjust the mask size by drawing details.
     """
     if control_ is None:
         x1, y1 = np.array(from_)
@@ -163,7 +166,8 @@ def add_arrow(from_, to_, rad=0.3, control_=None, color='#515151', line='--', he
     vertices = [from_, control_, to_]
     codes = [patches.Path.MOVETO, patches.Path.CURVE3, patches.Path.CURVE3]
     path = patches.Path(vertices, codes)
-    patch = patches.PathPatch(path, facecolor='none', edgecolor=color, linestyle=line, linewidth=1, zorder=-2)
+    patch = patches.PathPatch(path, facecolor='none', edgecolor=color,
+                              linestyle=line, linewidth=1, zorder=-2)
     ax.add_patch(patch)
     direction = -1 if control_[0] < to_[0] else 1
     mask_c = 'red' if detail else 'white'
@@ -342,7 +346,8 @@ import matplotlib.pyplot as plt
 import matplotlib.transforms as transforms
 import numpy as np
 
-def add_arrow(from_, to_, rad=0.3, control_=None, color='#515151', line='--', head_length=0.6, size=0.04, detail=False):
+def add_arrow(from_, to_, rad=0.3, control_=None, color='#515151',
+              line='--', head_length=0.6, size=0.04, detail=False):
     """
     :param from_:起始点
     :param to_:目标终点
@@ -364,7 +369,8 @@ def add_arrow(from_, to_, rad=0.3, control_=None, color='#515151', line='--', he
     vertices = [from_, control_, to_]
     codes = [patches.Path.MOVETO, patches.Path.CURVE3, patches.Path.CURVE3]
     path = patches.Path(vertices, codes)
-    patch = patches.PathPatch(path, facecolor='none', edgecolor=color, linestyle=line, linewidth=1, zorder=-2)
+    patch = patches.PathPatch(path, facecolor='none', edgecolor=color,
+                              linestyle=line, linewidth=1, zorder=-2)
     ax.add_patch(patch)
     direction = -1 if control_[0] < to_[0] else 1
     mask_c = 'red' if detail else 'white'

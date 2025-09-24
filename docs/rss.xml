@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>OmnisyR's Blog</title><link>https://OmnisyR.github.io</link><description>;;;eRecording the bits and pieces of scientific research, development, and life.;;;e;;;c记录科研、开发以及生活的点点滴滴;;;c</description><copyright>OmnisyR's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/68898477?s=400&amp;u=262ae3b76f651c62a82042317aaae313706c859c&amp;v=4</url><title>avatar</title><link>https://OmnisyR.github.io</link></image><lastBuildDate>Wed, 24 Sep 2025 03:07:00 +0000</lastBuildDate><managingEditor>OmnisyR's Blog</managingEditor><ttl>60</ttl><webMaster>OmnisyR's Blog</webMaster><item><title>;;;eNon-Solid Curves with Arrows in Matplotlib;;;e;;;cMatplotlib中带箭头的非实曲线;;;c</title><link>https://OmnisyR.github.io/post/%3B%3B%3BeNon-Solid%20Curves%20with%20Arrows%20in%20Matplotlib%3B%3B%3Be%3B%3B%3BcMatplotlib-zhong-dai-jian-tou-de-fei-shi-qu-xian-%3B%3B%3Bc.html</link><description>;;;a
-;;;;;;;eNote::note;;;e;;;c注释::注释;;;c;;;;
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>OmnisyR's Blog</title><link>https://OmnisyR.github.io</link><description>;;;eRecording the bits and pieces of scientific research, development, and life.;;;e;;;c记录科研、开发以及生活的点点滴滴;;;c</description><copyright>OmnisyR's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/68898477?s=400&amp;u=262ae3b76f651c62a82042317aaae313706c859c&amp;v=4</url><title>avatar</title><link>https://OmnisyR.github.io</link></image><lastBuildDate>Wed, 24 Sep 2025 03:12:02 +0000</lastBuildDate><managingEditor>OmnisyR's Blog</managingEditor><ttl>60</ttl><webMaster>OmnisyR's Blog</webMaster><item><title>;;;eNon-Solid Curves with Arrows in Matplotlib;;;e;;;cMatplotlib中带箭头的非实曲线;;;c</title><link>https://OmnisyR.github.io/post/%3B%3B%3BeNon-Solid%20Curves%20with%20Arrows%20in%20Matplotlib%3B%3B%3Be%3B%3B%3BcMatplotlib-zhong-dai-jian-tou-de-fei-shi-qu-xian-%3B%3B%3Bc.html</link><description>&lt;!-- ##{'script':'&lt;script src='https://OmnisyR.github.io/assets/HyperTOC.js'&gt;&lt;/script&gt;'}## --&gt;
 ;;;a
-;;;e
+;;;;;;;eNote::note;;;e;;;c注释::注释;;;c;;;;
+;;;a;;;e
 ## Introduction
 This article will explain how to use Matplotlib to plot non-solid curves with arrows, as shown in the figure below:
 
@@ -142,17 +142,20 @@ import matplotlib.pyplot as plt
 import matplotlib.transforms as transforms
 import numpy as np
 
-def add_arrow(from_, to_, rad=0.3, control_=None, color='#515151', line='--', head_length=0.6, size=0.04, detail=False):
+def add_arrow(from_, to_, rad=0.3, control_=None, color='#515151',
+              line='--', head_length=0.6, size=0.04, detail=False):
     '''
     :param from_:Starting point
     :param to_:Target endpoint
     :param rad:Curve radius
-    :param control_:Control points; if None, calculated based on the curvature of the curve.
+    :param control_:Control points;
+                    if None, calculated based on the curvature of the curve.
     :param color:Drawing colors
     :param line:Curve Style
     :param head_length:Arrow size
     :param size:Mask Size
-    :param detail:Select whether to draw details, and manually adjust the mask size by drawing details.
+    :param detail:Select whether to draw details,
+                  and manually adjust the mask size by drawing details.
     '''
     if control_ is None:
         x1, y1 = np.array(from_)
@@ -164,7 +167,8 @@ def add_arrow(from_, to_, rad=0.3, control_=None, color='#515151', line='--', he
     vertices = [from_, control_, to_]
     codes = [patches.Path.MOVETO, patches.Path.CURVE3, patches.Path.CURVE3]
     path = patches.Path(vertices, codes)
-    patch = patches.PathPatch(path, facecolor='none', edgecolor=color, linestyle=line, linewidth=1, zorder=-2)
+    patch = patches.PathPatch(path, facecolor='none', edgecolor=color,
+                              linestyle=line, linewidth=1, zorder=-2)
     ax.add_patch(patch)
     direction = -1 if control_[0] &lt; to_[0] else 1
     mask_c = 'red' if detail else 'white'
