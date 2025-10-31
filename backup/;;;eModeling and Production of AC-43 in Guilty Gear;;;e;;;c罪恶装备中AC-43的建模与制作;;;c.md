@@ -57,5 +57,4 @@ All packages
 ## 模型预览
 在模型和材质等素材导出后便可先使用Blender进行预览，使用Unreal PSK/PSA插件。通过该插件导入Mesh文件夹下的uni_weaponsp.pskx，为了保证单位一致，可在导入的时候选择缩放0.01。该文件为AC/43展开的模型，它能够为后续的零件建模提供更好的参考价值。
 
-`Gmeek-html<img src="https://OmnisyR.github.io/figs/preview.png" height=200>`
-`Gmeek-html<img src="https://OmnisyR.github.io/figs/3view.png" height=200>`
+`Gmeek-html<p align="center"><img src="https://OmnisyR.github.io/figs/preview.png" height=200> <img src="https://OmnisyR.github.io/figs/3view.png" height=200>`
