@@ -56,7 +56,7 @@ $$
 ;;;;;;;eResidual idea::[Article address](https://arxiv.org/abs/1512.03385);;;e;;;c残差思想::[文章地址](https://arxiv.org/abs/1512.03385);;;c;;;;
 ;;;;Attention is All You Need::;;;e[Article address](https://arxiv.org/abs/1706.03762);;;e;;;c[文章地址](https://arxiv.org/abs/1706.03762);;;c;;;;
 ;;;;;;;eSelect a linear noise schedule::There are many types of noise schedules. Although cosine noise schedule seem to be highly recommended online, in actual practice, they can cause a problem I call “color divergence.” A series of measures are required to improve the results and obtain the correct outcome. Therefore, when you are just starting to learn about diffusion models, it is best to use a linear noise schedule first.;;;e;;;c选择线性噪声时间表::噪声时间表有很多种，虽然网络上疑似很推崇余弦型噪声时间表，但实际操作中它会导致一种被我称为“色彩发散”的问题，还需要通过一系列手段来改善才能得到正确结果，所以刚刚接触扩散模型，可以先使用线性噪声时间表。;;;c
-`Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/color_diverge.png 320w"/></p>`;;;;
+`Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/color_diverge.png" width="400" height="146"/></p>`;;;;
 ;;;;;;;eEquation ;;;e;;;c式;;;c(50)::
 
 $$
