@@ -53,23 +53,28 @@
   }
 
   function createLanguageButton(lang) {
-    const button = document.createElement("button");
+    const button = document.createElement("a");
     button.id = "omnisyr-language-toggle";
-    button.type = "button";
     button.className = "btn btn-invisible circle";
+    button.href = "javascript:void(0)";
   
     button.title = lang === LANG_CN ? "Switch to English" : "切换到中文";
     button.setAttribute("aria-label", button.title);
+    button.setAttribute("role", "button");
   
     button.innerHTML = `<svg class="octicon omnisyr-language-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M 3 8 h 10 M 8 5 v 3 M 5 8 c 1 3 2 5 7 7 M 11 8 c -1 3 -2 5 -7 7 M 14 20 l 4 -11 l 4 11 M 15 17 h 6"></path></svg>`;
   
-    button.addEventListener("click", function () {
+   button.addEventListener("click", function (event) {
+      event.preventDefault();
+  
       const nextLang = getCurrentLang() === LANG_CN ? LANG_EN : LANG_CN;
       setCurrentLang(nextLang);
       location.reload();
     });
   
-    const titleRight = document.querySelector("#header .title-right") || document.querySelector(".title-right");
+    const titleRight =
+      document.querySelector("#header .title-right") ||
+      document.querySelector(".title-right");
   
     if (titleRight) {
       const themeButton = Array.from(titleRight.children).find(function (item) {
@@ -77,8 +82,6 @@
       });
   
       titleRight.insertBefore(button, themeButton || null);
-    } else {
-      document.body.appendChild(button);
     }
   }
   
@@ -86,20 +89,10 @@
     const style = document.createElement("style");
     style.textContent = `
       #omnisyr-language-toggle {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--fgColor-muted, #57606a);
-        cursor: pointer;
-        line-height: 1;
-        vertical-align: middle;
+        margin: 0 !important;
       }
   
-      #omnisyr-language-toggle:hover {
-        color: var(--fgColor-accent, #0969da);
-      }
-  
-      .omnisyr-language-icon {
+      #omnisyr-language-toggle .omnisyr-language-icon {
         width: 16px;
         height: 16px;
         fill: none;
@@ -107,6 +100,7 @@
         stroke-width: 1.65;
         stroke-linecap: round;
         stroke-linejoin: round;
+        display: block;
       }
     `;
     document.head.appendChild(style);
