@@ -56,58 +56,59 @@
     const button = document.createElement("button");
     button.id = "omnisyr-language-toggle";
     button.type = "button";
-    button.title = lang === LANG_CN ? "切换到英文" : "Switch to Chinese";
+    button.className = "btn btn-invisible circle";
+  
+    button.title = lang === LANG_CN ? "Switch to English" : "切换到中文";
     button.setAttribute("aria-label", button.title);
-
+  
     button.innerHTML = `
-      <svg class="omnisyr-language-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <svg class="octicon omnisyr-language-icon" viewBox="0 0 24 24" aria-hidden="true">
         <circle cx="12" cy="12" r="9"></circle>
         <path d="M3 12h18"></path>
         <path d="M12 3c2.2 2.5 3.4 5.5 3.4 9s-1.2 6.5-3.4 9"></path>
         <path d="M12 3c-2.2 2.5-3.4 5.5-3.4 9s1.2 6.5 3.4 9"></path>
       </svg>
-      <span>${lang === LANG_CN ? "EN" : "中"}</span>
     `;
-
+  
     button.addEventListener("click", function () {
       const nextLang = getCurrentLang() === LANG_CN ? LANG_EN : LANG_CN;
       setCurrentLang(nextLang);
       location.reload();
     });
-
-    document.body.appendChild(button);
+  
+    const titleRight = document.querySelector("#header .title-right") || document.querySelector(".title-right");
+  
+    if (titleRight) {
+      const themeButton = Array.from(titleRight.children).find(function (item) {
+        return item.getAttribute("onclick") === "modeSwitch()";
+      });
+  
+      titleRight.insertBefore(button, themeButton || null);
+    } else {
+      document.body.appendChild(button);
+    }
   }
-
+  
   function injectStyle() {
     const style = document.createElement("style");
     style.textContent = `
       #omnisyr-language-toggle {
-        position: fixed;
-        right: 18px;
-        bottom: 18px;
-        z-index: 9999;
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        height: 36px;
-        padding: 0 11px;
-        border: 1px solid var(--borderColor-default, #d0d7de);
-        border-radius: 999px;
-        background: var(--bgColor-default, #ffffff);
-        color: var(--fgColor-default, #24292f);
-        box-shadow: 0 6px 18px rgba(27, 31, 36, 0.12);
+        justify-content: center;
+        color: var(--fgColor-muted, #57606a);
         cursor: pointer;
-        font-size: 14px;
         line-height: 1;
+        vertical-align: middle;
       }
-
+  
       #omnisyr-language-toggle:hover {
-        background: var(--bgColor-muted, #f6f8fa);
+        color: var(--fgColor-accent, #0969da);
       }
-
+  
       .omnisyr-language-icon {
-        width: 17px;
-        height: 17px;
+        width: 16px;
+        height: 16px;
         fill: none;
         stroke: currentColor;
         stroke-width: 1.8;
