@@ -60,6 +60,21 @@ After reading it, what remains most vividly in the mind is not Red King, nor the
 > 
 > A bullet pierced through my chest. In the moments before death, the words that reached my ears were saying that I had betrayed humanity. Hahahaha. So this is human nature? Red King, I am beginning to understand you. But suddenly… I want to eat a～～ hamburger～～ so badly……
 `Gmeek-html<p align="center"><img src="https://OmnisyR.github.io/figs/sorrow.png" style="width: 400px; height: auto;"/></p>`
+
+## Aside｜About That 2 Points
+This essay later received only 2 points. The score itself feels like another layer of absurdity growing outside the text.
+
+From the perspective of the examination system, the 2 points are not entirely incomprehensible. An exam essay is first of all an act of answering a question, and it assumes that the writer will obey a basic order. The characters should face the right way, the paper should be easy to read, the theme should be quickly recognizable, and the writing should reduce the burden on the grader as much as possible. The Sorrow of Ending War refuses this order from the very beginning. It turns the entire essay upside down, forcing the reader to rotate their view before entering the text. In an exam setting, this is almost an open refusal to cooperate. The extremely low score then becomes a natural reaction from within the system.
+
+This is where the 2 points form a strange intertext with the essay itself.
+
+In the essay, the protagonist walks toward Red King with a hamburger in his hand. Perhaps he is approaching peace in an absurd, ridiculous, almost unreasonable way. Red King has already stopped. For a brief moment, war seems to open a narrow crack. Yet humanity does not understand him, does not wait for him, and does not try to read the possibility hidden inside this absurd gesture. It simply judges him as a traitor. A bullet pierces through his chest.
+
+The real-world score resembles that bullet. Through inverted handwriting, absurd plotting, and the image of the hamburger, the writer creates a textual order of his own. The grading system never enters that order. It first sees an answer sheet that is improper, uncooperative, and outside the norm, then completes its judgment with an extremely low score. In this sense, the 2 points become a real-world verdict of “betrayal.” The text clearly has its own logic and vitality, yet it is quickly pushed aside because it does not stand where the examination order expects it to stand.
+
+This does not have to be turned into a simple case of injustice. The teacher is facing an exam, not a literary magazine. Their task is not to search for avant-garde meaning in every strange essay. By choosing to write upside down, the author has already accepted the risk of being misread, rejected, and punished. That very risk is what makes the score meaningful.
+
+The Sorrow of Ending War writes about a person who is not understood by the normal order, and in the end, the essay itself truly encounters the cold gaze of that order. The protagonist dies under the accusation of “betrayal”; the essay dies because of its unruly page. The 2 points do not simply end the essay. They feel more like a final paragraph added outside the text. In a world that only allows reading right side up, writing upside down has already become its own crime.
 ;;;e;;;c
 《止战之殇》最迷人的地方，在于它用一种近乎轻佻的方式，写出了非常沉重的东西。
 
@@ -122,4 +137,19 @@ After reading it, what remains most vividly in the mind is not Red King, nor the
 > 
 > 一颗子弹贯穿了我的胸膛，濒死前耳畔传来的话语，在说我通敌。哈哈哈，这就是人性吗？雷德王，我开始理解你了。不过，突然……好想吃个～～汉堡～～啊……
 `Gmeek-html<p align="center"><img src="https://OmnisyR.github.io/figs/sorrow.png" style="width: 400px; height: auto;"/></p>`
+
+## 题外话｜关于那个 2 分
+这篇文章后来只得了 2 分。这个分数本身，像是文本之外又长出来的一层荒诞。
+
+从考试制度的角度看，2 分并非完全不可理解。作文首先是一种答题行为，它默认作者要服从某种基本秩序。字要正着写，卷面要便于阅读，主题要能被迅速辨认，表达要尽量减少阅卷成本。《止战之殇》偏偏从形式上就拒绝了这一点。它把整篇文章倒过来写，让读者必须先转动视角，才能进入文本。对于一场考试来说，这几乎是一种明目张胆的不配合。阅卷老师给出极低分，也就成了制度内部十分自然的反应。
+
+也正是在这里，这个 2 分和文章本身形成了奇妙的互文。
+
+文章里，主人公手持汉堡走向雷德王。他也许正在用一种荒唐、滑稽、近乎不可理喻的方式靠近和平。雷德王已经停下脚步，战争似乎出现了一瞬间的缝隙。可是人类没有理解他，没有等待他，也没有试图读懂这个荒诞行为背后的可能性，直接把他判定为“通敌”。一颗子弹贯穿了他的胸膛。
+
+现实中的评分也像这一枪。作者用倒置的书写、荒诞的情节和汉堡的意象建立了一套自己的文本秩序，阅卷系统却没有进入这个秩序。它先看到的是不端正、不配合、不符合规范的答卷，然后用一个极低的分数完成了裁决。于是，2 分就像现实版的“通敌”判决。文本内部明明有自己的逻辑和生命，最后却因为没有站在考试秩序要求的位置上，被迅速排除出去。
+
+这并不需要被写成一场简单的冤案。老师面对的是考试，不是文学杂志；他的任务也不是为每一篇怪异的作文寻找先锋意义。作者选择倒着写，本身就已经承担了被误读、被拒绝、被惩罚的风险。可也正是这种风险，让这个分数变得意味深长。
+
+《止战之殇》写了一个不被正常秩序理解的人，而它自己最终也真的遭遇了正常秩序的冷眼。主人公死于“通敌”的指控，文章死于“离经叛道”的卷面。那个 2 分没有简单地结束这篇文章，倒像是在文章之外补上了最后一段。在一个只允许正着阅读的世界里，倒过来写本身就成了罪名。
 ;;;c
