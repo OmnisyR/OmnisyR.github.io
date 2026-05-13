@@ -55,7 +55,7 @@ After reading it, what remains most vividly in the mind is not Red King, nor the
 > Red King stopped his advance. He lowered his head to look at me and motioned for me to give him my hand. I did not dare refuse, yet I could not stop trembling. So that was it. He wanted the hamburger in my hand. It seems that no matter how advanced a life-form may be, it still cannot resist the temptation of a hamburger.
 > 
 > A bullet pierced through my chest. In the moments before death, the words that reached my ears were saying that I had betrayed humanity. Hahahaha. So this is human nature? Red King, I am beginning to understand you. But suddenly… I want to eat a～～ hamburger～～ so badly……
-`Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/sorrow.png" width="400" height="400"/></p>`
+`Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/sorrow.png" width="400" height=auto/></p>`
 ;;;e;;;c
 《止战之殇》最迷人的地方，在于它用一种近乎轻佻的方式，写出了非常沉重的东西。
 
@@ -113,5 +113,5 @@ After reading it, what remains most vividly in the mind is not Red King, nor the
 > 雷德王停了进攻的脚步，低头看我，示意我把手给他。等不敢拒绝却也止不住地颤抖，原来他是要我手中的汉堡啊，看来无论何等高级的生命，都无法抵御汉堡的诱惑。
 > 
 > 一颗子弹贯穿了我的胸膛，濒死前耳畔传来的话语，在说我通敌。哈哈哈，这就是人性吗？雷德王，我开始理解你了。不过，突然……好想吃个～～汉堡～～啊……
-`Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/sorrow.png" width="400" height="400"/></p>`
+`Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/sorrow.png" width="400" height=auto/></p>`
 ;;;c
