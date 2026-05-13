@@ -1,5 +1,5 @@
 ;;;e
-The most fascinating thing about The Sorrow of Ending War is that it uses an almost flippant manner to write about something profoundly heavy.
+The most fascinating thing about *The Sorrow of Ending War* is that it uses an almost flippant manner to write about something profoundly heavy.
 
 Red King will descend upon Earth in three hours, and the world has fallen into a panic of uncertainty. Such an opening should normally lead into a disaster narrative, a heroic narrative, or a solemn anti-war essay. Yet the author does not immediately send the protagonist rushing to the battlefield, nor does he have him deliver a declaration about the fate of humankind. Instead, at the end of the world, the protagonist thinks of one tiny thing: eating a hamburger.
 
