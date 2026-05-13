@@ -63,10 +63,13 @@
   
     button.innerHTML = `
       <svg class="octicon omnisyr-language-icon" viewBox="0 0 24 24" aria-hidden="true">
-        <circle cx="12" cy="12" r="9"></circle>
-        <path d="M3 12h18"></path>
-        <path d="M12 3c2.2 2.5 3.4 5.5 3.4 9s-1.2 6.5-3.4 9"></path>
-        <path d="M12 3c-2.2 2.5-3.4 5.5-3.4 9s1.2 6.5 3.4 9"></path>
+        <path d="M4 5.5h9.5"></path>
+        <path d="M8.75 3.5v2"></path>
+        <path d="M5.25 9h8.5"></path>
+        <path d="M6.5 9c.85 2.35 2.35 4.25 5 5.75"></path>
+        <path d="M12.5 9c-.75 2.25-2.55 4.35-5.75 5.9"></path>
+        <path d="M14.75 20.5l4-10 4 10"></path>
+        <path d="M16.15 16.9h5.2"></path>
       </svg>
     `;
   
@@ -111,7 +114,7 @@
         height: 16px;
         fill: none;
         stroke: currentColor;
-        stroke-width: 1.8;
+        stroke-width: 1.65;
         stroke-linecap: round;
         stroke-linejoin: round;
       }
