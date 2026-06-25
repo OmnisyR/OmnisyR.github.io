@@ -66,6 +66,11 @@
     }
   }
 
+  function translateMetaAttribute(element, attr, lang, forceCn) {
+    if (!element || !element.getAttribute(attr)) return;
+    element.setAttribute(attr, transMeta(element.getAttribute(attr), lang, forceCn));
+  }
+
   function applyLanguageVisibility(lang, forceCn) {
     const visibleLang = forceCn || lang === LANG_CN ? LANG_CN : LANG_EN;
     document.documentElement.setAttribute("data-omnisyr-lang", visibleLang);
@@ -144,6 +149,15 @@
     translateMetaElement(document.getElementById("listTitle"), lang, forceCn);
     translateMetaElement(document.querySelector(".postTitle"), lang, forceCn);
     translateMetaElement(document.querySelector(".tagTitle"), lang, forceCn);
+    translateMetaElement(document.querySelector("#content > div:first-child:not(.markdown-body):not(#taglabel)"), lang, forceCn);
+
+    [
+      "meta[name='description']",
+      "meta[property='og:title']",
+      "meta[property='og:description']"
+    ].forEach(function (selector) {
+      translateMetaAttribute(document.querySelector(selector), "content", lang, forceCn);
+    });
 
     const content = document.getElementById("content");
     if (content) translateLegacy(content, lang, forceCn);
