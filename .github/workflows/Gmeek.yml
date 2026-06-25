@@ -11,6 +11,9 @@ jobs:
   build:
     name: Generate blog
     runs-on: ubuntu-24.04
+    concurrency:
+      group: gmeek-build
+      cancel-in-progress: true
     if: ${{ github.event.repository.owner.id == github.event.sender.id || github.event_name == 'schedule' }}
     permissions: write-all
     steps:
@@ -51,7 +54,7 @@ jobs:
           cp -r ./* /opt/Gmeek/
           cd /opt/Gmeek/
           python scripts/patch_gmeek_include.py /opt/Gmeek/Gmeek.py
-          python Gmeek.py ${{ secrets.GITHUB_TOKEN }} ${{ github.repository }} --issue_number '${{ github.event.issue.number }}'
+          python Gmeek.py ${{ secrets.GITHUB_TOKEN }} ${{ github.repository }}
           python scripts/create_legacy_redirects.py /opt/Gmeek/docs static/legacy-redirects.json
           cp -a /opt/Gmeek/docs ${{ github.workspace }} 
           cp -a /opt/Gmeek/backup ${{ github.workspace }} 
