@@ -59,13 +59,36 @@ HELPER = r'''
 '''
 
 
+def ensure_import(source: str, import_line: str) -> str:
+    if import_line in source:
+        return source
+
+    lines = source.splitlines(keepends=True)
+    insert_at = 0
+    seen_import = False
+
+    for index, line in enumerate(lines):
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        if line.startswith("import ") or line.startswith("from "):
+            seen_import = True
+            insert_at = index + 1
+            continue
+        if seen_import:
+            break
+
+    lines.insert(insert_at, import_line)
+    return "".join(lines)
+
+
 def patch_gmeek(path: pathlib.Path) -> None:
     source = path.read_text(encoding="utf-8")
     if "def resolveIssueBody(self, issue):" in source:
         print("Gmeek include patch already present")
         return
 
-    source = source.replace("import urllib.parse\n", "import urllib.parse\nimport pathlib\n", 1)
+    source = ensure_import(source, "import pathlib\n")
     source = source.replace("    def addOnePostJson(self,issue):\n", HELPER + "\n    def addOnePostJson(self,issue):\n", 1)
     source = source.replace("        if len(issue.labels)>=1:\n", "        if len(issue.labels)>=1:\n            issue_body=self.resolveIssueBody(issue)\n", 1)
     source = source.replace("            if issue.body==None:\n", "            if issue_body==None:\n", 1)
