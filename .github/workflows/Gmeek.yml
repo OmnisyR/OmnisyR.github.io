@@ -50,7 +50,9 @@ jobs:
         run: |
           cp -r ./* /opt/Gmeek/
           cd /opt/Gmeek/
+          python scripts/patch_gmeek_include.py /opt/Gmeek/Gmeek.py
           python Gmeek.py ${{ secrets.GITHUB_TOKEN }} ${{ github.repository }} --issue_number '${{ github.event.issue.number }}'
+          python scripts/create_legacy_redirects.py /opt/Gmeek/docs static/legacy-redirects.json
           cp -a /opt/Gmeek/docs ${{ github.workspace }} 
           cp -a /opt/Gmeek/backup ${{ github.workspace }} 
           cp /opt/Gmeek/blogBase.json ${{ github.workspace }} 

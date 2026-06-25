@@ -2,6 +2,7 @@
   const STORAGE_KEY = "omnisyr_blog_lang";
   const LANG_CN = "zh";
   const LANG_EN = "en";
+  const META_SEPARATOR = "||";
 
   function getBrowserLang() {
     const langs = navigator.languages && navigator.languages.length
@@ -41,9 +42,34 @@
       .replace(removePattern, "");
   }
 
-  function translate(container, lang, forceCn) {
+  function transMeta(str, lang, forceCn) {
+    const legacy = transStr(str, lang, forceCn);
+    if (!legacy.includes(META_SEPARATOR)) return legacy;
+
+    const parts = legacy.split(META_SEPARATOR);
+    if (parts.length !== 2) return legacy;
+
+    return (forceCn || lang === LANG_CN ? parts[1] : parts[0]).trim();
+  }
+
+  function translateLegacy(container, lang, forceCn) {
     if (!container) return;
     container.innerHTML = transStr(container.innerHTML, lang, forceCn);
+  }
+
+  function translateMetaElement(element, lang, forceCn) {
+    if (!element) return;
+    element.innerHTML = transMeta(element.innerHTML, lang, forceCn);
+    if (element.title) element.title = transMeta(element.title, lang, forceCn);
+    if (element.getAttribute("aria-label")) {
+      element.setAttribute("aria-label", transMeta(element.getAttribute("aria-label"), lang, forceCn));
+    }
+  }
+
+  function applyLanguageVisibility(lang, forceCn) {
+    const visibleLang = forceCn || lang === LANG_CN ? LANG_CN : LANG_EN;
+    document.documentElement.setAttribute("data-omnisyr-lang", visibleLang);
+    document.documentElement.lang = visibleLang === LANG_CN ? "zh-CN" : "en";
   }
 
   function detectForceCn() {
@@ -88,6 +114,11 @@
   function injectStyle() {
     const style = document.createElement("style");
     style.textContent = `
+      html[data-omnisyr-lang="en"] body [lang^="zh"],
+      html[data-omnisyr-lang="zh"] body [lang^="en"] {
+        display: none !important;
+      }
+
       #omnisyr-language-toggle {
         margin: 0 !important;
       }
@@ -106,27 +137,59 @@
     document.head.appendChild(style);
   }
 
+  function translatePage(lang, forceCn) {
+    document.title = transMeta(document.title, lang, forceCn);
+
+    translateMetaElement(document.querySelector(".blogTitle"), lang, forceCn);
+    translateMetaElement(document.getElementById("listTitle"), lang, forceCn);
+    translateMetaElement(document.querySelector(".postTitle"), lang, forceCn);
+    translateMetaElement(document.querySelector(".tagTitle"), lang, forceCn);
+
+    const content = document.getElementById("content");
+    if (content) translateLegacy(content, lang, forceCn);
+
+    const metaSelectors = [
+      ".listTitle",
+      ".LabelName",
+      ".LabelName a",
+      "#taglabel .Label",
+      "#footer",
+      "[title]",
+      "[aria-label]"
+    ];
+
+    metaSelectors.forEach(function (selector) {
+      document.querySelectorAll(selector).forEach(function (element) {
+        translateMetaElement(element, lang, forceCn);
+      });
+    });
+  }
+
+  function observeDynamicContent(lang, forceCn) {
+    const target = document.getElementById("content");
+    if (!target || !window.MutationObserver) return;
+
+    let scheduled = false;
+    const observer = new MutationObserver(function () {
+      if (scheduled) return;
+      scheduled = true;
+      window.requestAnimationFrame(function () {
+        scheduled = false;
+        translatePage(lang, forceCn);
+      });
+    });
+
+    observer.observe(target, { childList: true, subtree: true });
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     const lang = getCurrentLang();
     const forceCn = detectForceCn();
 
-    document.documentElement.lang = forceCn || lang === LANG_CN ? "zh-CN" : "en";
-    document.title = transStr(document.title, lang, forceCn);
-
-    translate(document.getElementById("listTitle"), lang, forceCn);
-    translate(document.getElementById("content"), lang, forceCn);
-
-    let elements = document.getElementsByClassName("postTitle");
-    if (elements.length > 0) {
-      translate(elements[0], lang, forceCn);
-    }
-
-    elements = document.getElementsByClassName("Label LabelName");
-    for (const item of elements) {
-      translate(item, lang, forceCn);
-    }
-
+    applyLanguageVisibility(lang, forceCn);
     injectStyle();
+    translatePage(lang, forceCn);
+    observeDynamicContent(lang, forceCn);
 
     if (!forceCn) {
       createLanguageButton(lang);
