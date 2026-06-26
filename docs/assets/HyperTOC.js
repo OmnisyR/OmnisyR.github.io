@@ -1,11 +1,120 @@
 const denotes = new Map();
+let mathCopyHandlerInstalled = false;
+let denoteTypesetToken = 0;
+
+function parseDenoteEntry(raw) {
+  const separator = raw.indexOf('::');
+  if (separator === -1) return null;
+  return {
+    key: raw.slice(0, separator).trim(),
+    value: raw.slice(separator + 2).trim()
+  };
+}
+
+function texForClipboard(math, display) {
+  const tex = String(math || '').trim();
+  return display ? '$$\n' + tex + '\n$$' : '$' + tex + '$';
+}
+
+function refreshMathCopyData(root) {
+  if (!window.MathJax || !MathJax.startup || !MathJax.startup.document) return;
+  const scope = root || document;
+  for (const item of MathJax.startup.document.math) {
+    if (!item.typesetRoot || !scope.contains(item.typesetRoot)) continue;
+    item.typesetRoot.setAttribute('data-tex', texForClipboard(item.math, item.display));
+    item.typesetRoot.setAttribute('title', 'Copy as LaTeX');
+  }
+}
+
+function closestMathNode(node) {
+  const element = node && node.nodeType === Node.TEXT_NODE
+    ? node.parentElement
+    : node;
+  return element && element.closest ? element.closest('mjx-container[data-tex]') : null;
+}
+
+function hasTextOutsideMath(root) {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  let node = walker.nextNode();
+  while (node) {
+    if (node.textContent.trim()) {
+      let parent = node.parentNode;
+      let insideMath = false;
+      while (parent && parent !== root) {
+        if (parent.nodeType === Node.ELEMENT_NODE && parent.matches('mjx-container[data-tex]')) {
+          insideMath = true;
+          break;
+        }
+        parent = parent.parentNode;
+      }
+      if (!insideMath) return true;
+    }
+    node = walker.nextNode();
+  }
+  return false;
+}
+
+function selectedMathTex(selection) {
+  const anchorMath = closestMathNode(selection.anchorNode);
+  const focusMath = closestMathNode(selection.focusNode);
+  if (anchorMath && anchorMath === focusMath) return anchorMath.getAttribute('data-tex');
+  if (selection.rangeCount !== 1) return null;
+
+  const fragment = selection.getRangeAt(0).cloneContents();
+  const mathNodes = Array.from(fragment.querySelectorAll('mjx-container[data-tex]'));
+  if (mathNodes.length !== 1 || hasTextOutsideMath(fragment)) return null;
+  return mathNodes[0].getAttribute('data-tex');
+}
+
+function setupMathCopy() {
+  if (mathCopyHandlerInstalled) return;
+  mathCopyHandlerInstalled = true;
+  document.addEventListener('copy', event => {
+    const selection = window.getSelection();
+    if (!selection || selection.isCollapsed || !event.clipboardData) return;
+
+    const tex = selectedMathTex(selection);
+    if (!tex) return;
+    event.clipboardData.setData('text/plain', tex);
+    event.preventDefault();
+  });
+}
+
+function renderMathIn(element) {
+  if (!element || !window.MathJax) return;
+  const token = ++denoteTypesetToken;
+
+  if (MathJax.typesetClear) MathJax.typesetClear([element]);
+  const done = () => {
+    if (token === denoteTypesetToken) refreshMathCopyData(element);
+  };
+
+  if (MathJax.typesetPromise) {
+    MathJax.typesetPromise([element]).then(done).catch(() => {});
+  } else if (MathJax.typeset) {
+    MathJax.typeset([element]);
+    done();
+  }
+}
+
+function whenMathJaxReady(callback) {
+  if (!window.MathJax || !MathJax.startup) {
+    window.setTimeout(() => whenMathJaxReady(callback), 50);
+    return;
+  }
+  if (MathJax.startup.promise) {
+    MathJax.startup.promise.then(callback).catch(() => {});
+  } else {
+    callback();
+  }
+}
 
 document.addEventListener('DOMContentLoaded', function() {
   var container = document.getElementById('content')
   container.innerHTML = container.innerHTML.replace(/;;;a([\s\S]*?);;;a/g, (match, content) => {
     content.replace(/;;;;([\s\S]*?);;;;/g, (m, c) => {
-      let arr = c.split('::')
-      denotes.set(arr[0], arr[1])
+      const entry = parseDenoteEntry(c)
+      if (entry) denotes.set(entry.key, entry.value)
     })
     return ''
   })
@@ -66,7 +175,7 @@ window.addEventListener('load', function() {
     position: fixed;
     display: flex;
     left: 50%;
-    transform: translateX(420px);
+    transform: translateX(calc(var(--omni-maxw, 1160px) / 2 + 24px));
     overflow-y: auto;
     max-height: 70vh;
     flex-direction: column;
@@ -116,6 +225,12 @@ window.addEventListener('load', function() {
     overflow-y: auto;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     max-height: 70vh;
+    user-select: text;
+    -webkit-user-select: text;
+  }
+  .denote * {
+    user-select: text;
+    -webkit-user-select: text;
   }
   .denote-title{
     font-weight: bold;
@@ -131,6 +246,10 @@ window.addEventListener('load', function() {
     font-size: 14px;
     line-height: 1.5;
     border-bottom: 1px solid #e1e4e8;
+    cursor: text;
+  }
+  mjx-container[data-tex] {
+    cursor: text;
   }
   @media (max-width: 1670px) {
     .flex-container {
@@ -164,15 +283,18 @@ window.addEventListener('load', function() {
       "click",
       () => {
         const value = denotes.get(key)
-        document.getElementsByClassName("denote-title")[0].innerHTML = key
-        document.getElementsByClassName('denote-content')[0].innerHTML = value
-        if (value.includes('$')) {
-          MathJax.typeset()
-        }
+        const denoteTitle = document.getElementsByClassName("denote-title")[0]
+        const denoteContent = document.getElementsByClassName('denote-content')[0]
+        if (window.MathJax && MathJax.typesetClear) MathJax.typesetClear([denoteContent])
+        denoteTitle.textContent = key
+        denoteContent.innerHTML = value
+        if (value.includes('$') || value.includes('\\(') || value.includes('\\[')) renderMathIn(denoteContent)
       },
       false,
     );
   }
+  setupMathCopy()
+  whenMathJaxReady(() => refreshMathCopyData(document))
   let currentFeedback = null;
   document.querySelectorAll('clipboard-copy').forEach(copyButton => {
     copyButton.addEventListener('click', () => {

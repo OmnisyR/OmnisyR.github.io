@@ -20,7 +20,7 @@
         --omni-shadow: 0 14px 38px rgba(31, 35, 40, 0.10);
         --omni-font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
         --omni-mono: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
-        --omni-maxw: 1000px;
+        --omni-maxw: 1160px;
         --omni-sticky-top: 84px;
       }
 
@@ -376,7 +376,7 @@
 
       /* ---------- Article body ---------- */
       .markdown-body {
-        max-width: 72ch;
+        max-width: 100%;
         margin: 0 auto;
         color: var(--fgColor-default, var(--color-fg-default));
         font-size: 1.02rem;
