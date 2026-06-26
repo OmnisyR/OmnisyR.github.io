@@ -749,6 +749,217 @@
     document.querySelectorAll(".listTitle, .tagTitle").forEach(function (el) {
       resolveTextMarkers(el, isZh);
     });
+    installTagPageBehavior();
+  }
+
+  function setText(element, value) {
+    if (element && element.textContent !== value) element.textContent = value;
+  }
+
+  function decodeHash(value) {
+    try {
+      return decodeURIComponent(value || "");
+    } catch (e) {
+      return value || "";
+    }
+  }
+
+  function tagSlug(label) {
+    if (label === "All") return "all";
+    let source = resolveMarkers(label, false) || resolveMarkers(label, true) || label;
+    if (source.normalize) source = source.normalize("NFKD");
+    const slug = source
+      .toLowerCase()
+      .replace(/&/g, " and ")
+      .replace(/['']/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+    return slug || "tag";
+  }
+
+  function createTagState() {
+    if (!window.jsonData || typeof window.jsonData !== "object" || !Array.isArray(window.tagList)) return null;
+
+    const labels = window.tagList.slice();
+    const labelToSlug = Object.create(null);
+    const slugToLabel = Object.create(null);
+
+    labels.forEach(function (label) {
+      const base = tagSlug(label);
+      let slug = base;
+      let suffix = 2;
+      while (slugToLabel[slug] && slugToLabel[slug] !== label) {
+        slug = base + "-" + suffix;
+        suffix++;
+      }
+      labelToSlug[label] = slug;
+      slugToLabel[slug] = label;
+    });
+
+    const posts = Object.keys(window.jsonData)
+      .filter(function (key) {
+        return key !== "labelColorDict" && window.jsonData[key] && Array.isArray(window.jsonData[key].labels);
+      })
+      .map(function (key) {
+        return window.jsonData[key];
+      });
+
+    return { labels: labels, labelToSlug: labelToSlug, slugToLabel: slugToLabel, posts: posts };
+  }
+
+  function resolveTagInput(input, state) {
+    const value = decodeHash(String(input || "").replace(/^#/, "")).trim();
+    if (!value || value.toLowerCase() === "all") return "All";
+    if (state.slugToLabel[value]) return state.slugToLabel[value];
+    if (state.labelToSlug[value]) return value;
+
+    const lowered = value.toLowerCase();
+    if (state.slugToLabel[lowered]) return state.slugToLabel[lowered];
+
+    const isZh = currentLanguage() === "zh";
+    for (let i = 0; i < state.labels.length; i++) {
+      const label = state.labels[i];
+      if (
+        resolveMarkers(label, isZh) === value ||
+        resolveMarkers(label, false) === value ||
+        resolveMarkers(label, true) === value
+      ) {
+        return label;
+      }
+    }
+
+    return value;
+  }
+
+  function tagDisplayName(label) {
+    return label === "All" ? "All" : resolveMarkers(label, currentLanguage() === "zh");
+  }
+
+  function setNotFound(message, show) {
+    const notFind = document.getElementsByClassName("notFind")[0];
+    if (!notFind) return;
+    notFind.style.display = show ? "block" : "none";
+    if (message) notFind.textContent = message;
+  }
+
+  function applyTagSearch(query, state) {
+    const lists = Array.from(document.getElementsByClassName("lists"));
+    const tagTitle = document.getElementsByClassName("tagTitle")[0];
+    const input = document.getElementsByClassName("subnav-search-input")[0];
+    const searchInput = String(query || "");
+    const needle = searchInput.toUpperCase();
+    let count = 0;
+
+    if (input && input.value !== searchInput) input.value = searchInput;
+    setText(tagTitle, searchInput ? "Search #" + searchInput : "Search");
+    document.title = (searchInput || "Search") + " - OmnisyR's Blog";
+
+    lists.forEach(function (list, index) {
+      const post = state.posts[index];
+      const haystack = [
+        list.textContent,
+        post && post.postTitle,
+        post && post.labels && post.labels.join(" "),
+        post && post.labels && post.labels.map(function (label) {
+          return resolveMarkers(label, false) + " " + resolveMarkers(label, true);
+        }).join(" ")
+      ].join(" ").toUpperCase();
+
+      const visible = !needle || haystack.indexOf(needle) !== -1;
+      list.style.display = visible ? "block" : "none";
+      if (visible) count++;
+    });
+
+    setNotFound('Not Find "' + searchInput + '"', count === 0);
+  }
+
+  function applyTagFilter(label, state) {
+    const lists = Array.from(document.getElementsByClassName("lists"));
+    const tagTitle = document.getElementsByClassName("tagTitle")[0];
+    const input = document.getElementsByClassName("subnav-search-input")[0];
+    const display = tagDisplayName(label);
+    let count = 0;
+
+    if (input) input.value = "";
+    setText(tagTitle, "Tag #" + display);
+    document.title = display + " - OmnisyR's Blog";
+
+    lists.forEach(function (list, index) {
+      const post = state.posts[index];
+      const visible = label === "All" || !!(post && post.labels && post.labels.indexOf(label) !== -1);
+      list.style.display = visible ? "block" : "none";
+      if (visible) count++;
+    });
+
+    setNotFound('Not Find "' + display + '"', count === 0);
+  }
+
+  function installTagPageBehavior() {
+    if (!document.querySelector(".tagTitle") || !document.getElementById("taglabel")) return;
+
+    const state = createTagState();
+    if (!state || !state.labels.length || !document.querySelector(".SideNav .lists")) return;
+    window.__omniTagState = state;
+
+    Array.from(document.querySelectorAll("#taglabel > .Label")).forEach(function (button, index) {
+      const label = state.labels[index];
+      if (!label) return;
+      button.removeAttribute("onclick");
+      button.setAttribute("type", "button");
+      button.setAttribute("data-omni-tag", state.labelToSlug[label]);
+      button.onclick = function (event) {
+        event.preventDefault();
+        window.updateShowTag(label);
+      };
+    });
+
+    Array.from(document.querySelectorAll(".SideNav .lists")).forEach(function (list, index) {
+      const post = state.posts[index];
+      const slugs = post && post.labels
+        ? post.labels.map(function (label) { return state.labelToSlug[label]; }).filter(Boolean)
+        : [];
+      list.setAttribute("data-omni-tags", slugs.join(" "));
+    });
+
+    window.updateShowTag = function (labelOrSlug) {
+      const activeState = createTagState() || state;
+      const label = resolveTagInput(labelOrSlug, activeState);
+      const slug = activeState.labelToSlug[label];
+      if (slug) window.location.hash = "#" + encodeURIComponent(slug);
+      applyTagFilter(label, activeState);
+    };
+
+    window.setClassDisplay = function (labelOrSlug) {
+      const activeState = createTagState() || state;
+      const label = resolveTagInput(labelOrSlug, activeState);
+      if (activeState.labelToSlug[label]) {
+        applyTagFilter(label, activeState);
+      } else {
+        applyTagSearch(label, activeState);
+      }
+    };
+
+    window.searchShow = function () {
+      const input = document.getElementsByClassName("subnav-search-input")[0];
+      const query = input ? input.value : "";
+      if (query) window.location.hash = "#" + encodeURIComponent(query);
+      else history.replaceState(null, "", window.location.pathname);
+      applyTagSearch(query, createTagState() || state);
+    };
+
+    if (!window.__omniTagHashListener) {
+      window.__omniTagHashListener = true;
+      window.addEventListener("hashchange", function () {
+        if (document.querySelector(".tagTitle") && window.setClassDisplay) {
+          window.setClassDisplay(decodeHash(window.location.hash.slice(1)) || "All");
+        }
+      });
+    }
+
+    const searchInput = document.getElementsByClassName("subnav-search-input")[0];
+    if (document.activeElement !== searchInput) {
+      window.setClassDisplay(decodeHash(window.location.hash.slice(1)) || "All");
+    }
   }
 
   // The tag/search page builds its chips and list from postList.json after

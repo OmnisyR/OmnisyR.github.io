@@ -54,7 +54,9 @@
 
   function translateLegacy(container, lang, forceCn) {
     if (!container) return;
-    container.innerHTML = transStr(container.innerHTML, lang, forceCn);
+    const html = container.innerHTML;
+    const translated = transStr(html, lang, forceCn);
+    if (translated !== html) container.innerHTML = translated;
   }
 
   function translateMetaElement(element, lang, forceCn) {
