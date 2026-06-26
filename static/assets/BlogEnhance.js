@@ -631,6 +631,21 @@
   }
 
   function currentLanguage() {
+    const explicit = document.documentElement.getAttribute("data-omnisyr-lang");
+    if (explicit) return explicit.toLowerCase().startsWith("zh") ? "zh" : "en";
+
+    try {
+      const stored = localStorage.getItem("omnisyr_blog_lang");
+      if (stored) return stored.toLowerCase().startsWith("zh") ? "zh" : "en";
+    } catch (e) {
+      // localStorage may be unavailable in strict privacy contexts.
+    }
+
+    const browserLangs = navigator.languages && navigator.languages.length
+      ? navigator.languages
+      : [navigator.language || navigator.userLanguage || ""];
+    if (browserLangs.some(function (lang) { return String(lang).toLowerCase().startsWith("zh"); })) return "zh";
+
     const lang = document.documentElement.lang || "";
     return lang.toLowerCase().startsWith("zh") ? "zh" : "en";
   }
