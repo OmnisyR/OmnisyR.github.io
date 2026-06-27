@@ -20,7 +20,6 @@
         --omni-shadow: 0 14px 38px rgba(31, 35, 40, 0.10);
         --omni-font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
         --omni-mono: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
-        --omni-maxw: 1000px;
         --omni-sticky-top: 84px;
       }
 
@@ -53,10 +52,6 @@
       }
 
       html body {
-        width: min(100% - 40px, var(--omni-maxw)) !important;
-        min-width: 0 !important;
-        max-width: none !important;
-        margin: 0 auto !important;
         padding: 26px 0 72px !important;
         color: var(--fgColor-default, var(--color-fg-default)) !important;
         font-family: var(--omni-font) !important;
@@ -371,8 +366,6 @@
 
       /* ---------- Article body ---------- */
       .markdown-body {
-        max-width: 72ch;
-        margin: 0 auto;
         color: var(--fgColor-default, var(--color-fg-default));
         font-size: 1.02rem;
         line-height: 1.78;
@@ -525,7 +518,6 @@
 
       @media (max-width: 720px) {
         html body {
-          width: min(100% - 24px, var(--omni-maxw)) !important;
           padding: 14px 0 44px !important;
         }
 

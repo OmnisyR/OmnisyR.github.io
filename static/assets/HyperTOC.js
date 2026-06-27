@@ -1,6 +1,4 @@
 const denotes = new Map();
-let mathCopyHandlerInstalled = false;
-let denoteTypesetToken = 0;
 
 function parseDenoteEntry(raw) {
   const separator = raw.indexOf('::');
@@ -11,88 +9,14 @@ function parseDenoteEntry(raw) {
   };
 }
 
-function texForClipboard(math, display) {
-  const tex = String(math || '').trim();
-  return display ? '$$\n' + tex + '\n$$' : '$' + tex + '$';
-}
-
-function refreshMathCopyData(root) {
-  if (!window.MathJax || !MathJax.startup || !MathJax.startup.document) return;
-  const scope = root || document;
-  for (const item of MathJax.startup.document.math) {
-    if (!item.typesetRoot || !scope.contains(item.typesetRoot)) continue;
-    item.typesetRoot.setAttribute('data-tex', texForClipboard(item.math, item.display));
-    item.typesetRoot.setAttribute('title', 'Copy as LaTeX');
-  }
-}
-
-function closestMathNode(node) {
-  const element = node && node.nodeType === Node.TEXT_NODE
-    ? node.parentElement
-    : node;
-  return element && element.closest ? element.closest('mjx-container[data-tex]') : null;
-}
-
-function exactSelectedMath(range) {
-  if (!range || range.startContainer !== range.endContainer) return null;
-  if (range.endOffset !== range.startOffset + 1) return null;
-
-  const selected = range.startContainer.childNodes[range.startOffset];
-  if (!selected || selected.nodeType !== Node.ELEMENT_NODE) return null;
-  if (selected.matches('mjx-container[data-tex]')) return selected;
-  return selected.querySelector ? selected.querySelector('mjx-container[data-tex]') : null;
-}
-
-function selectedMathTex(selection) {
-  const anchorMath = closestMathNode(selection.anchorNode);
-  const focusMath = closestMathNode(selection.focusNode);
-  if (anchorMath && anchorMath === focusMath) return anchorMath.getAttribute('data-tex');
-  if (selection.rangeCount !== 1) return null;
-  const selectedMath = exactSelectedMath(selection.getRangeAt(0));
-  if (selectedMath) return selectedMath.getAttribute('data-tex');
-  return null;
-}
-
-function setupMathCopy() {
-  if (mathCopyHandlerInstalled) return;
-  mathCopyHandlerInstalled = true;
-  document.addEventListener('copy', event => {
-    const selection = window.getSelection();
-    if (!selection || selection.isCollapsed || !event.clipboardData) return;
-
-    const tex = selectedMathTex(selection);
-    if (!tex) return;
-    event.clipboardData.setData('text/plain', tex);
-    event.preventDefault();
-  });
-}
-
 function renderMathIn(element) {
   if (!element || !window.MathJax) return;
-  const token = ++denoteTypesetToken;
-
   if (MathJax.typesetClear) MathJax.typesetClear([element]);
-  const done = () => {
-    if (token === denoteTypesetToken) refreshMathCopyData(element);
-  };
 
   if (MathJax.typesetPromise) {
-    MathJax.typesetPromise([element]).then(done).catch(() => {});
+    MathJax.typesetPromise([element]).catch(() => {});
   } else if (MathJax.typeset) {
     MathJax.typeset([element]);
-    done();
-  }
-}
-
-function whenMathJaxReady(callback) {
-  if (!window.MathJax || !MathJax.startup) {
-    window.setTimeout(() => whenMathJaxReady(callback), 50);
-    return;
-  }
-  if (MathJax.startup.promise) {
-    MathJax.startup.promise.then(callback).catch(() => {});
-  } else {
-    callback();
   }
 }
 
@@ -162,7 +86,7 @@ window.addEventListener('load', function() {
     position: fixed;
     display: flex;
     left: 50%;
-    transform: translateX(calc(var(--omni-maxw, 1000px) / 2 + 24px));
+    transform: translateX(420px);
     overflow-y: auto;
     max-height: 70vh;
     flex-direction: column;
@@ -235,9 +159,6 @@ window.addEventListener('load', function() {
     border-bottom: 1px solid #e1e4e8;
     cursor: text;
   }
-  mjx-container[data-tex] {
-    cursor: text;
-  }
   @media (max-width: 1670px) {
     .flex-container {
       position:static;
@@ -280,8 +201,6 @@ window.addEventListener('load', function() {
       false,
     );
   }
-  setupMathCopy()
-  whenMathJaxReady(() => refreshMathCopyData(document))
   let currentFeedback = null;
   document.querySelectorAll('clipboard-copy').forEach(copyButton => {
     copyButton.addEventListener('click', () => {
