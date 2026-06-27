@@ -52,7 +52,6 @@
       }
 
       html body {
-        padding: 26px 0 72px !important;
         color: var(--fgColor-default, var(--color-fg-default)) !important;
         font-family: var(--omni-font) !important;
         font-size: 16px !important;
@@ -517,10 +516,6 @@
       }
 
       @media (max-width: 720px) {
-        html body {
-          padding: 14px 0 44px !important;
-        }
-
         #header {
           min-height: 56px;
           gap: 10px;
