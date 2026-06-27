@@ -33,25 +33,14 @@ function closestMathNode(node) {
   return element && element.closest ? element.closest('mjx-container[data-tex]') : null;
 }
 
-function hasTextOutsideMath(root) {
-  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-  let node = walker.nextNode();
-  while (node) {
-    if (node.textContent.trim()) {
-      let parent = node.parentNode;
-      let insideMath = false;
-      while (parent && parent !== root) {
-        if (parent.nodeType === Node.ELEMENT_NODE && parent.matches('mjx-container[data-tex]')) {
-          insideMath = true;
-          break;
-        }
-        parent = parent.parentNode;
-      }
-      if (!insideMath) return true;
-    }
-    node = walker.nextNode();
-  }
-  return false;
+function exactSelectedMath(range) {
+  if (!range || range.startContainer !== range.endContainer) return null;
+  if (range.endOffset !== range.startOffset + 1) return null;
+
+  const selected = range.startContainer.childNodes[range.startOffset];
+  if (!selected || selected.nodeType !== Node.ELEMENT_NODE) return null;
+  if (selected.matches('mjx-container[data-tex]')) return selected;
+  return selected.querySelector ? selected.querySelector('mjx-container[data-tex]') : null;
 }
 
 function selectedMathTex(selection) {
@@ -59,11 +48,9 @@ function selectedMathTex(selection) {
   const focusMath = closestMathNode(selection.focusNode);
   if (anchorMath && anchorMath === focusMath) return anchorMath.getAttribute('data-tex');
   if (selection.rangeCount !== 1) return null;
-
-  const fragment = selection.getRangeAt(0).cloneContents();
-  const mathNodes = Array.from(fragment.querySelectorAll('mjx-container[data-tex]'));
-  if (mathNodes.length !== 1 || hasTextOutsideMath(fragment)) return null;
-  return mathNodes[0].getAttribute('data-tex');
+  const selectedMath = exactSelectedMath(selection.getRangeAt(0));
+  if (selectedMath) return selectedMath.getAttribute('data-tex');
+  return null;
 }
 
 function setupMathCopy() {
@@ -175,7 +162,7 @@ window.addEventListener('load', function() {
     position: fixed;
     display: flex;
     left: 50%;
-    transform: translateX(calc(var(--omni-maxw, 1160px) / 2 + 24px));
+    transform: translateX(calc(var(--omni-maxw, 1000px) / 2 + 24px));
     overflow-y: auto;
     max-height: 70vh;
     flex-direction: column;

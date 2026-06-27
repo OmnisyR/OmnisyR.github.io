@@ -20,7 +20,7 @@
         --omni-shadow: 0 14px 38px rgba(31, 35, 40, 0.10);
         --omni-font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
         --omni-mono: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
-        --omni-maxw: 1160px;
+        --omni-maxw: 1000px;
         --omni-sticky-top: 84px;
       }
 
@@ -68,16 +68,11 @@
       }
 
       body::before {
-        content: "";
-        position: fixed;
-        inset: 0;
-        z-index: -1;
-        pointer-events: none;
-        background: radial-gradient(120% 56% at 50% -8%, var(--omni-accent-soft), transparent 62%);
+        content: none;
       }
 
       ::selection {
-        background: color-mix(in srgb, var(--omni-accent) 24%, transparent);
+        background: rgba(0, 107, 117, 0.20);
       }
 
       a:focus-visible,
@@ -376,7 +371,7 @@
 
       /* ---------- Article body ---------- */
       .markdown-body {
-        max-width: 100%;
+        max-width: 72ch;
         margin: 0 auto;
         color: var(--fgColor-default, var(--color-fg-default));
         font-size: 1.02rem;
