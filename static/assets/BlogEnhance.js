@@ -442,9 +442,22 @@
       .markdown-body pre,
       .markdown-body .highlight pre {
         padding: 16px 18px;
-        line-height: 1.6;
+        font-size: 0.88rem;
+        line-height: 1.55;
         border: 1px solid var(--borderColor-muted, var(--color-border-muted));
         border-radius: var(--omni-radius) !important;
+      }
+
+      .markdown-body .snippet-clipboard-content {
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        overscroll-behavior-x: contain;
+        overscroll-behavior-y: auto;
+      }
+
+      .markdown-body .snippet-clipboard-content pre {
+        min-width: max-content;
+        overflow: visible !important;
       }
 
       .markdown-body code,
@@ -972,6 +985,7 @@
       timer = window.setTimeout(function () {
         timer = null;
         processContent();
+        setupCodeBlockWheel();
       }, 40);
     });
     observer.observe(target, { childList: true, subtree: true });
@@ -998,6 +1012,28 @@
     document.querySelectorAll(".markdown-body img").forEach(function (image) {
       if (!image.getAttribute("loading")) image.setAttribute("loading", "lazy");
       if (!image.getAttribute("decoding")) image.setAttribute("decoding", "async");
+    });
+  }
+
+  function wheelDeltaPixels(event) {
+    if (event.deltaMode === WheelEvent.DOM_DELTA_LINE) return event.deltaY * 16;
+    if (event.deltaMode === WheelEvent.DOM_DELTA_PAGE) return event.deltaY * window.innerHeight;
+    return event.deltaY;
+  }
+
+  function setupCodeBlockWheel() {
+    document.querySelectorAll(".markdown-body .snippet-clipboard-content, .markdown-body pre").forEach(function (block) {
+      const scroller = block.closest(".snippet-clipboard-content") || block;
+      if (scroller.getAttribute("data-omni-wheel-fixed")) return;
+      scroller.setAttribute("data-omni-wheel-fixed", "true");
+
+      scroller.addEventListener("wheel", function (event) {
+        if (event.defaultPrevented || !event.deltaY) return;
+        if (Math.abs(event.deltaX) >= Math.abs(event.deltaY)) return;
+
+        event.preventDefault();
+        window.scrollBy({ top: wheelDeltaPixels(event), left: 0, behavior: "auto" });
+      }, { passive: false });
     });
   }
 
@@ -1071,6 +1107,7 @@
     enhanceExternalLinks();
     enhanceIconButtons();
     enhanceImages();
+    setupCodeBlockWheel();
     setupStickyHeader();
     watchContent();
   }
