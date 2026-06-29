@@ -442,7 +442,7 @@
       .markdown-body pre,
       .markdown-body .highlight pre {
         padding: 16px 18px;
-        font-size: 0.88rem;
+        font-size: 0.8rem;
         line-height: 1.55;
         border: 1px solid var(--borderColor-muted, var(--color-border-muted));
         border-radius: var(--omni-radius) !important;
