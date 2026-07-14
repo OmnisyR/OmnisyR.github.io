@@ -20,13 +20,38 @@ HELPER = r'''
                 return 'zh-CN'
             return 'en'
 
+        protected_denotes = []
+
+        def protect_denotes(match):
+            token = '@@OMNISYR_DENOTES_{}@@'.format(len(protected_denotes))
+            protected_denotes.append(
+                '<div class="omnisyr-denote-data" hidden aria-hidden="true">\n\n{}\n\n</div>'.format(match.group(0))
+            )
+            return token
+
         def replace_fence(match):
             lang = lang_name(match.group(1))
             body = match.group(2).strip()
             return '<div lang="{}">\n\n{}\n\n</div>'.format(lang, body)
 
+        def replace_legacy_pair(match):
+            english = match.group(1)
+            chinese = match.group(2)
+            is_block = '\n' in english or '\n' in chinese or 'Gmeek-html' in english or 'Gmeek-html' in chinese
+            if is_block:
+                return (
+                    '<div lang="en">\n\n{}\n\n</div>\n\n'
+                    '<div lang="zh-CN">\n\n{}\n\n</div>'
+                ).format(english.strip(), chinese.strip())
+            return '<span lang="en">{}</span><span lang="zh-CN">{}</span>'.format(english, chinese)
+
+        text = re.sub(r'(?ms);;;a.*?;;;a', protect_denotes, text)
         text = re.sub(r'(?ms)^:::\s*(en|zh|zh-CN|cn)\s*$\n(.*?)^:::\s*$', replace_fence, text)
         text = re.sub(r'(?ms)^<!--\s*lang:\s*(en|zh|zh-CN|cn)\s*-->\s*$\n(.*?)^<!--\s*/lang\s*-->\s*$', replace_fence, text)
+        text = re.sub(r'(?s);;;e(.*?);;;e;;;c(.*?);;;c', replace_legacy_pair, text)
+
+        for index, denote in enumerate(protected_denotes):
+            text = text.replace('@@OMNISYR_DENOTES_{}@@'.format(index), denote)
         return text
 
     def resolveIssueBody(self, issue):
