@@ -54,6 +54,76 @@ HELPER = r'''
             text = text.replace('@@OMNISYR_DENOTES_{}@@'.format(index), denote)
         return text
 
+    def issueDescription(self, text, title=''):
+        source = text or ''
+        source = re.sub(
+            r'(?is)<div\s+class=["\']omnisyr-denote-data["\'][^>]*>.*?</div>',
+            ' ',
+            source,
+        )
+        source = re.sub(r'(?ms);;;a.*?;;;a', ' ', source)
+        source = re.sub(r'(?is)<!--.*?-->', ' ', source)
+        source = re.sub(r'(?ms)```.*?```', ' ', source)
+        source = re.sub(r'(?is)`Gmeek-html.*?`', ' ', source)
+
+        def plain_text(markdown):
+            value = markdown or ''
+            value = re.sub(r'!\[([^\]]*)\]\([^)]*\)', r'\1', value)
+            value = re.sub(r'\[([^\]]+)\]\([^)]*\)', r'\1', value)
+            value = re.sub(r'`([^`]*)`', r'\1', value)
+            value = re.sub(r'\$[^$]*\$', ' ', value)
+            value = re.sub(r'https?://\S+', ' ', value)
+            value = re.sub(r'[*_~|]', '', value)
+
+            paragraph = []
+            for raw_line in value.splitlines():
+                if re.search(r'<span\s+lang=', raw_line, re.I):
+                    if paragraph:
+                        break
+                    continue
+                line = re.sub(r'<[^>]+>', ' ', raw_line)
+                line = re.sub(r'\s+', ' ', line).strip()
+                if not line:
+                    if paragraph:
+                        break
+                    continue
+                if re.match(r'^(?:#{1,6}\s|>|[-+*]\s|\d+[.)]\s|\$\$|\\\[|;;;)', line):
+                    if paragraph:
+                        break
+                    continue
+                if len(line) < 20 and not paragraph:
+                    continue
+                paragraph.append(line)
+                if len(' '.join(paragraph)) >= 180:
+                    break
+
+            result = re.sub(r'\s+', ' ', ' '.join(paragraph)).strip()
+            if len(result) <= 160:
+                return result
+            shortened = result[:157]
+            if ' ' in shortened:
+                shortened = shortened.rsplit(' ', 1)[0]
+            return shortened.rstrip(' ,.;:') + '...'
+
+        descriptions = {}
+        block_pattern = r'(?is)<div\s+lang=["\'](en|zh-CN)["\']>\s*(.*?)\s*</div>'
+        for language, body in re.findall(block_pattern, source):
+            description = plain_text(body)
+            if description and language not in descriptions:
+                descriptions[language] = description
+
+        if descriptions.get('en') and descriptions.get('zh-CN'):
+            return descriptions['en'] + ' || ' + descriptions['zh-CN']
+        if descriptions:
+            return descriptions.get('en') or descriptions.get('zh-CN')
+
+        fallback = plain_text(source)
+        if fallback:
+            return fallback
+
+        title_parts = [part.strip() for part in str(title or '').split('||') if part.strip()]
+        return ' || '.join(title_parts[:2])
+
     def resolveIssueBody(self, issue):
         body = issue.body or ''
         match = re.search(r'<!--\s*(?:gmeek:include|include)\s+([^>]+?)\s*-->', body, re.I)
@@ -118,7 +188,7 @@ def patch_gmeek(path: pathlib.Path) -> None:
     source = source.replace("        if len(issue.labels)>=1:\n", "        if len(issue.labels)>=1:\n            issue_body=self.resolveIssueBody(issue)\n", 1)
     source = source.replace("            if issue.body==None:\n", "            if issue_body==None:\n", 1)
     source = source.replace("                self.blogBase[listJsonName][postNum][\"wordCount\"]=len(issue.body)\n", "                self.blogBase[listJsonName][postNum][\"wordCount\"]=len(issue_body)\n", 1)
-    source = source.replace("                self.blogBase[listJsonName][postNum][\"description\"]=issue.body.split(period)[0].replace(\"\\\"\", \"\\'\")+period\n", "                self.blogBase[listJsonName][postNum][\"description\"]=issue_body.split(period)[0].replace(\"\\\"\", \"\\'\")+period\n", 1)
+    source = source.replace("                self.blogBase[listJsonName][postNum][\"description\"]=issue.body.split(period)[0].replace(\"\\\"\", \"\\'\")+period\n", "                self.blogBase[listJsonName][postNum][\"description\"]=self.issueDescription(issue_body, issue.title).replace(\"\\\"\", \"\\'\")\n", 1)
     source = source.replace("                postConfig=json.loads(issue.body.split(\"\\r\\n\")[-1:][0].split(\"##\")[1])\n", "                postConfig=json.loads(re.findall(r'##({[\\s\\S]*?})##', issue_body)[-1])\n", 1)
     source = source.replace("            if issue.body==None:\n                f.write('')\n            else:\n                f.write(issue.body)\n", "            if issue_body==None:\n                f.write('')\n            else:\n                f.write(issue_body)\n", 1)
 
