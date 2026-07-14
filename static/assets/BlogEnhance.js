@@ -475,6 +475,16 @@
         aspect-ratio: 2 / 1;
       }
 
+      .markdown-body mjx-container[display="true"] {
+        display: block !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding-block: 0.25rem;
+      }
+
       .markdown-body :not(pre) > code {
         padding: 0.16em 0.4em;
         font-size: 0.88em;
