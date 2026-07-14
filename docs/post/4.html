@@ -73,13 +73,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </div>
 </div>
     <div id="content">
-<div class="markdown-body" id="postBody"><div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg data-component="Octicon" class="octicon octicon-info mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p><p>This article currently only supports Chinese.</p>
-</div>
-<div class="markdown-alert markdown-alert-caution"><p class="markdown-alert-title"><svg data-component="Octicon" class="octicon octicon-stop mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M4.47.22A.749.749 0 0 1 5 0h6c.199 0 .389.079.53.22l4.25 4.25c.141.14.22.331.22.53v6a.749.749 0 0 1-.22.53l-4.25 4.25A.749.749 0 0 1 11 16H5a.749.749 0 0 1-.53-.22L.22 11.53A.749.749 0 0 1 0 11V5c0-.199.079-.389.22-.53Zm.84 1.28L1.5 5.31v5.38l3.81 3.81h5.38l3.81-3.81V5.31L10.69 1.5ZM8 4a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Caution</p><p>施工中！</p>
-</div>
-
-<div>
-<p>;;;a<br>
+<div class="markdown-body" id="postBody"><div class="omnisyr-denote-data" hidden aria-hidden="true"><p>;;;a<br>
 ;;;;生成式模型::在实际运用中，依据用户的引导性输入或是不依靠输入，就可以生成出一系列数据的模型（这些数据往往在现实中不存在）;;;;<br>
 ;;;;变分自编码器::简称VAE;;;;<br>
 ;;;;生成式对抗模型::GANs;;;;<br>
@@ -92,10 +86,13 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 ;;;;重参数化技巧::一种数学计算技巧，在<a href="https://OmnisyR.github.io/post/6.html" rel="nofollow">扩散模型的基石：Denoising Diffusion Probabilistic Models(DDPM)</a>中将详细讨论。;;;;<br>
 ;;;;随机梯度下降法::SDG;;;;<br>
 ;;;;时至今日::直到写到这里时的2025年07月;;;;<br>
-;;;a</p>
+;;;a</p></div><div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg data-component="Octicon" class="octicon octicon-info mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p><p>This article currently only supports Chinese.</p>
 </div>
-## 生成式模型
-扩散模型是一种`生成式模型`，它最初只运用在了图片生成上，但如今，它已经有了相当广阔的运用空间。在扩散模型流行之前，主流的图片的生成式模型还有`变分自编码器`以及`生成式对抗模型`，与它们相比，扩散模型虽然牺牲了采样速度，提升了采样结果的`泛性`与`质量`。
+<div class="markdown-alert markdown-alert-caution"><p class="markdown-alert-title"><svg data-component="Octicon" class="octicon octicon-stop mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M4.47.22A.749.749 0 0 1 5 0h6c.199 0 .389.079.53.22l4.25 4.25c.141.14.22.331.22.53v6a.749.749 0 0 1-.22.53l-4.25 4.25A.749.749 0 0 1 11 16H5a.749.749 0 0 1-.53-.22L.22 11.53A.749.749 0 0 1 0 11V5c0-.199.079-.389.22-.53Zm.84 1.28L1.5 5.31v5.38l3.81 3.81h5.38l3.81-3.81V5.31L10.69 1.5ZM8 4a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Caution</p><p>施工中！</p>
+</div>
+
+<h2>生成式模型</h2>
+<p>扩散模型是一种<code class="notranslate">生成式模型</code>，它最初只运用在了图片生成上，但如今，它已经有了相当广阔的运用空间。在扩散模型流行之前，主流的图片的生成式模型还有<code class="notranslate">变分自编码器</code>以及<code class="notranslate">生成式对抗模型</code>，与它们相比，扩散模型虽然牺牲了采样速度，提升了采样结果的<code class="notranslate">泛性</code>与<code class="notranslate">质量</code>。</p>
 <p><img src="https://OmnisyR.github.io/figs/generative_models.png" width="1600" height="658" alt="生成式模型对比"><br>
 <span lang="en">Source:</span><span lang="zh-CN">图片来源：</span><a href="https://pub.towardsai.net/diffusion-models-vs-gans-vs-vaes-comparison-of-deep-generative-models-67ab93e0d9ae" rel="nofollow">Diffusion Models vs. GANs vs. VAEs: Comparison of Deep Generative Models</a></p>
 <h2>扩散模型</h2>

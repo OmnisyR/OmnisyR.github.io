@@ -83,9 +83,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </div>
 </div>
     <div id="content">
-<div class="markdown-body" id="postBody">
-<div>
-<p>;;;a<br>
+<div class="markdown-body" id="postBody"><div class="omnisyr-denote-data" hidden aria-hidden="true"><p>;;;a<br>
 ;;;;;;;eCopy and paste the code directly::Or just click <a href="https://github.com/OmnisyR/diffusion_demo/tree/main/ddpm/en">me</a> to go to the full version.;;;e;;;c直接复制粘贴::或是点<a href="https://github.com/OmnisyR/diffusion_demo/tree/main/ddpm/cn">我</a>转到完全版。;;;c;;;;<br>
 ;;;;;;;eMarkov chain::The state at a given moment is only related to the state at the previous moment, i.e., $x_t = f(x_{t - 1})$, without the involvement of states at other moments. A chain formed by a number of such state relationships constitutes a Markov chain. Therefore, Markov chains have the following special properties:;;;e;;;c马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。因此，马尔科夫链存在着这样的特殊性质：;;;c</p>
 <p>$$
@@ -145,8 +143,8 @@ x_{t - 1} &amp;= \frac{1}{\sqrt{\alpha_t}}x_t
 $$</p>
 <p>;;;;<br>
 ;;;;;;;eThe limitations of the blog framework::The total number of characters in a single article is limited to 65,536.;;;e;;;c博客框架的限制::单篇文章的总字符数被限制在了65,536内。;;;c;;;;<br>
-;;;a</p>
-</div><div lang="en">
+;;;a</p></div>
+<div lang="en">
 <h2>Introduction</h2>
 <p>I'm not very good at describing subjective things, and most of the information about diffusion models has already been covered in <a href="https://omnisyr.github.io/post/4.html" rel="nofollow">Diffusion Model Overview</a>, so I'll skip the formalities and get straight to the point!</p>
 <p>In this article, I will introduce and implement DDPM from a mathematical and coding perspective. If you just want to try it out, you can <code class="notranslate">Copy and paste the code directly</code>, modify a few path parameters, and run it right away, provided your environment is properly configured!</p>
