@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link href='/assets/Primer.css' rel='stylesheet' />
-    <script src='/assets/Language.js'></script> <script defer src='/assets/BlogEnhance.js'></script> <script type='text/javascript' id='mmvst_globe' src='https://mapmyvisitors.com/globe.js?d=7My-1755wft4R84QKdWiJC8M0BsNLhLfhDs_rBlfwRs'></script> <meta name='google-site-verification' content='jL_vSMve-woq2yALbGnRHeP86_xTVwPvJYu6vfAQiWo'/>
+    <script src='/assets/Language.js'></script> <script defer src='/assets/BlogEnhance.js'></script> <script defer src='/assets/ArticleTools.js'></script> <script async type='text/javascript' id='mmvst_globe' src='https://mapmyvisitors.com/globe.js?d=7My-1755wft4R84QKdWiJC8M0BsNLhLfhDs_rBlfwRs'></script> <meta name='google-site-verification' content='jL_vSMve-woq2yALbGnRHeP86_xTVwPvJYu6vfAQiWo'/>
     <link rel="icon" href="https://avatars.githubusercontent.com/u/68898477?s=400&u=262ae3b76f651c62a82042317aaae313706c859c&v=4"><script>
         let theme = localStorage.getItem("meek_theme") || "light";
         document.documentElement.setAttribute("data-color-mode", theme);
@@ -18,9 +18,13 @@
 
 <!-- ##{'script':'<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>'}## -->
 
+<div class='omnisyr-denote-data' hidden aria-hidden='true'>
+
 ;;;a
 ;;;;UE Viewer::[下载界面](https://www.gildor.org/en/projects/umodel#files);;;;
 ;;;a
+
+</div>
 ## 写在前面
 GGST中最吸引我的武器莫过于Unika的AC/43了。">
 <meta property="og:title" content="Modeling and Production of AC/43 in Guilty Gear || 罪恶装备中AC/43的建模与制作">
@@ -32,9 +36,13 @@ GGST中最吸引我的武器莫过于Unika的AC/43了。">
 
 <!-- ##{'script':'<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>'}## -->
 
+<div class='omnisyr-denote-data' hidden aria-hidden='true'>
+
 ;;;a
 ;;;;UE Viewer::[下载界面](https://www.gildor.org/en/projects/umodel#files);;;;
 ;;;a
+
+</div>
 ## 写在前面
 GGST中最吸引我的武器莫过于Unika的AC/43了。">
 <meta property="og:type" content="article">
@@ -112,11 +120,13 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <div class="markdown-alert markdown-alert-caution"><p class="markdown-alert-title"><svg data-component="Octicon" class="octicon octicon-stop mr-2" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M4.47.22A.749.749 0 0 1 5 0h6c.199 0 .389.079.53.22l4.25 4.25c.141.14.22.331.22.53v6a.749.749 0 0 1-.22.53l-4.25 4.25A.749.749 0 0 1 11 16H5a.749.749 0 0 1-.53-.22L.22 11.53A.749.749 0 0 1 0 11V5c0-.199.079-.389.22-.53Zm.84 1.28L1.5 5.31v5.38l3.81 3.81h5.38l3.81-3.81V5.31L10.69 1.5ZM8 4a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Caution</p><p>施工中！</p>
 </div>
 
+<div>
 <p>;;;a<br>
 ;;;;UE Viewer::<a href="https://www.gildor.org/en/projects/umodel#files" rel="nofollow">下载界面</a>;;;;<br>
 ;;;a</p>
-<h2>写在前面</h2>
-<p>GGST中最吸引我的武器莫过于Unika的AC/43了。在我看来，它的设计理念特别“浪漫”，于是我便有了“为什么我不自己动手做个呢？”的想法。网上也有不少关于AC/43的3D打印成品，但有个问题，那就是这些成品不会动，换句话说网上的那些只是一个单纯的模型罢了，完全不浪漫，很是遗憾。</p>
+</div>
+## 写在前面
+GGST中最吸引我的武器莫过于Unika的AC/43了。在我看来，它的设计理念特别“浪漫”，于是我便有了“为什么我不自己动手做个呢？”的想法。网上也有不少关于AC/43的3D打印成品，但有个问题，那就是这些成品不会动，换句话说网上的那些只是一个单纯的模型罢了，完全不浪漫，很是遗憾。
 <p>在这篇文章中，我将记录下我的关于制作AC/43的全部尝试以及成果，其中必然包含了一些对游戏进行解包的操作，还请希望Arc System高抬贵手，不要追究。</p>
 <h2>素材准备</h2>
 <p>首先是素材部分，由于游戏中有着现成的模型和设计图可以参考，因此只需要进行解包获取源文件用来参考即可。<br>
@@ -151,11 +161,16 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
     └── Plugins
 </code></pre>
 <p>双击资产文件即可进行预览，虚幻引擎为4.25版本：</p>
-<p>;;;e<img src="https://OmnisyR.github.io/figs/AC43_EN.png">;;;e;;;c<img src="https://OmnisyR.github.io/figs/AC43_ZH.png">;;;c</p>
+<div lang="en">
+<p><img src="https://OmnisyR.github.io/figs/AC43_EN.png" width="8844" height="2311" alt="AC/43 asset location in UE Viewer"></p>
+</div>
+<div lang="zh-CN">
+<p><img src="https://OmnisyR.github.io/figs/AC43_ZH.png" width="8844" height="2313" alt="UE Viewer 中的 AC/43 资产位置"></p>
+</div>
 <p>在预览界面的Tools中可以导出当前文件，或是在文件浏览界面右击文件夹来进行批量导出。</p>
 <h2>模型预览</h2>
 <p>在模型和材质等素材导出后便可先使用Blender进行预览，使用Unreal PSK/PSA插件。通过该插件导入Mesh文件夹下的uni_weaponsp.pskx，为了保证单位一致，可在导入的时候选择缩放0.01。该文件为AC/43展开的模型，它能够为后续的零件建模提供更好的参考价值。</p>
-<p><p align="center"><img src="https://OmnisyR.github.io/figs/preview.png" height=200> <img src="https://OmnisyR.github.io/figs/3view.png" height=200></p></div>
+<p><p align="center"><img src="https://OmnisyR.github.io/figs/preview.png" width="360" height="200" alt="AC/43 Blender preview"> <img src="https://OmnisyR.github.io/figs/3view.png" width="335" height="200" alt="AC/43 orthographic views"></p></p></div>
 <div style="font-size:small;margin-top:8px;float:right;">转载文章请注明出处</div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>

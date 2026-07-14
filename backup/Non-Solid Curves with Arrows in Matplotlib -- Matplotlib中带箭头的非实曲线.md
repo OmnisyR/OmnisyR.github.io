@@ -1,7 +1,12 @@
 <!-- ##{"script":"<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>"}## -->
+<div class="omnisyr-denote-data" hidden aria-hidden="true">
+
 ;;;a
 ;;;;;;;eNote::note;;;e;;;c注释::注释;;;c;;;;
-;;;a;;;e
+;;;a
+
+</div><div lang="en">
+
 ## Introduction
 This article will explain how to use Matplotlib to plot non-solid curves with arrows, as shown in the figure below:
 
@@ -206,7 +211,11 @@ colors = ['#515151', '#CC9900', '#B177DE', '#37AD6B', '#1A6FDF']
 draw_eg()
 ```
 `Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/arrow_example_cat.png" width="800" height="400"/></p>`
-;;;e;;;c
+
+</div>
+
+<div lang="zh-CN">
+
 ## 介绍
 本文将介绍如何使用Matplotlib来绘制带箭头的非实曲线，就像下图一样：
 
@@ -408,4 +417,6 @@ ax.set_ylim(0, 2)
 colors = ['#515151', '#CC9900', '#B177DE', '#37AD6B', '#1A6FDF']
 draw_eg()
 ```
-`Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/arrow_example_cat.png" width="800" height="400"/></p>`;;;c
+`Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/arrow_example_cat.png" width="800" height="400"/></p>`
+
+</div>

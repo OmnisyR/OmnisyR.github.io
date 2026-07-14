@@ -5,16 +5,20 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link href='/assets/Primer.css' rel='stylesheet' />
-    <script src='/assets/Language.js'></script> <script defer src='/assets/BlogEnhance.js'></script> <script type='text/javascript' id='mmvst_globe' src='https://mapmyvisitors.com/globe.js?d=7My-1755wft4R84QKdWiJC8M0BsNLhLfhDs_rBlfwRs'></script> <meta name='google-site-verification' content='jL_vSMve-woq2yALbGnRHeP86_xTVwPvJYu6vfAQiWo'/>
+    <script src='/assets/Language.js'></script> <script defer src='/assets/BlogEnhance.js'></script> <script defer src='/assets/ArticleTools.js'></script> <script async type='text/javascript' id='mmvst_globe' src='https://mapmyvisitors.com/globe.js?d=7My-1755wft4R84QKdWiJC8M0BsNLhLfhDs_rBlfwRs'></script> <meta name='google-site-verification' content='jL_vSMve-woq2yALbGnRHeP86_xTVwPvJYu6vfAQiWo'/>
     <link rel="icon" href="https://avatars.githubusercontent.com/u/68898477?s=400&u=262ae3b76f651c62a82042317aaae313706c859c&v=4"><script>
         let theme = localStorage.getItem("meek_theme") || "light";
         document.documentElement.setAttribute("data-color-mode", theme);
     </script>
 <meta name="description" content="<!-- ##{'script':'<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>'}## -->
+<div class='omnisyr-denote-data' hidden aria-hidden='true'>
+
 ;;;a
 ;;;;;;;eCopy and paste the code directly::Or just click [me](https://github.com/OmnisyR/diffusion_demo/tree/main/ddpm/en) to go to the full version.;;;e;;;c直接复制粘贴::或是点[我](https://github.com/OmnisyR/diffusion_demo/tree/main/ddpm/cn)转到完全版。">
 <meta property="og:title" content="The Foundation of Diffusion Models: DDPM || 扩散模型的基石：DDPM">
 <meta property="og:description" content="<!-- ##{'script':'<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>'}## -->
+<div class='omnisyr-denote-data' hidden aria-hidden='true'>
+
 ;;;a
 ;;;;;;;eCopy and paste the code directly::Or just click [me](https://github.com/OmnisyR/diffusion_demo/tree/main/ddpm/en) to go to the full version.;;;e;;;c直接复制粘贴::或是点[我](https://github.com/OmnisyR/diffusion_demo/tree/main/ddpm/cn)转到完全版。">
 <meta property="og:type" content="article">
@@ -88,6 +92,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </div>
     <div id="content">
 <div class="markdown-body" id="postBody">
+<div>
 <p>;;;a<br>
 ;;;;;;;eCopy and paste the code directly::Or just click <a href="https://github.com/OmnisyR/diffusion_demo/tree/main/ddpm/en">me</a> to go to the full version.;;;e;;;c直接复制粘贴::或是点<a href="https://github.com/OmnisyR/diffusion_demo/tree/main/ddpm/cn">我</a>转到完全版。;;;c;;;;<br>
 ;;;;;;;eMarkov chain::The state at a given moment is only related to the state at the previous moment, i.e., $x_t = f(x_{t - 1})$, without the involvement of states at other moments. A chain formed by a number of such state relationships constitutes a Markov chain. Therefore, Markov chains have the following special properties:;;;e;;;c马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。因此，马尔科夫链存在着这样的特殊性质：;;;c</p>
@@ -148,32 +153,37 @@ x_{t - 1} &amp;= \frac{1}{\sqrt{\alpha_t}}x_t
 $$</p>
 <p>;;;;<br>
 ;;;;;;;eThe limitations of the blog framework::The total number of characters in a single article is limited to 65,536.;;;e;;;c博客框架的限制::单篇文章的总字符数被限制在了65,536内。;;;c;;;;<br>
-;;;a;;;e</p>
+;;;a</p>
+</div><div lang="en">
 <h2>Introduction</h2>
 <p>I'm not very good at describing subjective things, and most of the information about diffusion models has already been covered in <a href="https://omnisyr.github.io/post/4.html" rel="nofollow">Diffusion Model Overview</a>, so I'll skip the formalities and get straight to the point!</p>
 <p>In this article, I will introduce and implement DDPM from a mathematical and coding perspective. If you just want to try it out, you can <code class="notranslate">Copy and paste the code directly</code>, modify a few path parameters, and run it right away, provided your environment is properly configured!</p>
 <h2>Forward Process</h2>
-<p>The forward process of the diffusion models involve gradually adding noise to the original image, such that by the final stage, the image fully follows the noise distribution. Typically, Gaussian noise is used for this process. For discrete time points $t = 0, 1, \dots, T$, in the <code class="notranslate">Markov chain</code> process followed by the diffusion models, given $x_0 \sim q(x_0)$, i.e., the original image as the initial stage, and $x_T \sim q(x_T) = \mathcal{N}(0, I)$, i.e., the image completely following standard Gaussian noise as the final stage. The probability distributions of the various stages $x_0, x_1, \dots, x_T$ follow the following formula:;;;e;;;c</p>
+<p>The forward process of the diffusion models involve gradually adding noise to the original image, such that by the final stage, the image fully follows the noise distribution. Typically, Gaussian noise is used for this process. For discrete time points $t = 0, 1, \dots, T$, in the <code class="notranslate">Markov chain</code> process followed by the diffusion models, given $x_0 \sim q(x_0)$, i.e., the original image as the initial stage, and $x_T \sim q(x_T) = \mathcal{N}(0, I)$, i.e., the image completely following standard Gaussian noise as the final stage. The probability distributions of the various stages $x_0, x_1, \dots, x_T$ follow the following formula:</p>
+</div>
+<div lang="zh-CN">
 <h2>介绍</h2>
 <p>我不擅长描述一些非客观性的东西，一些关于扩散模型的介绍在<a href="https://omnisyr.github.io/post/4.html" rel="nofollow">扩散模型概述</a>中也讲的差不多了，所以没有繁文缛节了，直接开始吧！</p>
 <p>在这篇文章中，我将从数学和代码上介绍和实现DDPM。如果你只是想单纯实践的话，在环境配置好的条件下，你可以<code class="notranslate">直接复制粘贴</code>，修改几个路径参数便可直接运行！</p>
 <h2>正向过程</h2>
-<p>扩散模型的正向过程为，对原始的图像进行一步步地噪声添加，从而在最终阶段，使得图片完全服从噪声分布，一般地，使用高斯噪声来进行这个过程。对于离散的时间$t = 0, 1, \dots, T$，在扩散模型遵循的<code class="notranslate">马尔可夫链</code>过程中，对于给定的$x_0 \sim q(x_0)$，即原始图像作为初始阶段，和$x_T \sim q(x_T) = \mathcal{N}(0, I)$，即完全服从标准高斯噪声的图像作为最终阶段。其各个阶段$x_0, x_1, \dots, x_T$的概率分布服从以下公式：;;;c</p>
+<p>扩散模型的正向过程为，对原始的图像进行一步步地噪声添加，从而在最终阶段，使得图片完全服从噪声分布，一般地，使用高斯噪声来进行这个过程。对于离散的时间$t = 0, 1, \dots, T$，在扩散模型遵循的<code class="notranslate">马尔可夫链</code>过程中，对于给定的$x_0 \sim q(x_0)$，即原始图像作为初始阶段，和$x_T \sim q(x_T) = \mathcal{N}(0, I)$，即完全服从标准高斯噪声的图像作为最终阶段。其各个阶段$x_0, x_1, \dots, x_T$的概率分布服从以下公式：</p>
+</div>
 <p>$$
 q(x_T|x_0) = q(x_0)\prod^T_{t = 1}q(x_t|x_{t - 1})
 \tag{1}
 $$</p>
-<p>;;;ewhere $q(x_{t + 1}|x_{t})$ represents the process of adding noise to the image at the previous moment at each moment. Obviously, this process needs to be defined manually, so a set of hyperparameters $\beta_t$ can be selected, resulting in:;;;e;;;c其中$q(x_{t + 1}|x_{t})$代表着每一时刻，为上一时刻的图片添加噪声的过程。很显然，这个过程是需要人为定义的，因此，可以选择一组超参数$\beta_t$，从而有：;;;c</p>
+<p><span lang="en">where $q(x_{t + 1}|x_{t})$ represents the process of adding noise to the image at the previous moment at each moment. Obviously, this process needs to be defined manually, so a set of hyperparameters $\beta_t$ can be selected, resulting in:</span><span lang="zh-CN">其中$q(x_{t + 1}|x_{t})$代表着每一时刻，为上一时刻的图片添加噪声的过程。很显然，这个过程是需要人为定义的，因此，可以选择一组超参数$\beta_t$，从而有：</span></p>
 <p>$$
 q(x_t|x_{t - 1}) = \mathcal{N}(x_t;\sqrt{1 - \beta_t}x_{t - 1},\beta_tI)
 \tag{2}
 $$</p>
-<p>;;;eHowever, such an equation is still incomputable. Through the <code class="notranslate">Reparameterization trick</code>, any Gaussian distribution can be expanded, so we have:;;;e;;;c但是，这样的式子仍然是不可计算的，通过<code class="notranslate">重参数化技巧</code>，可以将任意的高斯分布进行展开，因此则有：;;;c</p>
+<p><span lang="en">However, such an equation is still incomputable. Through the <code class="notranslate">Reparameterization trick</code>, any Gaussian distribution can be expanded, so we have:</span><span lang="zh-CN">但是，这样的式子仍然是不可计算的，通过<code class="notranslate">重参数化技巧</code>，可以将任意的高斯分布进行展开，因此则有：</span></p>
 <p>$$
 x_t = \sqrt{1 - \beta_t} x_{t - 1} + \sqrt{\beta_t}\epsilon
 \tag{3}
 $$</p>
-<p>;;;eIn this way, a computable form is used to express the Markov chain forward process of the diffusion model. In DDPM, $\beta_t$ is defined as a linear array ranging from $\beta_1 = 0.001$ to $\beta_T = 0.02$. This method of adding noise is also known as a linear noise schedule. The process can be implemented using <code class="notranslate">The code below</code>:</p>
+<div lang="en">
+<p>In this way, a computable form is used to express the Markov chain forward process of the diffusion model. In DDPM, $\beta_t$ is defined as a linear array ranging from $\beta_1 = 0.001$ to $\beta_T = 0.02$. This method of adding noise is also known as a linear noise schedule. The process can be implemented using <code class="notranslate">The code below</code>:</p>
 <div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">import</span> <span class="pl-s1">torch</span>
 <span class="pl-k">import</span> <span class="pl-s1">torchvision</span>.<span class="pl-s1">io</span>
 <span class="pl-k">from</span> <span class="pl-c1">PIL</span> <span class="pl-k">import</span> <span class="pl-v">Image</span>
@@ -200,7 +210,9 @@ $$</p>
       <span class="pl-en">transform_reverse</span>(<span class="pl-s1">x_t</span>).<span class="pl-c1">clip</span>(<span class="pl-c1">0</span>, <span class="pl-c1">255</span>).<span class="pl-c1">to</span>(<span class="pl-s1">torch</span>.<span class="pl-c1">uint8</span>).<span class="pl-c1">cpu</span>(),
       <span class="pl-s">'noising/%d.png'</span> <span class="pl-c1">%</span> <span class="pl-s1">timestep</span>
     )</pre></div>
-<p>;;;e;;;c这样一来，就使用了一个可计算的形式表达出了扩散模型的马尔科夫链正向过程。DDPM中定义$\beta_t$是一个从$\beta_1 = 0.001$到$\beta_T = 0.02$的线性数组，这种噪声添加方式又称线性噪声时间表。通过<code class="notranslate">下方的代码</code>便可以实现这一过程：</p>
+</div>
+<div lang="zh-CN">
+<p>这样一来，就使用了一个可计算的形式表达出了扩散模型的马尔科夫链正向过程。DDPM中定义$\beta_t$是一个从$\beta_1 = 0.001$到$\beta_T = 0.02$的线性数组，这种噪声添加方式又称线性噪声时间表。通过<code class="notranslate">下方的代码</code>便可以实现这一过程：</p>
 <div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">import</span> <span class="pl-s1">torch</span>
 <span class="pl-k">import</span> <span class="pl-s1">torchvision</span>.<span class="pl-s1">io</span>
 <span class="pl-k">from</span> <span class="pl-c1">PIL</span> <span class="pl-k">import</span> <span class="pl-v">Image</span>
@@ -227,8 +239,8 @@ $$</p>
       <span class="pl-en">transform_reverse</span>(<span class="pl-s1">x_t</span>).<span class="pl-c1">clip</span>(<span class="pl-c1">0</span>, <span class="pl-c1">255</span>).<span class="pl-c1">to</span>(<span class="pl-s1">torch</span>.<span class="pl-c1">uint8</span>).<span class="pl-c1">cpu</span>(),
       <span class="pl-s">'noising/%d.png'</span> <span class="pl-c1">%</span> <span class="pl-s1">timestep</span>
     )</pre></div>
-<p>;;;c</p>
-<p>;;;eFor simplicity, let $\alpha_t + \beta_t = 1$, then we have:;;;e;;;c为了式子的简洁性，记$\alpha_t + \beta_t = 1$，则有：;;;c</p>
+</div>
+<p><span lang="en">For simplicity, let $\alpha_t + \beta_t = 1$, then we have:</span><span lang="zh-CN">为了式子的简洁性，记$\alpha_t + \beta_t = 1$，则有：</span></p>
 <p>$$
 \begin{align}
 x_t &amp;= \sqrt{\alpha_t} x_{t - 1} + \sqrt{1 - \alpha_t}\tilde{\epsilon}_t
@@ -255,7 +267,8 @@ x_t &amp;= \sqrt{\alpha_t} x_{t - 1} + \sqrt{1 - \alpha_t}\tilde{\epsilon}_t
 \tag{10}
 \end{align}
 $$</p>
-<p>;;;ewhere $\bar{\alpha}_t = \prod_{i = 1}^{t}\alpha_i$. Since there are two completely random standard Gaussian distributions in equation (6), we can perform the inverse operation of the reparameterization technique on these two to obtain equation (7), and then use the <code class="notranslate">Addition rule of Gaussian distribution</code> to obtain equation (8), thereby simplifying the multi-step iteration and enabling us to calculate the state at any time in the forward process in a single step:</p>
+<div lang="en">
+<p>where $\bar{\alpha}_t = \prod_{i = 1}^{t}\alpha_i$. Since there are two completely random standard Gaussian distributions in equation (6), we can perform the inverse operation of the reparameterization technique on these two to obtain equation (7), and then use the <code class="notranslate">Addition rule of Gaussian distribution</code> to obtain equation (8), thereby simplifying the multi-step iteration and enabling us to calculate the state at any time in the forward process in a single step:</p>
 <div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">def</span> <span class="pl-en">add_noise</span>(<span class="pl-s1">x_0</span>, <span class="pl-s1">t</span>):
     <span class="pl-c">#The one-step noise addition process in equation (10).</span>
     <span class="pl-k">return</span> <span class="pl-s1">sqrt_alpha_bar</span>[<span class="pl-s1">t</span>] <span class="pl-c1">*</span> <span class="pl-s1">x_0</span> <span class="pl-c1">+</span> <span class="pl-s1">sqrt_one_minus_alpha_bar</span>[<span class="pl-s1">t</span>] <span class="pl-c1">*</span> <span class="pl-s1">torch</span>.<span class="pl-c1">randn</span>(<span class="pl-s1">size</span><span class="pl-c1">=</span><span class="pl-s1">x_0</span>.<span class="pl-c1">shape</span>).<span class="pl-c1">cuda</span>()
@@ -271,7 +284,9 @@ $$</p>
 <span class="pl-s1">timestep</span> <span class="pl-c1">=</span> <span class="pl-c1">200</span>
 <span class="pl-s1">x_t</span> <span class="pl-c1">=</span> <span class="pl-en">add_noise</span>(<span class="pl-s1">x_0</span>, <span class="pl-s1">timestep</span>)
 <span class="pl-s1">torchvision</span>.<span class="pl-c1">io</span>.<span class="pl-c1">write_png</span>(<span class="pl-en">transform_reverse</span>(<span class="pl-s1">x_t</span>).<span class="pl-c1">clip</span>(<span class="pl-c1">0</span>, <span class="pl-c1">255</span>).<span class="pl-c1">to</span>(<span class="pl-s1">torch</span>.<span class="pl-c1">uint8</span>).<span class="pl-c1">cpu</span>(), <span class="pl-s">'%s.png'</span> <span class="pl-c1">%</span> <span class="pl-s1">timestep</span>)</pre></div>
-<p>;;;e;;;c其中$\bar{\alpha}_t = \prod_{i = 1}^{t}\alpha_i$。由于式(6)中存在着两个完全随机的标准高斯分布，因此可以对这二者进行重参数化技巧的逆运算得到式(7)，再通过<code class="notranslate">高斯分布的加法法则</code>得到式(8)，从而对多步的迭代进行化简，能够仅仅使用一步求出正向过程的任意时刻的状态：</p>
+</div>
+<div lang="zh-CN">
+<p>其中$\bar{\alpha}_t = \prod_{i = 1}^{t}\alpha_i$。由于式(6)中存在着两个完全随机的标准高斯分布，因此可以对这二者进行重参数化技巧的逆运算得到式(7)，再通过<code class="notranslate">高斯分布的加法法则</code>得到式(8)，从而对多步的迭代进行化简，能够仅仅使用一步求出正向过程的任意时刻的状态：</p>
 <div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">def</span> <span class="pl-en">add_noise</span>(<span class="pl-s1">x_0</span>, <span class="pl-s1">t</span>):
     <span class="pl-c">#式(10)的一步增噪过程</span>
     <span class="pl-k">return</span> <span class="pl-s1">sqrt_alpha_bar</span>[<span class="pl-s1">t</span>] <span class="pl-c1">*</span> <span class="pl-s1">x_0</span> <span class="pl-c1">+</span> <span class="pl-s1">sqrt_one_minus_alpha_bar</span>[<span class="pl-s1">t</span>] <span class="pl-c1">*</span> <span class="pl-s1">torch</span>.<span class="pl-c1">randn</span>(<span class="pl-s1">size</span><span class="pl-c1">=</span><span class="pl-s1">x_0</span>.<span class="pl-c1">shape</span>).<span class="pl-c1">cuda</span>()
@@ -286,21 +301,24 @@ $$</p>
 <span class="pl-s1">timestep</span> <span class="pl-c1">=</span> <span class="pl-c1">200</span>
 <span class="pl-s1">x_t</span> <span class="pl-c1">=</span> <span class="pl-en">add_noise</span>(<span class="pl-s1">x_0</span>, <span class="pl-s1">timestep</span>)
 <span class="pl-s1">torchvision</span>.<span class="pl-c1">io</span>.<span class="pl-c1">write_png</span>(<span class="pl-en">transform_reverse</span>(<span class="pl-s1">x_t</span>).<span class="pl-c1">clip</span>(<span class="pl-c1">0</span>, <span class="pl-c1">255</span>).<span class="pl-c1">to</span>(<span class="pl-s1">torch</span>.<span class="pl-c1">uint8</span>).<span class="pl-c1">cpu</span>(), <span class="pl-s">'%s.png'</span> <span class="pl-c1">%</span> <span class="pl-s1">timestep</span>)</pre></div>
-<p>;;;c;;;e</p>
+</div><div lang="en">
 <h2>Reverse Process</h2>
-<p>Compared to the forward process, the reverse process is much more complex. The goal of the inverse process is to obtain a probabilistic model for a given $x_T \sim p_\theta(x_T) = \mathcal{N}(0, I)$, such that $x_T$ can be transformed from a standard Gaussian distribution into a likelihood estimate of the original data set, i.e.:;;;e;;;c</p>
+<p>Compared to the forward process, the reverse process is much more complex. The goal of the inverse process is to obtain a probabilistic model for a given $x_T \sim p_\theta(x_T) = \mathcal{N}(0, I)$, such that $x_T$ can be transformed from a standard Gaussian distribution into a likelihood estimate of the original data set, i.e.:</p>
+</div>
+<div lang="zh-CN">
 <h2>逆向过程</h2>
-<p>相较正向过程，逆向过程则会复杂很多。逆向过程的目标是对于给定的$x_T \sim p_\theta(x_T) = \mathcal{N}(0, I)$，需要一个概率模型，能够使得$x_T$由标准高斯分布，转变为原始数据集的似然估计，即：;;;c</p>
+<p>相较正向过程，逆向过程则会复杂很多。逆向过程的目标是对于给定的$x_T \sim p_\theta(x_T) = \mathcal{N}(0, I)$，需要一个概率模型，能够使得$x_T$由标准高斯分布，转变为原始数据集的似然估计，即：</p>
+</div>
 <p>$$
 p_\theta(x_0|x_T) = p_\theta(x_T)\prod^T_{t = 1}p_\theta(x_{t - 1}|x_t)
 \tag{11}
 $$</p>
-<p>;;;eIf we perform maximum likelihood estimation, the log loss is:;;;e;;;c若对其进行极大似然估计，其对数损失为：;;;c</p>
+<p><span lang="en">If we perform maximum likelihood estimation, the log loss is:</span><span lang="zh-CN">若对其进行极大似然估计，其对数损失为：</span></p>
 <p>$$
 L_\theta = -\log p_\theta(x_0) = -\log (p_\theta(x_T)\prod^T_{t = 1}p_\theta(x_{t - 1}|x_t))
 \tag{12}
 $$</p>
-<p>;;;ewhere $p_\theta(x_t|x_{t + 1})$ is completely unknown and cannot be solved, so we consider making <code class="notranslate">The upper bound of this loss as small as possible</code>. Since the KL divergence is necessarily non-negative, we have:;;;e;;;c其中，$p_\theta(x_t|x_{t + 1})$是完全未知的，无法求解，因此考虑令该损失的<code class="notranslate">上界尽可能的小</code>。由于KL散度必然是非负的，所以：;;;c</p>
+<p><span lang="en">where $p_\theta(x_t|x_{t + 1})$ is completely unknown and cannot be solved, so we consider making <code class="notranslate">The upper bound of this loss as small as possible</code>. Since the KL divergence is necessarily non-negative, we have:</span><span lang="zh-CN">其中，$p_\theta(x_t|x_{t + 1})$是完全未知的，无法求解，因此考虑令该损失的<code class="notranslate">上界尽可能的小</code>。由于KL散度必然是非负的，所以：</span></p>
 <p>$$
 \begin{align}
 L_\theta \leq L_{VLB} &amp;= -\log p_\theta(x_0) + D_{KL}(q(x_{1:T}|x_0)||p_\theta(x_{1:T}|x_0))
@@ -310,12 +328,12 @@ L_\theta \leq L_{VLB} &amp;= -\log p_\theta(x_0) + D_{KL}(q(x_{1:T}|x_0)||p_\the
 \tag{14}
 \end{align}
 $$</p>
-<p>;;;eAccording to <code class="notranslate">Bayes' theorem</code>:;;;e;;;c根据<code class="notranslate">贝叶斯定理</code>：;;;c</p>
+<p><span lang="en">According to <code class="notranslate">Bayes' theorem</code>:</span><span lang="zh-CN">根据<code class="notranslate">贝叶斯定理</code>：</span></p>
 <p>$$
 p_\theta(x_{1:T}|x_0) = \frac{p_\theta(x_0|x_{1:T})p_\theta(x_{1:T})}{p_\theta(x_0)} = \frac{p_\theta(x_0, x_{1:T})}{p_\theta(x_0)} = \frac{p_\theta(x_{0:T})}{p_\theta(x_0)}
 \tag{15}
 $$</p>
-<p>;;;eTherefore:;;;e;;;c因此：;;;c</p>
+<p><span lang="en">Therefore:</span><span lang="zh-CN">因此：</span></p>
 <p>$$
 \begin{align}
 L_{VLB} &amp;= -\log p_\theta(x_0) + E_{q(x_{1:T}|x_0)}\log\frac{q(x_{1:T}|x_0)p_\theta(x_0)}{p_\theta(x_{0:T})}
@@ -367,7 +385,7 @@ L_{VLB} &amp;= -\log p_\theta(x_0) + E_{q(x_{1:T}|x_0)}\log\frac{q(x_{1:T}|x_0)p
 \tag{29}
 \end{align}
 $$</p>
-<p>;;;eAlso:;;;e;;;c又：;;;c</p>
+<p><span lang="en">Also:</span><span lang="zh-CN">又：</span></p>
 <p>$$
 \begin{align}
 &amp;q(x_{t - 1}|x_t, x_0) = \frac{q(x_{t - 1}, x_t, x_0)}{q(x_t, x_0)} = \frac{q(x_{t - 1}, x_t| x_0)}{q(x_t, x_0)}
@@ -377,7 +395,7 @@ $$</p>
 \tag{31}
 \end{align}
 $$</p>
-<p>;;;eSo:;;;e;;;c从而：;;;c</p>
+<p><span lang="en">So:</span><span lang="zh-CN">从而：</span></p>
 <p>$$
 \begin{align}
 L_{VLB} &amp;= E_{q(x_T|x_0)}\log \frac{q(x_T|x_0)}{p_\theta(x_T)} - E_{q(x_1|x_0)}\log p_\theta(x_{0}|x_1)
@@ -393,9 +411,14 @@ L_{VLB} &amp;= E_{q(x_T|x_0)}\log \frac{q(x_T|x_0)}{p_\theta(x_T)} - E_{q(x_1|x_
 \tag{33}
 \end{align}
 $$</p>
-<p>;;;ewhere, for $L_T$, since $q(x_T) = \mathcal{N}(0, I)$ and $p_\theta(x_T) = \mathcal{N}(0, I)$ are both independent of the maximum likelihood estimation parameters, they are regarded as constants.</p>
-<p>For $L_0$, since $1 = q(x_0|x_0) = \frac{q(x_1|x_0)q(x_0|x_0)}{q(x_1|x_0)} = q(x_0|x_1)$, we have:;;;e;;;c其中，对于$L_T$，由于$q(x_T) = \mathcal{N}(0, I)$，$p_\theta(x_T) = \mathcal{N}(0, I)$都和极大似然估计参数无关，视为常数；</p>
-<p>对于$L_0$，由于$1 = q(x_0|x_0) = \frac{q(x_1|x_0)q(x_0|x_0)}{q(x_1|x_0)} = q(x_0|x_1)$，因此有：;;;c</p>
+<div lang="en">
+<p>where, for $L_T$, since $q(x_T) = \mathcal{N}(0, I)$ and $p_\theta(x_T) = \mathcal{N}(0, I)$ are both independent of the maximum likelihood estimation parameters, they are regarded as constants.</p>
+<p>For $L_0$, since $1 = q(x_0|x_0) = \frac{q(x_1|x_0)q(x_0|x_0)}{q(x_1|x_0)} = q(x_0|x_1)$, we have:</p>
+</div>
+<div lang="zh-CN">
+<p>其中，对于$L_T$，由于$q(x_T) = \mathcal{N}(0, I)$，$p_\theta(x_T) = \mathcal{N}(0, I)$都和极大似然估计参数无关，视为常数；</p>
+<p>对于$L_0$，由于$1 = q(x_0|x_0) = \frac{q(x_1|x_0)q(x_0|x_0)}{q(x_1|x_0)} = q(x_0|x_1)$，因此有：</p>
+</div>
 <p>$$
 \begin{align}
 L_0 &amp;= - E_{q(x_1|x_0)}\log p_\theta(x_{0}|x_1)
@@ -408,12 +431,12 @@ L_0 &amp;= - E_{q(x_1|x_0)}\log p_\theta(x_{0}|x_1)
 \tag{36}
 \end{align}
 $$</p>
-<p>;;;eSimilar to the form of $L_{t - 1}$, let $L_0 + L_{t - 1} = L_t$. For the posterior distribution $q(x_{t - 1}|x_t)$ of the forward process $q(x_t|x_{t - 1})$ in the equation, by Bayes' theorem:;;;e;;;c与$L_{t - 1}$形式相同，记$L_0 + L_{t - 1} = L_t$，对于式中的正向过程$q(x_t|x_{t - 1})$的后验分布$q(x_{t - 1}|x_t)$，由贝叶斯定理：;;;c</p>
+<p><span lang="en">Similar to the form of $L_{t - 1}$, let $L_0 + L_{t - 1} = L_t$. For the posterior distribution $q(x_{t - 1}|x_t)$ of the forward process $q(x_t|x_{t - 1})$ in the equation, by Bayes' theorem:</span><span lang="zh-CN">与$L_{t - 1}$形式相同，记$L_0 + L_{t - 1} = L_t$，对于式中的正向过程$q(x_t|x_{t - 1})$的后验分布$q(x_{t - 1}|x_t)$，由贝叶斯定理：</span></p>
 <p>$$
 q(x_{t - 1}|x_t) = \frac{q(x_t|x_{t - 1})q(x_{t - 1})}{q(x_t)} = \frac{q(x_t|x_{t - 1})q(x_{t - 1}|x_0)}{q(x_t|x_0)}
 \tag{37}
 $$</p>
-<p>;;;eThe three probabilities in equation (37) are known and can be solved. Let the posterior distribution be $q(x_{t - 1}|x_t) = \mathcal{N}(\tilde{\mu}, \Sigma)$. Considering the exponential part of equation (37) expanded using the Gaussian distribution density function, we have:;;;e;;;c式(37)的三个概率都是已知的，必然可以求解，设后验分布$q(x_{t - 1}|x_t) = \mathcal{N}(\tilde{\mu}, \Sigma)$，考虑式(37)使用高斯分布密度函数展开后的指数部分，则有：;;;c</p>
+<p><span lang="en">The three probabilities in equation (37) are known and can be solved. Let the posterior distribution be $q(x_{t - 1}|x_t) = \mathcal{N}(\tilde{\mu}, \Sigma)$. Considering the exponential part of equation (37) expanded using the Gaussian distribution density function, we have:</span><span lang="zh-CN">式(37)的三个概率都是已知的，必然可以求解，设后验分布$q(x_{t - 1}|x_t) = \mathcal{N}(\tilde{\mu}, \Sigma)$，考虑式(37)使用高斯分布密度函数展开后的指数部分，则有：</span></p>
 <p>$$
 \begin{align}
 \frac{(x_{t - 1} - \tilde{\mu})^2}{\Sigma} &amp;= \frac{(x_t - \sqrt{\alpha_t}x_{t - 1})^2}{1 - \alpha_t} + \frac{(x_{t - 1} - \sqrt{\bar{\alpha}_{t - 1}}x_0)^2}{1 - \bar{\alpha}_{t - 1}} - \frac{(x_t - \sqrt{\bar{\alpha}_t}x_0)^2}{1 - \bar{\alpha}_t}
@@ -423,7 +446,7 @@ $$</p>
 \tag{39}
 \end{align}
 $$</p>
-<p>;;;ewhere $C(x_0, x_t)$ is the term that does not contain $x_{t - 1}$. Through left-right comparison, it is easy to obtain:;;;e;;;c其中，$C(x_0, x_t)$为不含$x_{t - 1}$的项，通过左右比对，易得：;;;c</p>
+<p><span lang="en">where $C(x_0, x_t)$ is the term that does not contain $x_{t - 1}$. Through left-right comparison, it is easy to obtain:</span><span lang="zh-CN">其中，$C(x_0, x_t)$为不含$x_{t - 1}$的项，通过左右比对，易得：</span></p>
 <p>$$
 \begin{align}
 \Sigma &amp;= \frac{1}{\frac{\alpha_t}{1 - \alpha_t} + \frac{1}{1 - \bar{\alpha}_{t - 1}}}
@@ -439,7 +462,7 @@ $$</p>
 \tag{43}
 \end{align}
 $$</p>
-<p>;;;eThen, from <code class="notranslate">Equation (10)</code>, $x_0$ can be converted to $x_t$ for expression, thus:;;;e;;;c又由<code class="notranslate">式(10)</code>，可将$x_0$转换为$x_t$来进行表达，从而：;;;c</p>
+<p><span lang="en">Then, from <code class="notranslate">Equation (10)</code>, $x_0$ can be converted to $x_t$ for expression, thus:</span><span lang="zh-CN">又由<code class="notranslate">式(10)</code>，可将$x_0$转换为$x_t$来进行表达，从而：</span></p>
 <p>$$
 \begin{align}
 \tilde{\mu} &amp;= \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}_t)}}\epsilon_t(x_t, t)
@@ -449,7 +472,7 @@ x_{t - 1} &amp;= \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha
 \tag{45}
 \end{align}
 $$</p>
-<p>;;;ewhere $\epsilon_t(x_t, t)$ denotes the noise required to transition from the initial state $x_0$ to the state $x_t$ at time $t$ through a single forward step. If we define $p_\theta(x_{t - 1}|x_t) = \mathcal{N}(\mu_\theta, \sigma^2_\theta)$, then by the <code class="notranslate">KL divergence formula for Gaussian distributions</code>:;;;e;;;c其中，$\epsilon_t(x_t, t)$的含义为，对于给定的时刻$t$，从初始状态$x_0$，经过一步的正向过程成为该时刻状态$x_t$，所需要的噪声。若定义$p_\theta(x_{t - 1}|x_t) = \mathcal{N}(\mu_\theta, \sigma^2_\theta)$，由<code class="notranslate">高斯分布的KL散度公式</code>：;;;c</p>
+<p><span lang="en">where $\epsilon_t(x_t, t)$ denotes the noise required to transition from the initial state $x_0$ to the state $x_t$ at time $t$ through a single forward step. If we define $p_\theta(x_{t - 1}|x_t) = \mathcal{N}(\mu_\theta, \sigma^2_\theta)$, then by the <code class="notranslate">KL divergence formula for Gaussian distributions</code>:</span><span lang="zh-CN">其中，$\epsilon_t(x_t, t)$的含义为，对于给定的时刻$t$，从初始状态$x_0$，经过一步的正向过程成为该时刻状态$x_t$，所需要的噪声。若定义$p_\theta(x_{t - 1}|x_t) = \mathcal{N}(\mu_\theta, \sigma^2_\theta)$，由<code class="notranslate">高斯分布的KL散度公式</code>：</span></p>
 <p>$$
 \begin{align}
 L_t &amp;= \sum^T_{t = 1} E_{q(x_t, x_0)}D_{KL}(q(x_{t - 1}|x_t, x_0)||p_\theta(x_{t - 1}|x_t))
@@ -459,32 +482,36 @@ L_t &amp;= \sum^T_{t = 1} E_{q(x_t, x_0)}D_{KL}(q(x_{t - 1}|x_t, x_0)||p_\theta(
 \tag{47}
 \end{align}
 $$</p>
-<p>;;;eAlthough $\sigma_\theta$ is learnable, its improvement in sampling quality is not significant and has not been widely adopted. In DDPM, we set $\sigma^2_\theta = \frac{1 - \bar{\alpha}_{t - 1}}{1 - \bar{\alpha}_t}\beta_t$, so we have:;;;e;;;c尽管$\sigma_\theta$是可学习的，但其对采样质量的提升并不显著，未得到推广。在DDPM中，取$\sigma^2_\theta = \frac{1 - \bar{\alpha}_{t - 1}}{1 - \bar{\alpha}_t}\beta_t$，因此有：;;;c</p>
+<p><span lang="en">Although $\sigma_\theta$ is learnable, its improvement in sampling quality is not significant and has not been widely adopted. In DDPM, we set $\sigma^2_\theta = \frac{1 - \bar{\alpha}_{t - 1}}{1 - \bar{\alpha}_t}\beta_t$, so we have:</span><span lang="zh-CN">尽管$\sigma_\theta$是可学习的，但其对采样质量的提升并不显著，未得到推广。在DDPM中，取$\sigma^2_\theta = \frac{1 - \bar{\alpha}_{t - 1}}{1 - \bar{\alpha}_t}\beta_t$，因此有：</span></p>
 <p>$$
 L_t = \sum^T_{t = 1} E_{q(x_t, x_0)}[\frac{1 - \bar{\alpha}_t}{2(1 - \bar{\alpha}_{t - 1})\beta_t}(\tilde{\mu} - \mu_\theta)^2]
 \tag{48}
 $$</p>
-<p>;;;eTo minimize $L_t$, it is necessary for $\mu_\theta$ to be as close as possible to $\tilde{\mu}$. If we set $\mu_\theta = \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}_t)}}\epsilon_\theta(x_t, t)$, then we only need $\epsilon_\theta(x_t, t)$ to be as close as possible to $\epsilon_t(x_t, t)$, i.e., the loss function:;;;e;;;c要使$L_t$尽可能小，即需要$\mu_\theta$尽可能接近$\tilde{\mu}$。若令$\mu_\theta = \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}_t)}}\epsilon_\theta(x_t, t)$，那么只需要$\epsilon_\theta(x_t, t)$尽可能接近$\epsilon_t(x_t, t)$，即损失函数：;;;c</p>
+<p><span lang="en">To minimize $L_t$, it is necessary for $\mu_\theta$ to be as close as possible to $\tilde{\mu}$. If we set $\mu_\theta = \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}_t)}}\epsilon_\theta(x_t, t)$, then we only need $\epsilon_\theta(x_t, t)$ to be as close as possible to $\epsilon_t(x_t, t)$, i.e., the loss function:</span><span lang="zh-CN">要使$L_t$尽可能小，即需要$\mu_\theta$尽可能接近$\tilde{\mu}$。若令$\mu_\theta = \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}_t)}}\epsilon_\theta(x_t, t)$，那么只需要$\epsilon_\theta(x_t, t)$尽可能接近$\epsilon_t(x_t, t)$，即损失函数：</span></p>
 <p>$$
 L = ||\epsilon_\theta(x_t, t) - \epsilon_t(x_t, t)||^2_2
 \tag{49}
 $$</p>
-<p>;;;eSampling formula for the reverse process:;;;e;;;c逆向过程的采样公式：;;;c</p>
+<p><span lang="en">Sampling formula for the reverse process:</span><span lang="zh-CN">逆向过程的采样公式：</span></p>
 <p>$$
 x_{t - 1} = \frac{1}{\sqrt{\alpha_t}}x_t - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}_t)}}\epsilon_\theta(x_t, t) + \sqrt{\frac{1 - \bar{\alpha}_{t - 1}}{1 - \bar{\alpha}_t}\beta_t}\epsilon
 \tag{50}
 $$</p>
-<p>;;;e</p>
+<div lang="en">
 <h2>Network Setup</h2>
 <p>After a lengthy process of reverse derivation, the loss function of the diffusion model was obtained. The next step is to build a network for the prediction function, whose input is a certain time point and the corresponding noisy image at that time point, and whose output is the predicted noise required to transform the initial state into the state at that time point through the forward process. DDPM uses <code class="notranslate">UNet</code> to perform this process.</p>
 <h3>Network Structure</h3>
-<p>The original article provides a structural diagram of UNet:;;;e;;;c</p>
+<p>The original article provides a structural diagram of UNet:</p>
+</div>
+<div lang="zh-CN">
 <h2>网络搭建</h2>
 <p>经过逆向过程漫长的推导，获得了扩散模型的损失函数，接下来就是要对预测函数进行网络搭建，该预测函数的输入为某一时刻以及该时刻对应的带噪图片，输出为预测的，从初始状态，经过正向过程成为该时刻状态，所需要的噪声。DDPM采用了<code class="notranslate">UNet</code>来进行这个过程。</p>
 <h3>网络结构</h3>
-<p>原文章中给出了一个UNet的结构图：;;;c</p>
-<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/u-net-illustration-correct-scale2.png"/></p></p>
-<p>;;;eIn this case, the upper part of the square represents the number of data channels, and the lower left part represents the data resolution. The network inputs a $572^2$ resolution image with 1 channel and outputs a $388^2$ resolution image with 2 channels. The network contains four core components: ordinary convolution process, downsampling, upsampling, and residual process.</p>
+<p>原文章中给出了一个UNet的结构图：</p>
+</div>
+<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/u-net-illustration-correct-scale2.png" width="2870" height="1847" alt="U-Net network architecture / U-Net 网络结构"/></p></p>
+<div lang="en">
+<p>In this case, the upper part of the square represents the number of data channels, and the lower left part represents the data resolution. The network inputs a $572^2$ resolution image with 1 channel and outputs a $388^2$ resolution image with 2 channels. The network contains four core components: ordinary convolution process, downsampling, upsampling, and residual process.</p>
 <ul>
 <li>The short arrow pointing to the right represents the standard convolution process, where in each layer, the first convolution operation always reduces the number of channels in the data to the predefined number of channels for that layer;</li>
 <li>The downward arrow represents downsampling, during which the resolution of the data is always reduced to half of its original value, followed by deeper convolution operations;</li>
@@ -493,7 +520,10 @@ $$</p>
 </ul>
 <p>However, for diffusion models, the input requires an additional timestamp t in addition to a single image. Therefore, the image and timestamp must be integrated and fed into UNet for computation. This operation is also known as time embedding.</p>
 <h3>Time Embedding</h3>
-<p>The time embedding algorithm refers to the position embedding algorithm in <code class="notranslate">Attention is All You Need</code>. It expands the single number of the timestamp into a tensor, inputs it into the network for calculation, and then adds it to the ordinary convolution process for further calculation. The expansion of the timestamp obeys the following equation:;;;e;;;c在该案例中，方块的上方代表着数据的通道数，左下方代表着数据的分辨率。网络的输入为$572^2$分辨率、通道数为1的图片，输出为$388^2$分辨率、通道数为2的图片。在网络内，则包含了四个核心部分：普通卷积过程；下采样；上采样以及残差过程。</p>
+<p>The time embedding algorithm refers to the position embedding algorithm in <code class="notranslate">Attention is All You Need</code>. It expands the single number of the timestamp into a tensor, inputs it into the network for calculation, and then adds it to the ordinary convolution process for further calculation. The expansion of the timestamp obeys the following equation:</p>
+</div>
+<div lang="zh-CN">
+<p>在该案例中，方块的上方代表着数据的通道数，左下方代表着数据的分辨率。网络的输入为$572^2$分辨率、通道数为1的图片，输出为$388^2$分辨率、通道数为2的图片。在网络内，则包含了四个核心部分：普通卷积过程；下采样；上采样以及残差过程。</p>
 <ul>
 <li>向右的短箭头代表着普通卷积过程，在每一层中，第一次卷积过程总是会将数据的通道数变为预定的、该层的通道数；</li>
 <li>向下的箭头代表着下采样，在这个过程中，总是会将数据的分辨率变为原来的一半，并在接下来进行更深层的卷积；</li>
@@ -502,7 +532,8 @@ $$</p>
 </ul>
 <p>但是对于扩散模型而言，其输入还需要额外引入一个时间戳t，而非单单一个图片，因此还需要将图片和时间戳整合到一起，放入UNet中进行计算，这个操作又称时间嵌入。</p>
 <h3>时间嵌入</h3>
-<p>时间嵌入算法参考了<code class="notranslate">Attention is All You Need</code>中的位置嵌入算法，通过将时间戳这单个数字，展开为某个张量，再输入到网络中进行计算，最后再与普通卷积过程的值相加，进行接下来的计算。时间戳的展开服从下面的式子：;;;c</p>
+<p>时间嵌入算法参考了<code class="notranslate">Attention is All You Need</code>中的位置嵌入算法，通过将时间戳这单个数字，展开为某个张量，再输入到网络中进行计算，最后再与普通卷积过程的值相加，进行接下来的计算。时间戳的展开服从下面的式子：</p>
+</div>
 <p>$$
 \begin{align}
 TE_{(t, i)} &amp;= \sin\frac{t}{10000^{2i / d}}
@@ -512,11 +543,11 @@ TE_{(t, j)} &amp;= \cos\frac{t}{10000^{2j / d}}
 \tag{52}
 \end{align}
 $$</p>
-<p>;;;ewhere $d$ denotes the desired dimension of expansion, $i = {1, 2, \dots, \frac{d}{2}}$, and $j = {\frac{d}{2} + 1, \frac{d}{2} + 2, \dots, d}$. If $d = 128$ is defined, its visualization is shown in the figure below:;;;e;;;c其中，$d$表示所期望的展开维度，$i = \{1, 2, \dots, \frac{d}{2}\}$，$j = \{\frac{d}{2} + 1, \frac{d}{2} + 2, \dots, d\}$。若定义$d = 128$，则其可视化如下图所示：;;;c</p>
-<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/time_embeddings.png"/></p></p>
-<p>;;;eIf represented as function graphs, the red $TE_{(t, i)}$ and blue $TE_{(t, j)}$ change with dimension as shown below:;;;e;;;c若是以函数图像的形式表示，红色的$TE_{(t, i)}$与蓝色的$TE_{(t, j)}$随着维度的变化如下所示：;;;c</p>
-<p><p align="center"><iframe src="https://www.desmos.com/calculator/xkmphum0ou?embed" width="800" height="400" style="border: 1px solid #ccc" frameborder=0></iframe></p><br>
-;;;e</p>
+<p><span lang="en">where $d$ denotes the desired dimension of expansion, $i = {1, 2, \dots, \frac{d}{2}}$, and $j = {\frac{d}{2} + 1, \frac{d}{2} + 2, \dots, d}$. If $d = 128$ is defined, its visualization is shown in the figure below:</span><span lang="zh-CN">其中，$d$表示所期望的展开维度，$i = \{1, 2, \dots, \frac{d}{2}\}$，$j = \{\frac{d}{2} + 1, \frac{d}{2} + 2, \dots, d\}$。若定义$d = 128$，则其可视化如下图所示：</span></p>
+<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/time_embeddings.png" width="4095" height="2919" alt="Time embedding visualization / 时间嵌入可视化"/></p></p>
+<p><span lang="en">If represented as function graphs, the red $TE_{(t, i)}$ and blue $TE_{(t, j)}$ change with dimension as shown below:</span><span lang="zh-CN">若是以函数图像的形式表示，红色的$TE_{(t, i)}$与蓝色的$TE_{(t, j)}$随着维度的变化如下所示：</span></p>
+<p><p align="center"><iframe src="https://www.desmos.com/calculator/xkmphum0ou?embed" width="800" height="400" loading="lazy" title="Interactive time embedding graph / 交互式时间嵌入图" style="border: 1px solid #ccc" frameborder="0"></iframe></p></p>
+<div lang="en">
 <h2>Training Process</h2>
 <p>First, import some necessary libraries:</p>
 <div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">import</span> <span class="pl-s1">os</span>
@@ -959,14 +990,16 @@ The DDPM sampler, i.e., <code class="notranslate">Equation (50)</code>:</p>
 <div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">if</span> <span class="pl-s1">__name__</span> <span class="pl-c1">==</span> <span class="pl-s">'__main__'</span>:
     <span class="pl-en">train</span>()</pre></div>
 <p>The first 100 iterations of training process:</p>
-<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_10_100.png"/></p></p>
+<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_10_100.png" width="7233" height="2862" alt="Training samples from iterations 10 to 100"/></p></p>
 <p>The 500 iterations of the training process:</p>
-<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_50_500.png"/></p></p>
+<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_50_500.png" width="7233" height="2862" alt="Training samples from iterations 50 to 500"/></p></p>
 <p>Changes in training loss values:</p>
 <p><p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_loss.png" width="400" height="300"/></p></p>
 <h2>Summary</h2>
 <p>At this point, we have completed the reproduction of the DDPM algorithm. If you have run the code yourself, you will undoubtedly have felt the significant computational power requirements of diffusion models, which has inspired subsequent research into fast sampling.</p>
-<p>Due to <code class="notranslate">The limitations of the blog framework</code>, there is still a lot of content that has not been fully explained. I will try to supplement and explain some of the more difficult concepts in future posts, or perhaps write a separate article to explain them in more detail.;;;e;;;c</p>
+<p>Due to <code class="notranslate">The limitations of the blog framework</code>, there is still a lot of content that has not been fully explained. I will try to supplement and explain some of the more difficult concepts in future posts, or perhaps write a separate article to explain them in more detail.</p>
+</div>
+<div lang="zh-CN">
 <h2>训练过程</h2>
 <p>首先导入一些必要的库：</p>
 <div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">import</span> <span class="pl-s1">os</span>
@@ -1395,14 +1428,15 @@ DDPM的采样器，即<code class="notranslate">式(50)</code>：</p>
 <div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">if</span> <span class="pl-s1">__name__</span> <span class="pl-c1">==</span> <span class="pl-s">'__main__'</span>:
     <span class="pl-en">train</span>()</pre></div>
 <p>训练的前100次迭代过程：</p>
-<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_10_100.png"/></p></p>
+<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_10_100.png" width="7233" height="2862" alt="第 10 至 100 次迭代的训练样本"/></p></p>
 <p>训练的500次迭代过程：</p>
-<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_50_500.png"/></p></p>
+<p><p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_50_500.png" width="7233" height="2862" alt="第 50 至 500 次迭代的训练样本"/></p></p>
 <p>训练的损失值变化：</p>
 <p><p align="center"><img srcset="https://OmnisyR.github.io/figs/cifar1_loss.png" width="400" height="300"/></p></p>
 <h2>总结</h2>
 <p>至此，便完成了DDPM算法上的复现，若是亲自运行代码了，必然会感受到扩散模型对算力的需求之大，也才激发了人们后续关于快速采样的研究。</p>
-<p>由于<code class="notranslate">博客框架的限制</code>，还有很多内容没有能够讲明白，一些理解较为困难的地方后续我也会尽量补充解释，或是另开一篇文章进行讲解。;;;c</p></div>
+<p>由于<code class="notranslate">博客框架的限制</code>，还有很多内容没有能够讲明白，一些理解较为困难的地方后续我也会尽量补充解释，或是另开一篇文章进行讲解。</p>
+</div></div>
 <div style="font-size:small;margin-top:8px;float:right;">转载文章请注明出处</div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>

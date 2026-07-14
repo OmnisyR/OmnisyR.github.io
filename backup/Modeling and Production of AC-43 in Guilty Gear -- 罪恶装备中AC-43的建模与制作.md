@@ -6,9 +6,13 @@
 
 <!-- ##{"script":"<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>"}## -->
 
+<div class="omnisyr-denote-data" hidden aria-hidden="true">
+
 ;;;a
 ;;;;UE Viewer::[下载界面](https://www.gildor.org/en/projects/umodel#files);;;;
 ;;;a
+
+</div>
 ## 写在前面
 GGST中最吸引我的武器莫过于Unika的AC/43了。在我看来，它的设计理念特别“浪漫”，于是我便有了“为什么我不自己动手做个呢？”的想法。网上也有不少关于AC/43的3D打印成品，但有个问题，那就是这些成品不会动，换句话说网上的那些只是一个单纯的模型罢了，完全不浪漫，很是遗憾。
 
@@ -50,11 +54,21 @@ All packages
 ```
 双击资产文件即可进行预览，虚幻引擎为4.25版本：
 
-;;;e`Gmeek-html<img src="https://OmnisyR.github.io/figs/AC43_EN.png">`;;;e;;;c`Gmeek-html<img src="https://OmnisyR.github.io/figs/AC43_ZH.png">`;;;c
+<div lang="en">
+
+`Gmeek-html<img src="https://OmnisyR.github.io/figs/AC43_EN.png" width="8844" height="2311" alt="AC/43 asset location in UE Viewer">`
+
+</div>
+
+<div lang="zh-CN">
+
+`Gmeek-html<img src="https://OmnisyR.github.io/figs/AC43_ZH.png" width="8844" height="2313" alt="UE Viewer 中的 AC/43 资产位置">`
+
+</div>
 
 在预览界面的Tools中可以导出当前文件，或是在文件浏览界面右击文件夹来进行批量导出。
 
 ## 模型预览
 在模型和材质等素材导出后便可先使用Blender进行预览，使用Unreal PSK/PSA插件。通过该插件导入Mesh文件夹下的uni_weaponsp.pskx，为了保证单位一致，可在导入的时候选择缩放0.01。该文件为AC/43展开的模型，它能够为后续的零件建模提供更好的参考价值。
 
-`Gmeek-html<p align="center"><img src="https://OmnisyR.github.io/figs/preview.png" height=200> <img src="https://OmnisyR.github.io/figs/3view.png" height=200>`
+`Gmeek-html<p align="center"><img src="https://OmnisyR.github.io/figs/preview.png" width="360" height="200" alt="AC/43 Blender preview"> <img src="https://OmnisyR.github.io/figs/3view.png" width="335" height="200" alt="AC/43 orthographic views"></p>`
