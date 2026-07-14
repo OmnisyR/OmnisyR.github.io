@@ -54,6 +54,20 @@ HELPER = r'''
             text = text.replace('@@OMNISYR_DENOTES_{}@@'.format(index), denote)
         return text
 
+    def splitDenoteData(self, text):
+        denote_blocks = []
+
+        def collect(match):
+            denote_blocks.append(match.group(1).strip())
+            return '\n'
+
+        article = re.sub(
+            r'(?is)<div\s+class=["\']omnisyr-denote-data["\'][^>]*>(.*?)</div>',
+            collect,
+            text or '',
+        )
+        return article, '\n\n'.join(denote_blocks)
+
     def issueDescription(self, text, title=''):
         source = text or ''
         source = re.sub(
@@ -191,6 +205,16 @@ def patch_gmeek(path: pathlib.Path) -> None:
     source = source.replace("                self.blogBase[listJsonName][postNum][\"description\"]=issue.body.split(period)[0].replace(\"\\\"\", \"\\'\")+period\n", "                self.blogBase[listJsonName][postNum][\"description\"]=self.issueDescription(issue_body, issue.title).replace(\"\\\"\", \"\\'\")\n", 1)
     source = source.replace("                postConfig=json.loads(issue.body.split(\"\\r\\n\")[-1:][0].split(\"##\")[1])\n", "                postConfig=json.loads(re.findall(r'##({[\\s\\S]*?})##', issue_body)[-1])\n", 1)
     source = source.replace("            if issue.body==None:\n                f.write('')\n            else:\n                f.write(issue.body)\n", "            if issue_body==None:\n                f.write('')\n            else:\n                f.write(issue_body)\n", 1)
+    source = source.replace(
+        "        post_body=self.markdown2html(f.read())\n        f.close()\n",
+        "        post_source, denote_source=self.splitDenoteData(f.read())\n"
+        "        post_body=self.markdown2html(post_source)\n"
+        "        if denote_source:\n"
+        "            denote_body=self.markdown2html(denote_source)\n"
+        "            post_body='<div class=\"omnisyr-denote-data\" hidden aria-hidden=\"true\">'+denote_body+'</div>'+post_body\n"
+        "        f.close()\n",
+        1,
+    )
 
     path.write_text(source, encoding="utf-8")
     print("Patched Gmeek include support in {}".format(path))
