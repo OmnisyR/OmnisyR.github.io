@@ -1,11 +1,17 @@
-<!-- ##{"script":"<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>"}## -->
-<div class="omnisyr-denote-data" hidden aria-hidden="true">
 
-;;;a
-;;;;;;;eNote::note;;;e;;;c注释::注释;;;c;;;;
-;;;a
+<details class="omnisyr-note" lang="en">
+<summary>Note</summary>
 
-</div><div lang="en">
+note
+</details>
+
+<details class="omnisyr-note" lang="zh-CN">
+<summary>注释</summary>
+
+注释
+</details>
+
+<div lang="en">
 
 ## Introduction
 This article will explain how to use Matplotlib to plot non-solid curves with arrows, as shown in the figure below:

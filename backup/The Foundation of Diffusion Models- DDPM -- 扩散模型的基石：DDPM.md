@@ -1,9 +1,20 @@
-<!-- ##{"script":"<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>"}## -->
-<div class="omnisyr-denote-data" hidden aria-hidden="true">
 
-;;;a
-;;;;;;;eCopy and paste the code directly::Or just click [me](https://github.com/OmnisyR/diffusion_demo/tree/main/ddpm/en) to go to the full version.;;;e;;;c直接复制粘贴::或是点[我](https://github.com/OmnisyR/diffusion_demo/tree/main/ddpm/cn)转到完全版。;;;c;;;;
-;;;;;;;eMarkov chain::The state at a given moment is only related to the state at the previous moment, i.e., $x_t = f(x_{t - 1})$, without the involvement of states at other moments. A chain formed by a number of such state relationships constitutes a Markov chain. Therefore, Markov chains have the following special properties:;;;e;;;c马尔可夫链::某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。因此，马尔科夫链存在着这样的特殊性质：;;;c
+<details class="omnisyr-note" lang="en">
+<summary>Copy and paste the code directly</summary>
+
+Or just click [me](https://github.com/OmnisyR/diffusion_demo/tree/main/ddpm/en) to go to the full version.
+</details>
+
+<details class="omnisyr-note" lang="zh-CN">
+<summary>直接复制粘贴</summary>
+
+或是点[我](https://github.com/OmnisyR/diffusion_demo/tree/main/ddpm/cn)转到完全版。
+</details>
+
+<details class="omnisyr-note" lang="en">
+<summary>Markov chain</summary>
+
+The state at a given moment is only related to the state at the previous moment, i.e., $x_t = f(x_{t - 1})$, without the involvement of states at other moments. A chain formed by a number of such state relationships constitutes a Markov chain. Therefore, Markov chains have the following special properties:
 
 $$
 \begin{align}
@@ -12,59 +23,197 @@ $$
 &P(X_n|X_{n - 1}, X_{n - 2}, \dots, X_0) = P(X_n|X_{n - 1})
 \end{align}
 $$
+</details>
 
-;;;;
-;;;;;;;eReparameterization trick::For the probability $p(x|y) = \mathcal{N}(x|ay, b)$, i.e., $x$ follows a Gaussian distribution with mean $ay$ and standard deviation $\sqrt{b}$, then we have $x = ay + \sqrt{b}\epsilon$, where $\epsilon \sim \mathcal{N}(0, 1)$.;;;e;;;c重参数化技巧::对于概率$p(x|y) = \mathcal{N}(x|ay, b)$，即$x$服从一个均值为$ay$，标准差为$\sqrt{b}$的高斯分布，那么则有$x = ay + \sqrt{b}\epsilon$，其中$\epsilon \sim \mathcal{N}(0, 1)$。;;;c;;;;
-;;;;;;;eThe code below::PyTorch code that uses GPU acceleration by default. Due to the enormous computing power required by diffusion models, it is almost impossible to run diffusion models without GPU acceleration.;;;e;;;c下方的代码::默认使用GPU加速的pytorch代码，由于扩散模型需求算力巨大，不使用GPU加速几乎很难跑得了扩散模型。;;;c;;;;
-;;;;;;;eAddition rule of Gaussian distribution;;;e;;;c高斯分布的加法法则;;;c::
+<details class="omnisyr-note" lang="zh-CN">
+<summary>马尔可夫链</summary>
+
+某一时刻的状态只与上一时刻的状态相关，即$x_t = f(x_{t - 1})$，不需要其他时刻的状态参与，若干个这样的状态关系组成的链条便形成了马尔科夫链。因此，马尔科夫链存在着这样的特殊性质：
+
+$$
+\begin{align}
+&P(X_n|X_0) = P(X_n)
+\\
+&P(X_n|X_{n - 1}, X_{n - 2}, \dots, X_0) = P(X_n|X_{n - 1})
+\end{align}
+$$
+</details>
+
+<details class="omnisyr-note" lang="en">
+<summary>Reparameterization trick</summary>
+
+For the probability $p(x|y) = \mathcal{N}(x|ay, b)$, i.e., $x$ follows a Gaussian distribution with mean $ay$ and standard deviation $\sqrt{b}$, then we have $x = ay + \sqrt{b}\epsilon$, where $\epsilon \sim \mathcal{N}(0, 1)$.
+</details>
+
+<details class="omnisyr-note" lang="zh-CN">
+<summary>重参数化技巧</summary>
+
+对于概率$p(x|y) = \mathcal{N}(x|ay, b)$，即$x$服从一个均值为$ay$，标准差为$\sqrt{b}$的高斯分布，那么则有$x = ay + \sqrt{b}\epsilon$，其中$\epsilon \sim \mathcal{N}(0, 1)$。
+</details>
+
+<details class="omnisyr-note" lang="en">
+<summary>The code below</summary>
+
+PyTorch code that uses GPU acceleration by default. Due to the enormous computing power required by diffusion models, it is almost impossible to run diffusion models without GPU acceleration.
+</details>
+
+<details class="omnisyr-note" lang="zh-CN">
+<summary>下方的代码</summary>
+
+默认使用GPU加速的pytorch代码，由于扩散模型需求算力巨大，不使用GPU加速几乎很难跑得了扩散模型。
+</details>
+
+<details class="omnisyr-note" lang="en">
+<summary>Addition rule of Gaussian distribution</summary>
 
 $$
 \mathcal{N}(\mu_1, \sigma^2_1) + \mathcal{N}(\mu_2, \sigma^2_2) = \mathcal{N}(\mu_1 + \mu_2, \sigma^2_1 + \sigma^2_2)
 $$
+</details>
 
-;;;;
-;;;;;;;eThe upper bound of this loss as small as possible::Some people may have a typical misconception, namely that equation (13) is equivalent to the KL divergence on the right side being 0. This idea is incorrect because when the KL divergence is 0, although the gradient of the KL divergence is 0, the overall gradient on the right side is not necessarily 0. A very simple example can effectively illustrate this point:;;;e;;;c上界尽可能的小::有些人会存在一个典型的认识错误，即认为式(13)等价于目标为右方的KL散度为0。这个想法错在KL散度为0时，虽然KL散度的梯度为0，但右方整体的梯度不一定为0，一个很简单的例子就能有效进行说明：;;;c
+<details class="omnisyr-note" lang="zh-CN">
+<summary>高斯分布的加法法则</summary>
+
+$$
+\mathcal{N}(\mu_1, \sigma^2_1) + \mathcal{N}(\mu_2, \sigma^2_2) = \mathcal{N}(\mu_1 + \mu_2, \sigma^2_1 + \sigma^2_2)
+$$
+</details>
+
+<details class="omnisyr-note" lang="en">
+<summary>The upper bound of this loss as small as possible</summary>
+
+Some people may have a typical misconception, namely that equation (13) is equivalent to the KL divergence on the right side being 0. This idea is incorrect because when the KL divergence is 0, although the gradient of the KL divergence is 0, the overall gradient on the right side is not necessarily 0. A very simple example can effectively illustrate this point:
 
 $$
 x^2 \leq x^2 + (2 - x)^2
 $$
 
-;;;eClearly, the right-hand side takes its minimum value at $x = 1$, rather than at $x = 2$, where $(2 - x)^2$ is 0.;;;e;;;c显然，右式在$x = 1$时取最小值，而非令$(2 - x)^2$为0的$x = 2$时。;;;c
+Clearly, the right-hand side takes its minimum value at $x = 1$, rather than at $x = 2$, where $(2 - x)^2$ is 0.
+</details>
 
-;;;;
-;;;;;;;eBayes' theorem;;;e;;;c贝叶斯定理;;;c::
+<details class="omnisyr-note" lang="zh-CN">
+<summary>上界尽可能的小</summary>
+
+有些人会存在一个典型的认识错误，即认为式(13)等价于目标为右方的KL散度为0。这个想法错在KL散度为0时，虽然KL散度的梯度为0，但右方整体的梯度不一定为0，一个很简单的例子就能有效进行说明：
+
+$$
+x^2 \leq x^2 + (2 - x)^2
+$$
+
+显然，右式在$x = 1$时取最小值，而非令$(2 - x)^2$为0的$x = 2$时。
+</details>
+
+<details class="omnisyr-note" lang="en">
+<summary>Bayes&#x27; theorem</summary>
 
 $$
 P(A|B) = \frac{P(B|A)P(A)}{P(B)}
 $$
+</details>
 
-;;;;
-;;;;;;;eEquation ;;;e;;;c式;;;c(10)::
+<details class="omnisyr-note" lang="zh-CN">
+<summary>贝叶斯定理</summary>
+
+$$
+P(A|B) = \frac{P(B|A)P(A)}{P(B)}
+$$
+</details>
+
+<details class="omnisyr-note" lang="en">
+<summary>Equation (10)</summary>
 
 $$
 x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1 - \bar{\alpha}_t}\epsilon_t
 $$
+</details>
 
-;;;;
-;;;;;;;eKL divergence formula for Gaussian distributions::For $p_1(x) = \mathcal{N}(\mu_1, \sigma^2_1)$ and $p_2(x) = \mathcal{N}(\mu_2, \sigma^2_2)$, we have:;;;e;;;c高斯分布的KL散度公式::对于$p_1(x) = \mathcal{N}(\mu_1, \sigma^2_1)$以及$p_2(x) = \mathcal{N}(\mu_2, \sigma^2_2)$，有：;;;c
+<details class="omnisyr-note" lang="zh-CN">
+<summary>式(10)</summary>
+
+$$
+x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1 - \bar{\alpha}_t}\epsilon_t
+$$
+</details>
+
+<details class="omnisyr-note" lang="en">
+<summary>KL divergence formula for Gaussian distributions</summary>
+
+For $p_1(x) = \mathcal{N}(\mu_1, \sigma^2_1)$ and $p_2(x) = \mathcal{N}(\mu_2, \sigma^2_2)$, we have:
 
 $$
 D_{KL}(p_1||p_2) = \frac{1}{2}\log\frac{\sigma^2_2}{\sigma^2_1} + \frac{\sigma^2_1 + (\mu_1 - \mu_2)^2}{2\sigma^2_2} - \frac{1}{2}
 $$
+</details>
 
-;;;;
-;;;;UNet::;;;e[Article address](https://arxiv.org/abs/1505.04597);;;e;;;c[文章地址](https://arxiv.org/abs/1505.04597);;;c
-;;;eUNet is relatively complex. You can download [unet.py](https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/unet.py) and [nn.py](https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/nn.py) provided by the article [Diffusion Models Beat GANs on Image Synthesis](https://arxiv.org/abs/2105.05233) on GitHub to run the diffusion model. You do not need to download fp16_util.py. Simply delete the relevant code in unet.py before running it.;;;e;;;cUNet较为复杂，可以在Github上下载由文章[Diffusion Models Beat GANs on Image Synthesis](https://arxiv.org/abs/2105.05233)提供的[unet.py](https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/unet.py)以及[nn.py](https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/nn.py)来运行扩散模型，fp16_util.py可以不用下载，运行前将unet.py中相关代码删去即可。;;;c;;;;
-;;;;;;;eResidual idea::[Article address](https://arxiv.org/abs/1512.03385);;;e;;;c残差思想::[文章地址](https://arxiv.org/abs/1512.03385);;;c;;;;
-;;;;Attention is All You Need::;;;e[Article address](https://arxiv.org/abs/1706.03762);;;e;;;c[文章地址](https://arxiv.org/abs/1706.03762);;;c;;;;
-;;;;;;;eSelect the linear noise schedule::There are many types of noise schedules. Although cosine noise schedule seem to be highly recommended online, in actual practice, they can cause a problem I call “color divergence.” A series of measures are required to improve the results and obtain the correct outcome. Therefore, when you are just starting to learn about diffusion models, it is best to use a linear noise schedule first.
+<details class="omnisyr-note" lang="zh-CN">
+<summary>高斯分布的KL散度公式</summary>
+
+对于$p_1(x) = \mathcal{N}(\mu_1, \sigma^2_1)$以及$p_2(x) = \mathcal{N}(\mu_2, \sigma^2_2)$，有：
+
+$$
+D_{KL}(p_1||p_2) = \frac{1}{2}\log\frac{\sigma^2_2}{\sigma^2_1} + \frac{\sigma^2_1 + (\mu_1 - \mu_2)^2}{2\sigma^2_2} - \frac{1}{2}
+$$
+</details>
+
+<details class="omnisyr-note" lang="en">
+<summary>UNet</summary>
+
+[Article address](https://arxiv.org/abs/1505.04597)
+UNet is relatively complex. You can download [unet.py](https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/unet.py) and [nn.py](https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/nn.py) provided by the article [Diffusion Models Beat GANs on Image Synthesis](https://arxiv.org/abs/2105.05233) on GitHub to run the diffusion model. You do not need to download fp16_util.py. Simply delete the relevant code in unet.py before running it.
+</details>
+
+<details class="omnisyr-note" lang="zh-CN">
+<summary>UNet</summary>
+
+[文章地址](https://arxiv.org/abs/1505.04597)
+UNet较为复杂，可以在Github上下载由文章[Diffusion Models Beat GANs on Image Synthesis](https://arxiv.org/abs/2105.05233)提供的[unet.py](https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/unet.py)以及[nn.py](https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/nn.py)来运行扩散模型，fp16_util.py可以不用下载，运行前将unet.py中相关代码删去即可。
+</details>
+
+<details class="omnisyr-note" lang="en">
+<summary>Residual idea</summary>
+
+[Article address](https://arxiv.org/abs/1512.03385)
+</details>
+
+<details class="omnisyr-note" lang="zh-CN">
+<summary>残差思想</summary>
+
+[文章地址](https://arxiv.org/abs/1512.03385)
+</details>
+
+<details class="omnisyr-note" lang="en">
+<summary>Attention is All You Need</summary>
+
+[Article address](https://arxiv.org/abs/1706.03762)
+</details>
+
+<details class="omnisyr-note" lang="zh-CN">
+<summary>Attention is All You Need</summary>
+
+[文章地址](https://arxiv.org/abs/1706.03762)
+</details>
+
+<details class="omnisyr-note" lang="en">
+<summary>Select the linear noise schedule</summary>
+
+There are many types of noise schedules. Although cosine noise schedule seem to be highly recommended online, in actual practice, they can cause a problem I call “color divergence.” A series of measures are required to improve the results and obtain the correct outcome. Therefore, when you are just starting to learn about diffusion models, it is best to use a linear noise schedule first.
 
 Color Diverge Phenomenon
-;;;e;;;c选择线性噪声时间表::噪声时间表有很多种，虽然网络上疑似很推崇余弦型噪声时间表，但实际操作中它会导致一种被我称为“色彩发散”的问题，还需要通过一系列手段来改善才能得到正确结果，所以刚刚接触扩散模型，可以先使用线性噪声时间表。
 
-色彩发散现象;;;c
-`Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/color_diverge.png" width="351" height="128"/></p>`;;;;
-;;;;;;;eEquation ;;;e;;;c式;;;c(50)::
+`Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/color_diverge.png" width="351" height="128"/></p>`
+</details>
+
+<details class="omnisyr-note" lang="zh-CN">
+<summary>选择线性噪声时间表</summary>
+
+噪声时间表有很多种，虽然网络上疑似很推崇余弦型噪声时间表，但实际操作中它会导致一种被我称为“色彩发散”的问题，还需要通过一系列手段来改善才能得到正确结果，所以刚刚接触扩散模型，可以先使用线性噪声时间表。
+
+色彩发散现象
+`Gmeek-html<p align="center"><img srcset="https://OmnisyR.github.io/figs/color_diverge.png" width="351" height="128"/></p>`
+</details>
+
+<details class="omnisyr-note" lang="en">
+<summary>Equation (50)</summary>
 
 $$
 \begin{align}
@@ -75,12 +224,35 @@ x_{t - 1} &= \frac{1}{\sqrt{\alpha_t}}x_t
 &\quad + \sqrt{\frac{1 - \bar{\alpha}\_{t - 1}}{1 - \bar{\alpha}\_t}\beta_t}\epsilon
 \end{align}
 $$
+</details>
 
-;;;;
-;;;;;;;eThe limitations of the blog framework::The total number of characters in a single article is limited to 65,536.;;;e;;;c博客框架的限制::单篇文章的总字符数被限制在了65,536内。;;;c;;;;
-;;;a
+<details class="omnisyr-note" lang="zh-CN">
+<summary>式(50)</summary>
 
-</div><div lang="en">
+$$
+\begin{align}
+x_{t - 1} &= \frac{1}{\sqrt{\alpha_t}}x_t
+\\
+&\quad - \frac{1 - \alpha_t}{\sqrt{\alpha_t(1 - \bar{\alpha}\_t)}}\epsilon_\theta(x_t, t)
+\\
+&\quad + \sqrt{\frac{1 - \bar{\alpha}\_{t - 1}}{1 - \bar{\alpha}\_t}\beta_t}\epsilon
+\end{align}
+$$
+</details>
+
+<details class="omnisyr-note" lang="en">
+<summary>The limitations of the blog framework</summary>
+
+The total number of characters in a single article is limited to 65,536.
+</details>
+
+<details class="omnisyr-note" lang="zh-CN">
+<summary>博客框架的限制</summary>
+
+单篇文章的总字符数被限制在了65,536内。
+</details>
+
+<div lang="en">
 
 ## Introduction
 I'm not very good at describing subjective things, and most of the information about diffusion models has already been covered in [Diffusion Model Overview](https://omnisyr.github.io/post/4.html), so I'll skip the formalities and get straight to the point!

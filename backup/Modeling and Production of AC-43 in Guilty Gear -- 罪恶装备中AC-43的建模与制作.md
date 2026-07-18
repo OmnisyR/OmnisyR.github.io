@@ -4,15 +4,15 @@
 > [!CAUTION]
 > 施工中！
 
-<!-- ##{"script":"<script src='https://OmnisyR.github.io/assets/HyperTOC.js'></script>"}## -->
 
-<div class="omnisyr-denote-data" hidden aria-hidden="true">
 
-;;;a
-;;;;UE Viewer::[下载界面](https://www.gildor.org/en/projects/umodel#files);;;;
-;;;a
+<details class="omnisyr-note" lang="zh-CN">
+<summary>UE Viewer</summary>
 
-</div>
+[下载界面](https://www.gildor.org/en/projects/umodel#files)
+</details>
+
+
 ## 写在前面
 GGST中最吸引我的武器莫过于Unika的AC/43了。在我看来，它的设计理念特别“浪漫”，于是我便有了“为什么我不自己动手做个呢？”的想法。网上也有不少关于AC/43的3D打印成品，但有个问题，那就是这些成品不会动，换句话说网上的那些只是一个单纯的模型罢了，完全不浪漫，很是遗憾。
 
