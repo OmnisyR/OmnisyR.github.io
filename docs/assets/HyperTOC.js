@@ -53,11 +53,22 @@
     let raw = "";
 
     dataBlocks.forEach(function (block) {
-      raw += "\n" + block.innerHTML;
+      const structuredNotes = Array.from(block.querySelectorAll(":scope > article[lang]"));
+      structuredNotes.forEach(function (note) {
+        const language = note.lang.toLowerCase().startsWith("zh") ? "zh" : "en";
+        if (language !== currentLanguage()) return;
+
+        const term = note.querySelector(":scope > h6");
+        const body = note.querySelector(":scope > div");
+        const key = term ? term.textContent.replace(/\s+/g, " ").trim() : "";
+        if (key && body) denotes.set(key, body.innerHTML);
+      });
+      if (!structuredNotes.length) raw += "\n" + block.innerHTML;
       block.remove();
     });
-    if (!raw) raw = extractLegacyData(article);
+    if (denotes.size) return;
 
+    if (!raw) raw = extractLegacyData(article);
     const selected = resolveLegacy(raw);
     selected.replace(/;;;;([\s\S]*?);;;;/gm, function (_, entryText) {
       const entry = parseDenoteEntry(entryText);
@@ -352,11 +363,11 @@
       }
 
       .omnisyr-denote__content {
-        max-height: 34vh;
+        max-height: 46vh;
         overflow: auto;
         color: var(--fgColor-muted, var(--color-fg-muted));
-        font-size: 0.82rem;
-        line-height: 1.55;
+        font-size: 0.86rem;
+        line-height: 1.6;
         overflow-wrap: anywhere;
         user-select: text;
         -webkit-user-select: text;
@@ -364,6 +375,16 @@
 
       .omnisyr-denote__content > :first-child { margin-top: 0; }
       .omnisyr-denote__content > :last-child { margin-bottom: 0; }
+
+      .omnisyr-denote__content mjx-container[display="true"] {
+        display: block !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding-block: 0.25rem;
+      }
 
       .markdown-body .omnisyr-denote-trigger {
         cursor: help;
@@ -390,8 +411,8 @@
           position: fixed;
           z-index: 10;
           top: var(--omni-sticky-top, 84px);
-          left: calc(50% + 470px);
-          width: min(240px, calc(50vw - 490px));
+          left: calc(50% + 430px);
+          width: min(320px, calc(50vw - 450px));
           max-height: calc(100dvh - var(--omni-sticky-top, 84px) - 20px);
           margin: 0;
           overflow-y: auto;

@@ -1,51 +1,22 @@
-# Blog Authoring Notes
+# Blog Authoring Guide
 
-This blog is still powered by Gmeek and GitHub Issues, but long posts can now
-live in repository Markdown files instead of issue bodies.
+The blog is powered by Gmeek and GitHub Issues, while long articles live in
+repository Markdown files so they are not limited by the issue body size.
 
-## Recommended Issue Body
+## Issue Body
 
-For long posts, keep the issue body short:
+Keep a long-post issue body short:
 
 ```md
 <!-- gmeek:include static/posts/10.md -->
 ```
 
-Put the full article in `static/posts/10.md`. The number should match the
-GitHub issue number. This avoids GitHub issue character limits and makes the
-article easier to edit locally.
-
-Per-post Gmeek config can stay inside the included file:
-
-```md
-<!-- ##{"script":"<script src='/assets/HyperTOC.js'></script>"}## -->
-```
+Put the complete article in `static/posts/10.md`. The filename should match the
+GitHub issue number.
 
 ## Bilingual Content
 
-For full bilingual sections in included Markdown files, use language fences:
-
-```md
-::: en
-
-## Introduction
-
-English content.
-
-:::
-
-::: zh
-
-## 引言
-
-中文内容。
-
-:::
-```
-
-The build step converts these fences into HTML language blocks before Gmeek
-renders Markdown. If you want the GitHub issue preview itself to render the
-blocks, you can write the HTML form directly:
+Use standard HTML language attributes for complete Markdown sections:
 
 ```md
 <div lang="en">
@@ -65,27 +36,68 @@ English content.
 </div>
 ```
 
-For short titles, labels, or subtitles where HTML is not practical, use:
+Use spans only for short inline text:
 
-```text
-English title || 中文标题
+```md
+## <span lang="en">Methods</span><span lang="zh-CN">方法</span>
 ```
 
-The old `;;;e...;;;e;;;c...;;;c` format is still supported for existing posts,
-but new content should use the cleaner forms above.
+Complete language blocks are preferred because they keep links, headings, and
+shared words from appearing in both languages at once.
 
-## URL Mode
+Issue titles and labels can use `English || 中文` because those values are not
+part of the Markdown source.
 
-`config.json` now uses:
+## Annotations
 
-```json
-"urlMode": "issue"
+Write each translated annotation as a semantic `details` block:
+
+```md
+<details class="omnisyr-note" lang="en">
+<summary>Markov chain</summary>
+
+The state at a given moment only depends on the previous state.
+</details>
+
+<details class="omnisyr-note" lang="zh-CN">
+<summary>马尔可夫链</summary>
+
+某一时刻的状态只与上一时刻的状态相关。
+</details>
 ```
 
-Posts will be generated as `/post/3.html`, `/post/4.html`, and so on. This keeps
-URLs stable even when issue titles change.
+Reference the corresponding term with inline code in the article:
 
-## Migrating Existing Issues
+```md
+The forward process is a `Markov chain`.
+```
+
+Annotation bodies support Markdown links, code, and LaTeX. The build removes
+the definition blocks from the article and gives the structured data to
+`HyperTOC.js`.
+
+## Mathematics
+
+Use normal TeX delimiters:
+
+```md
+Inline: $x_t$
+
+Display:
+$$
+x_t = \sqrt{\alpha_t}x_0 + \sqrt{1 - \alpha_t}\epsilon
+$$
+```
+
+`MathLoader.js` loads MathJax 4 only when an article or annotation contains
+math. Do not add a MathJax script to individual posts.
+
+## URLs
+
+`config.json` uses `"urlMode": "issue"`, so article URLs remain stable as
+`/post/3.html`, `/post/4.html`, and so on even when issue titles change.
+
+## Migrating Issues
 
 After committing `static/posts/*.md`, set a GitHub token and run:
 
@@ -94,4 +106,4 @@ $env:GITHUB_TOKEN = "your_token"
 python scripts/migrate_issues_to_static.py --apply --clean-title
 ```
 
-Without `--apply`, the script only prints what it would change.
+Without `--apply`, the script only prints the planned changes.

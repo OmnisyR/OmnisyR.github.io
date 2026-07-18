@@ -1,8 +1,7 @@
-"""Patch Gmeek so issue bodies can include Markdown files from the repo.
+"""Patch Gmeek for repository posts and the blog's authoring format.
 
-The patch keeps the upstream generator intact except for `addOnePostJson`:
-it resolves a small include directive before Gmeek computes descriptions,
-custom post config, backups, and rendered pages.
+The patch resolves include directives, extracts semantic note definitions,
+builds clean descriptions, and leaves math loading to the blog asset pipeline.
 """
 
 from __future__ import annotations
@@ -20,56 +19,21 @@ HELPER = r'''
                 return 'zh-CN'
             return 'en'
 
-        protected_denotes = []
-
-        def protect_denotes(match):
-            token = '@@OMNISYR_DENOTES_{}@@'.format(len(protected_denotes))
-            protected_denotes.append(
-                '<div class="omnisyr-denote-data" hidden aria-hidden="true">\n\n{}\n\n</div>'.format(match.group(0))
-            )
-            return token
-
         def replace_fence(match):
             lang = lang_name(match.group(1))
             body = match.group(2).strip()
             return '<div lang="{}">\n\n{}\n\n</div>'.format(lang, body)
 
-        def replace_legacy_pair(match):
-            english = match.group(1)
-            chinese = match.group(2)
-            is_block = '\n' in english or '\n' in chinese or 'Gmeek-html' in english or 'Gmeek-html' in chinese
-            if is_block:
-                return (
-                    '<div lang="en">\n\n{}\n\n</div>\n\n'
-                    '<div lang="zh-CN">\n\n{}\n\n</div>'
-                ).format(english.strip(), chinese.strip())
-            return '<span lang="en">{}</span><span lang="zh-CN">{}</span>'.format(english, chinese)
-
-        text = re.sub(r'(?ms);;;a.*?;;;a', protect_denotes, text)
+        text = migrate_legacy_authoring(text or '')
         text = re.sub(r'(?ms)^:::\s*(en|zh|zh-CN|cn)\s*$\n(.*?)^:::\s*$', replace_fence, text)
         text = re.sub(r'(?ms)^<!--\s*lang:\s*(en|zh|zh-CN|cn)\s*-->\s*$\n(.*?)^<!--\s*/lang\s*-->\s*$', replace_fence, text)
-        text = re.sub(r'(?s);;;e(.*?);;;e;;;c(.*?);;;c', replace_legacy_pair, text)
-
-        for index, denote in enumerate(protected_denotes):
-            text = text.replace('@@OMNISYR_DENOTES_{}@@'.format(index), denote)
         return text
 
     def splitDenoteData(self, text):
-        denote_blocks = []
-
-        def collect(match):
-            denote_blocks.append(match.group(1).strip())
-            return '\n'
-
-        article = re.sub(
-            r'(?is)<div\s+class=["\']omnisyr-denote-data["\'][^>]*>(.*?)</div>',
-            collect,
-            text or '',
-        )
-        return article, '\n\n'.join(denote_blocks)
+        return extract_note_definitions(text or '')
 
     def issueDescription(self, text, title=''):
-        source = text or ''
+        source, unused_notes = extract_note_definitions(text or '')
         source = re.sub(
             r'(?is)<div\s+class=["\']omnisyr-denote-data["\'][^>]*>.*?</div>',
             ' ',
@@ -198,6 +162,10 @@ def patch_gmeek(path: pathlib.Path) -> None:
         return
 
     source = ensure_import(source, "import pathlib\n")
+    source = ensure_import(
+        source,
+        "from scripts.authoring_format import extract_note_definitions, migrate_legacy_authoring, render_note_data\n",
+    )
     source = source.replace("    def addOnePostJson(self,issue):\n", HELPER + "\n    def addOnePostJson(self,issue):\n", 1)
     source = source.replace("        if len(issue.labels)>=1:\n", "        if len(issue.labels)>=1:\n            issue_body=self.resolveIssueBody(issue)\n", 1)
     source = source.replace("            if issue.body==None:\n", "            if issue_body==None:\n", 1)
@@ -207,12 +175,16 @@ def patch_gmeek(path: pathlib.Path) -> None:
     source = source.replace("            if issue.body==None:\n                f.write('')\n            else:\n                f.write(issue.body)\n", "            if issue_body==None:\n                f.write('')\n            else:\n                f.write(issue_body)\n", 1)
     source = source.replace(
         "        post_body=self.markdown2html(f.read())\n        f.close()\n",
-        "        post_source, denote_source=self.splitDenoteData(f.read())\n"
+        "        post_source, note_definitions=self.splitDenoteData(f.read())\n"
         "        post_body=self.markdown2html(post_source)\n"
-        "        if denote_source:\n"
-        "            denote_body=self.markdown2html(denote_source)\n"
-        "            post_body='<div class=\"omnisyr-denote-data\" hidden aria-hidden=\"true\">'+denote_body+'</div>'+post_body\n"
+        "        if note_definitions:\n"
+        "            post_body=render_note_data(note_definitions, self.markdown2html)+post_body\n"
         "        f.close()\n",
+        1,
+    )
+    source = source.replace(
+        "            issue[\"script\"]=issue[\"script\"]+'<script>MathJax = {tex: {inlineMath: [[\"$\", \"$\"]]}};</script><script async src=\"https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js\"></script>'\n",
+        "",
         1,
     )
 

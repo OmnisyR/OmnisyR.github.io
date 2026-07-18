@@ -14,5 +14,5 @@
     "singlePage":["link"],
     "bottomText":"转载文章请注明出处",
     "primerCSS":"<link href='/assets/Primer.css' rel='stylesheet' />",
-    "allHead":"<script src='/assets/Language.js'></script> <script defer src='/assets/BlogEnhance.js'></script> <script defer src='/assets/ArticleTools.js'></script> <script async type='text/javascript' id='mmvst_globe' src='https://mapmyvisitors.com/globe.js?d=7My-1755wft4R84QKdWiJC8M0BsNLhLfhDs_rBlfwRs'></script> <meta name='google-site-verification' content='jL_vSMve-woq2yALbGnRHeP86_xTVwPvJYu6vfAQiWo'/>"
+    "allHead":"<script src='/assets/Language.js'></script> <script defer src='/assets/BlogEnhance.js'></script> <script defer src='/assets/ArticleTools.js'></script> <script defer src='/assets/MathLoader.js'></script> <script defer src='/assets/HyperTOC.js'></script> <script async type='text/javascript' id='mmvst_globe' src='https://mapmyvisitors.com/globe.js?d=7My-1755wft4R84QKdWiJC8M0BsNLhLfhDs_rBlfwRs'></script> <meta name='google-site-verification' content='jL_vSMve-woq2yALbGnRHeP86_xTVwPvJYu6vfAQiWo'/>"
 }
