@@ -2,8 +2,20 @@
   "use strict";
 
   const denotes = new Map();
-  const renderedDenotes = new Map();
-  let activeDenote = "";
+
+  function normalizeLanguage(value) {
+    return String(value || "").toLowerCase().startsWith("zh") ? "zh" : "en";
+  }
+
+  function languageMatches(elementLanguage, selectedLanguage) {
+    if (!elementLanguage) return true;
+    return normalizeLanguage(elementLanguage) === normalizeLanguage(selectedLanguage);
+  }
+
+  if (typeof module !== "undefined" && module.exports) {
+    module.exports = { languageMatches: languageMatches };
+    return;
+  }
 
   function currentLanguage() {
     if (window.OmnisyrLanguage) return window.OmnisyrLanguage.get();
@@ -12,6 +24,12 @@
 
   function message(english, chinese) {
     return currentLanguage() === "zh" ? chinese : english;
+  }
+
+  function headingMatchesCurrentLanguage(heading) {
+    const languageContainer = heading.closest("[lang]");
+    return !languageContainer
+      || languageMatches(languageContainer.getAttribute("lang"), currentLanguage());
   }
 
   function resolveLegacy(value) {
@@ -55,7 +73,7 @@
     dataBlocks.forEach(function (block) {
       const structuredNotes = Array.from(block.querySelectorAll(":scope > article[lang]"));
       structuredNotes.forEach(function (note) {
-        const language = note.lang.toLowerCase().startsWith("zh") ? "zh" : "en";
+        const language = normalizeLanguage(note.lang);
         if (language !== currentLanguage()) return;
 
         const term = note.querySelector(":scope > h6");
@@ -136,7 +154,7 @@
 
     const details = document.createElement("details");
     details.className = "omnisyr-tool-panel omnisyr-toc";
-    details.open = window.matchMedia("(min-width: 1320px)").matches;
+    details.open = window.matchMedia("(min-width: 1600px)").matches;
 
     const summary = document.createElement("summary");
     summary.textContent = message("Contents", "目录");
@@ -167,21 +185,20 @@
   }
 
   function renderDenote(key, title, content) {
-    activeDenote = key;
     title.textContent = key;
     content.setAttribute("aria-busy", "false");
 
     if (window.MathJax && MathJax.typesetClear) MathJax.typesetClear([content]);
-    if (renderedDenotes.has(key)) {
-      content.innerHTML = renderedDenotes.get(key);
-      return;
-    }
-
     const value = denotes.get(key) || "";
     content.innerHTML = value;
     if (/\$|\\\(|\\\[/.test(value)) {
       content.setAttribute("aria-busy", "true");
-      renderMathIn(content).then(function () {
+      const typeset = window.OmnisyrMath && window.OmnisyrMath.typeset
+        ? window.OmnisyrMath.typeset([content])
+        : renderMathIn(content);
+      Promise.resolve(typeset).then(function () {
+        content.setAttribute("aria-busy", "false");
+      }, function () {
         content.setAttribute("aria-busy", "false");
       });
     }
@@ -209,7 +226,9 @@
 
     document.querySelectorAll(".notranslate").forEach(function (element) {
       const key = element.textContent.replace(/\s+/g, " ").trim();
-      if (!denotes.has(key) || element.hasAttribute("data-omni-denote")) return;
+      if (!headingMatchesCurrentLanguage(element)
+        || !denotes.has(key)
+        || element.hasAttribute("data-omni-denote")) return;
 
       const label = message("Show annotation", "查看注释") + ": " + key;
       element.setAttribute("data-omni-denote", "ready");
@@ -220,7 +239,11 @@
       element.title = label;
       element.classList.add("omnisyr-denote-trigger");
 
-      const activate = function () { renderDenote(key, title, content); };
+      const activate = function () {
+        const toc = document.querySelector(".omnisyr-toc");
+        if (toc) toc.open = false;
+        renderDenote(key, title, content);
+      };
       element.addEventListener("click", activate);
       element.addEventListener("keydown", function (event) {
         if (event.key === "Enter" || event.key === " ") {
@@ -231,50 +254,6 @@
     });
 
     return panel;
-  }
-
-  function preRenderDenotes(title, content) {
-    const mathEntries = Array.from(denotes.entries()).filter(function (entry) {
-      return /\$|\\\(|\\\[/.test(entry[1]);
-    });
-    if (!mathEntries.length) return;
-
-    const cache = document.createElement("div");
-    cache.className = "omnisyr-denote-cache";
-    const items = mathEntries.map(function (entry) {
-      const item = document.createElement("div");
-      item.innerHTML = entry[1];
-      cache.appendChild(item);
-      return { key: entry[0], element: item };
-    });
-    document.body.appendChild(cache);
-
-    const started = Date.now();
-    const finish = function () {
-      items.forEach(function (item) {
-        renderedDenotes.set(item.key, item.element.innerHTML);
-      });
-      cache.remove();
-      if (activeDenote && renderedDenotes.has(activeDenote)) {
-        renderDenote(activeDenote, title, content);
-      }
-    };
-
-    const attempt = function () {
-      if (window.MathJax && MathJax.startup && MathJax.startup.promise && MathJax.typesetPromise) {
-        MathJax.startup.promise
-          .then(function () { return MathJax.typesetPromise([cache]); })
-          .then(finish)
-          .catch(function () { cache.remove(); });
-        return;
-      }
-      if (Date.now() - started < 6000) {
-        window.setTimeout(attempt, 100);
-      } else {
-        cache.remove();
-      }
-    };
-    attempt();
   }
 
   function injectStyle() {
@@ -363,8 +342,6 @@
       }
 
       .omnisyr-denote__content {
-        max-height: 46vh;
-        overflow: auto;
         color: var(--fgColor-muted, var(--color-fg-muted));
         font-size: 0.86rem;
         line-height: 1.6;
@@ -381,8 +358,7 @@
         width: 100% !important;
         min-width: 0 !important;
         max-width: 100% !important;
-        overflow-x: auto;
-        overflow-y: hidden;
+        overflow: visible;
         padding-block: 0.25rem;
       }
 
@@ -396,26 +372,14 @@
         outline-offset: 2px;
       }
 
-      .omnisyr-denote-cache {
-        position: fixed;
-        left: -100000px;
-        top: 0;
-        width: 520px;
-        visibility: hidden;
-        pointer-events: none;
-        contain: layout paint style;
-      }
-
-      @media (min-width: 1320px) {
+      @media (min-width: 1600px) {
         .omnisyr-reading-tools {
           position: fixed;
           z-index: 10;
           top: var(--omni-sticky-top, 84px);
-          left: calc(50% + 430px);
-          width: min(320px, calc(50vw - 450px));
-          max-height: calc(100dvh - var(--omni-sticky-top, 84px) - 20px);
+          left: calc(50% + 420px);
+          width: min(440px, calc(50vw - 430px));
           margin: 0;
-          overflow-y: auto;
         }
       }
 
@@ -426,10 +390,6 @@
 
         .omnisyr-toc nav {
           max-height: 36vh;
-        }
-
-        .omnisyr-denote__content {
-          max-height: 30vh;
         }
       }
     `;
@@ -442,7 +402,8 @@
     if (!contentContainer || !article || document.querySelector(".omnisyr-reading-tools")) return;
 
     extractDenotes(article);
-    const headings = Array.from(article.querySelectorAll("h1, h2, h3, h4, h5, h6"));
+    const headings = Array.from(article.querySelectorAll("h1, h2, h3, h4, h5, h6"))
+      .filter(headingMatchesCurrentLanguage);
     ensureHeadingIds(headings);
 
     const tools = document.createElement("aside");
@@ -458,12 +419,6 @@
     injectStyle();
     contentContainer.insertBefore(tools, article);
 
-    if (denotePanel) {
-      preRenderDenotes(
-        denotePanel.querySelector(".omnisyr-denote__title"),
-        denotePanel.querySelector(".omnisyr-denote__content")
-      );
-    }
   }
 
   if (document.readyState === "loading") {

@@ -69,10 +69,6 @@
     const style = document.createElement("style");
     style.id = "omnisyr-language-style";
     style.textContent = `
-      html[data-omnisyr-i18n="pending"] body {
-        visibility: hidden !important;
-      }
-
       html[data-omnisyr-lang="en"] body [lang^="zh"],
       html[data-omnisyr-lang="zh"] body [lang^="en"] {
         display: none !important;

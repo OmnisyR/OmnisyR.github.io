@@ -12,8 +12,21 @@
       || /(^|[^\\$])\$(?!\s|\d)(?:\\.|[^$\n])+?\$(?!\$)/m.test(text);
   }
 
+  function normalizeLanguage(value) {
+    return String(value || "").toLowerCase().startsWith("zh") ? "zh" : "en";
+  }
+
+  function shouldTypesetBlock(blockLanguage, isNoteData, selectedLanguage) {
+    if (isNoteData) return false;
+    if (!blockLanguage) return true;
+    return normalizeLanguage(blockLanguage) === normalizeLanguage(selectedLanguage);
+  }
+
   if (typeof module !== "undefined" && module.exports) {
-    module.exports = { containsMathSource: containsMathSource };
+    module.exports = {
+      containsMathSource: containsMathSource,
+      shouldTypesetBlock: shouldTypesetBlock
+    };
     return;
   }
 
@@ -28,18 +41,6 @@
     return clone.textContent || "";
   }
 
-  function injectCriticalStyle() {
-    if (document.getElementById("omnisyr-math-loading-style")) return;
-    const style = document.createElement("style");
-    style.id = "omnisyr-math-loading-style";
-    style.textContent = `
-      html[data-omnisyr-math="pending"] .markdown-body {
-        visibility: hidden !important;
-      }
-    `;
-    document.head.appendChild(style);
-  }
-
   function addPreconnect() {
     if (document.querySelector('link[data-omnisyr-math-preconnect]')) return;
     const link = document.createElement("link");
@@ -50,6 +51,18 @@
     document.head.appendChild(link);
   }
 
+  function typesetTargets(article) {
+    const selectedLanguage = document.documentElement.getAttribute("data-omnisyr-lang") || "en";
+    const targets = Array.from(article.children).filter(function (element) {
+      return shouldTypesetBlock(
+        element.getAttribute("lang"),
+        element.classList.contains("omnisyr-denote-data"),
+        selectedLanguage
+      );
+    });
+    return targets.length ? targets : [article];
+  }
+
   function initialize() {
     const article = document.querySelector(".markdown-body");
     if (!article || !containsMathSource(articleMathSource(article))) {
@@ -57,7 +70,6 @@
       return;
     }
 
-    injectCriticalStyle();
     addPreconnect();
     document.documentElement.setAttribute("data-omnisyr-math", "pending");
     article.setAttribute("aria-busy", "true");
@@ -97,6 +109,14 @@
       },
       startup: {
         typeset: false
+      },
+      output: {
+        displayOverflow: "linebreak",
+        linebreaks: {
+          inline: true,
+          width: "100%",
+          lineleading: 0.2
+        }
       }
     };
 
@@ -113,7 +133,7 @@
         ? root.MathJax.startup.promise
         : Promise.resolve();
       startup
-        .then(function () { return root.MathJax.typesetPromise([article]); })
+        .then(function () { return root.MathJax.typesetPromise(typesetTargets(article)); })
         .then(function () { finish("ready"); })
         .catch(function (error) {
           console.error("MathJax typesetting failed", error);
